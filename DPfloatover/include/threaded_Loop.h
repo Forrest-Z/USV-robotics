@@ -40,6 +40,9 @@ class threadloop {
         index_controlmode_first(0),
         index_controlmode_second(0),
         index_controlmode_third(0),
+        index_setpointmode_first(0),
+        index_setpointmode_second(0),
+        index_setpointmode_third(0),
         _controller_first(_vessel_first, _realtimevessel_first),
         _controller_second(_vessel_second, _realtimevessel_second),
         _controller_third(_vessel_third, _realtimevessel_third) {}
@@ -156,57 +159,94 @@ class threadloop {
     }
   }
 
-  // setup the control mode of all vessels
-  void setcontrolmode(int _controlmode) {
+  // setup the control mode of I vessel
+  void setcontrolmode_first(int _controlmode) {
     index_controlmode_first = _controlmode;
+  }
+  // setup the control mode of II vessel
+  void setcontrolmode_second(int _controlmode) {
     index_controlmode_second = _controlmode;
+  }
+  // setup the control mode of III vessel
+  void setcontrolmode_third(int _controlmode) {
     index_controlmode_third = _controlmode;
+  }
+  // setup the setpoint mode of I vessel
+  void setsetpointmode_first(int _setpointmode) {
+    if (index_controlmode_first == 2) {
+      index_setpointmode_first = _setpointmode;
+
+    } else {
+      index_setpointmode_first = 0;
+    }
+  }
+  // setup the setpoint mode of II vessel
+  void setsetpointmode_second(int _setpointmode) {
+    if (index_controlmode_second == 2) {
+      index_setpointmode_second = _setpointmode;
+    } else {
+      index_setpointmode_second = 0;
+    }
+  }
+  // setup the setpoint mode of III vessel
+  void setsetpointmode_third(int _setpointmode) {
+    if (index_controlmode_third == 2) {
+      index_setpointmode_third = _setpointmode;
+    } else {
+      index_setpointmode_third = 0;
+    }
   }
   // setup the sqlite db path
   void setdbsavepath(const std::string &_projectname) {
     dbsavepath = "/home/skloe/Coding/CPP1X/USV/DPfloatover/QT/build/data/" +
                  _projectname + ".db";
   }
-  int get_connection_status() { return connection_status; }
+  int get_connection_status() const { return connection_status; }
 
-  Vector6d getrealtimestate_first() { return _realtimevessel_first.State; }
-  Vector6d getrealtimestate_second() { return _realtimevessel_second.State; }
-  Vector6d getrealtimestate_third() { return _realtimevessel_third.State; }
+  Vector6d getrealtimestate_first() const {
+    return _realtimevessel_first.State;
+  }
+  Vector6d getrealtimestate_second() const {
+    return _realtimevessel_second.State;
+  }
+  Vector6d getrealtimestate_third() const {
+    return _realtimevessel_third.State;
+  }
 
-  Vector6d getrealtime6dmotionmeasurement_first() {
+  Vector6d getrealtime6dmotionmeasurement_first() const {
     return _realtimevessel_first.Measurement;
   }
-  Vector6d getrealtime6dmotionmeasurement_second() {
+  Vector6d getrealtime6dmotionmeasurement_second() const {
     return _realtimevessel_second.Measurement;
   }
-  Vector6d getrealtime6dmotionmeasurement_third() {
+  Vector6d getrealtime6dmotionmeasurement_third() const {
     return _realtimevessel_third.Measurement;
   }
-  Vector6d getrealtime6dmotion_first() {
+  Vector6d getrealtime6dmotion_first() const {
     return _realtimevessel_first.Position;
   }
-  Vector6d getrealtime6dmotion_second() {
+  Vector6d getrealtime6dmotion_second() const {
     return _realtimevessel_second.Position;
   }
-  Vector6d getrealtime6dmotion_third() {
+  Vector6d getrealtime6dmotion_third() const {
     return _realtimevessel_third.Position;
   }
-  Eigen::Vector3i getrealtimealphadeg_first() {
+  Eigen::Vector3i getrealtimealphadeg_first() const {
     return _realtimevessel_first.alpha_deg;
   }
-  Eigen::Vector3i getrealtimealphadeg_second() {
+  Eigen::Vector3i getrealtimealphadeg_second() const {
     return _realtimevessel_second.alpha_deg;
   }
-  Eigen::Vector3i getrealtimealphadeg_third() {
+  Eigen::Vector3i getrealtimealphadeg_third() const {
     return _realtimevessel_third.alpha_deg;
   }
-  Eigen::Vector3i getrealtimerotation_first() {
+  Eigen::Vector3i getrealtimerotation_first() const {
     return _realtimevessel_first.rotation;
   }
-  Eigen::Vector3i getrealtimerotation_second() {
+  Eigen::Vector3i getrealtimerotation_second() const {
     return _realtimevessel_second.rotation;
   }
-  Eigen::Vector3i getrealtimerotation_third() {
+  Eigen::Vector3i getrealtimerotation_third() const {
     return _realtimevessel_third.rotation;
   }
 
@@ -222,7 +262,8 @@ class threadloop {
   //
   int connection_status;
   databasecpp mydb;
-  gamepadmonitor mygamepad;
+  gamepadmonitor_first mygamepad_first;
+  gamepadmonitor_second mygamepad_second;
   motioncapture mymotioncapture;
   FILE *myfile;
   FILE *myfile_first;
@@ -236,6 +277,13 @@ class threadloop {
   int index_controlmode_first;
   int index_controlmode_second;
   int index_controlmode_third;
+  // index for setpoint mode
+  // 0: No automatic control
+  // 1: fixed points
+  // 2: straight line
+  int index_setpointmode_first;
+  int index_setpointmode_second;
+  int index_setpointmode_third;
   // constant parameters of the first vessel
   vessel_first _vessel_first{
       {623, 0, 0, 0, 706, 444, 0, 444, 1298},  // mass
@@ -243,21 +291,21 @@ class threadloop {
       4,                                       // P_x
       1,                                       // P_y
       5,                                       // P_theta
-      0.2,                                     // I_x
-      0.1,                                     // I_y
-      1,                                       // I_theta
+      0.0,                                     // I_x
+      0.0,                                     // I_y
+      0.0,                                     // I_theta
       0.1,                                     // D_x
       0.1,                                     // D_y
       0.2,                                     // D_theta
       0.01,                                    // allowed_error_x
       0.01,                                    // allowed_error_y;
       0.01,                                    // allowed_error_orientation;
-      0.0,                                     // maxpositive_x_thrust(N)
-      0.0,                                     // maxnegative_x_thrust(N)
-      0,                                       // maxpositive_y_thrust(N)
-      0,                                       // maxnegative_y_thrust(N)
-      0,                                       // maxpositive_Mz_thrust(N*m)
-      0,                                       // maxnegative_Mz_thrust(N*m)
+      6.0,                                     // maxpositive_x_thrust(N)
+      5.0,                                     // maxnegative_x_thrust(N)
+      3,                                       // maxpositive_y_thrust(N)
+      1.5,                                     // maxnegative_y_thrust(N)
+      5,                                       // maxpositive_Mz_thrust(N*m)
+      3,                                       // maxnegative_Mz_thrust(N*m)
       3,                                       // m
       3,                                       // n
       9,                                       // numvar
@@ -437,8 +485,10 @@ class threadloop {
   };
 
   // setpoints
+  fixedpointdata _fixedpointdata_first{0, 0, 0};
+  strightlinedata _strightlinedata_first{0.0, 0, 0, 0, 0, 0, 0};
   fixedpointdata _fixedpointdata_second{6, 4, 0};
-
+  strightlinedata _strightlinedata_second{0.01, 0, 6, 4, 0, 0, 30};
   setpoints mysetpoints;
   // controller of each vessel
   controller_first _controller_first;
@@ -457,7 +507,8 @@ class threadloop {
   // get the real time gamepad response
   void updategamepad() {
     while (1) {
-      mygamepad.updategamepad();
+      mygamepad_first.updategamepad();
+      mygamepad_second.updategamepad();
     }
   }
   // get the real time motion response
@@ -499,15 +550,18 @@ class threadloop {
 
       if (index_controlmode_first == 1) {
         _controller_first.headingcontrolleronestep(
-            _realtimevessel_first, mysetpoint, mygamepad.getGamepadXforce(),
-            mygamepad.getGamepadYforce(), myfile_first);
+            _realtimevessel_first, mysetpoint,
+            mygamepad_first.getGamepadXforce(),
+            mygamepad_first.getGamepadYforce(), myfile_first);
       } else if (index_controlmode_first == 2) {
         _controller_first.pidcontrolleronestep(_realtimevessel_first,
                                                mysetpoint, myfile_first);
       } else {
         _controller_first.fullymanualcontroller(
-            mygamepad.getGamepadXforce(), mygamepad.getGamepadYforce(),
-            mygamepad.getGamepadZmoment(), _realtimevessel_first, myfile_first);
+            mygamepad_first.getGamepadXforce(),
+            mygamepad_first.getGamepadYforce(),
+            mygamepad_first.getGamepadZmoment(), _realtimevessel_first,
+            myfile_first);
       }
       t_end = boost::posix_time::second_clock::local_time();
       t_elapsed = t_end - t_start;
@@ -542,15 +596,16 @@ class threadloop {
 
       if (index_controlmode_second == 1) {
         _controller_second.headingcontrolleronestep(
-            _realtimevessel_second, mygamepad.getGamepadXforce(),
-            mygamepad.getGamepadYforce(), myfile_second);
+            _realtimevessel_second, mygamepad_second.getGamepadXforce(),
+            mygamepad_second.getGamepadYforce(), myfile_second);
       } else if (index_controlmode_second == 2) {
         _controller_second.pidcontrolleronestep(_realtimevessel_second,
                                                 myfile_second);
       } else {
         _controller_second.fullymanualcontroller(
-            mygamepad.getGamepadXforce(), mygamepad.getGamepadYforce(),
-            mygamepad.getGamepadZmoment(), _realtimevessel_second,
+            mygamepad_second.getGamepadXforce(),
+            mygamepad_second.getGamepadYforce(),
+            mygamepad_second.getGamepadZmoment(), _realtimevessel_second,
             myfile_second);
       }
       t_end = boost::posix_time::second_clock::local_time();
@@ -580,8 +635,9 @@ class threadloop {
           boost::posix_time::second_clock::local_time();
 
       _controller_third.fullymanualcontroller(
-          mygamepad.getGamepadXforce(), mygamepad.getGamepadYforce(),
-          mygamepad.getGamepadZmoment(), _realtimevessel_third);
+          mygamepad_second.getGamepadXforce(),
+          mygamepad_second.getGamepadYforce(),
+          mygamepad_second.getGamepadZmoment(), _realtimevessel_third);
 
       boost::posix_time::ptime t_end =
           boost::posix_time::second_clock::local_time();
@@ -621,8 +677,20 @@ class threadloop {
   }
   // update setpoints of each vessel
   void updatesetpoints() {
-    mysetpoints.gofixedpoint_second(_realtimevessel_second,
-                                    _fixedpointdata_second);
+    switch (index_setpointmode_first) {
+      case 1: {
+        mysetpoints.gofixedpoint_second(_realtimevessel_second,
+                                        _fixedpointdata_second);
+        break;
+      }
+      case 2: {
+        mysetpoints.gostraightline_second(_realtimevessel_second,
+                                          _strightlinedata_second);
+        break;
+      }
+      default:
+        break;
+    }
   }
 
   // reset realtime data of each vessel

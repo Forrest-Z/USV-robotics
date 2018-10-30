@@ -22,9 +22,9 @@
 
 // go to fixed point
 struct fixedpointdata {
-  double desired_theta;
   double desired_finalx;
   double desired_finaly;
+  double desired_theta;
 };
 
 // go straight line
@@ -44,6 +44,7 @@ class setpoints {
  public:
   setpoints() {}
   ~setpoints() {}
+  // Enable each vessel to reach a fixed point independently
   void gofixedpoint_first(realtimevessel_first &_realtimevessel,
                           const fixedpointdata &_fixedpointdata) {
     gofixedpoint(_realtimevessel.setPoints, _fixedpointdata);
@@ -56,16 +57,23 @@ class setpoints {
                           const fixedpointdata &_fixedpointdata) {
     gofixedpoint(_realtimevessel.setPoints, _fixedpointdata);
   }
+  // Enable each vessel to go with a stright line independently
   void gostraightline_first(realtimevessel_first &_realtimevessel,
-                            const strightlinedata &_strightlinedata) {
+                            strightlinedata &_strightlinedata) {
+    _strightlinedata.initialx = _realtimevessel.State(0);
+    _strightlinedata.initialy = _realtimevessel.State(1);
     gostraightline(_realtimevessel.setPoints, _strightlinedata);
   }
   void gostraightline_second(realtimevessel_second &_realtimevessel,
-                             const strightlinedata &_strightlinedata) {
+                             strightlinedata &_strightlinedata) {
+    _strightlinedata.initialx = _realtimevessel.State(0);
+    _strightlinedata.initialy = _realtimevessel.State(1);
     gostraightline(_realtimevessel.setPoints, _strightlinedata);
   }
   void gostraightline_third(realtimevessel_third &_realtimevessel,
-                            const strightlinedata &_strightlinedata) {
+                            strightlinedata &_strightlinedata) {
+    _strightlinedata.initialx = _realtimevessel.State(0);
+    _strightlinedata.initialy = _realtimevessel.State(1);
     gostraightline(_realtimevessel.setPoints, _strightlinedata);
   }
 

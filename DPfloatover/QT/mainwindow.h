@@ -32,15 +32,43 @@ class MainWindow : public QMainWindow {
 
   void readfilebyline();
 
-  void on_RB_headhold_clicked();
-
-  void on_RB_PID_clicked();
-
-  void on_RB_manual_clicked();
-
-  void on_RB_MPC_clicked();
-
   void on_PB_enablePLC_clicked();
+
+  void on_RB_headholdI_clicked();
+
+  void on_RB_PIDI_clicked();
+
+  void on_RB_manualI_clicked();
+
+  void on_RB_MPCI_clicked();
+
+  void on_RB_headholdII_clicked();
+
+  void on_RB_PIDII_clicked();
+
+  void on_RB_manualII_clicked();
+
+  void on_RB_MPCII_clicked();
+
+  void on_RB_headholdIII_clicked();
+
+  void on_RB_PIDIII_clicked();
+
+  void on_RB_manualIII_clicked();
+
+  void on_RB_MPCIII_clicked();
+
+  void on_RB_fixedpointI_clicked();
+
+  void on_RB_straightlineI_clicked();
+
+  void on_RB_fixedpointII_clicked();
+
+  void on_RB_straightlineII_clicked();
+
+  void on_RB_fixedpointIII_clicked();
+
+  void on_RB_straightlineIII_clicked();
 
  private:
   Ui::MainWindow *ui;

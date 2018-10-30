@@ -6,34 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>770</width>
-    <height>539</height>
+    <width>847</width>
+    <height>670</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Mr. SKLOE</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="PB_start">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>100</y>
-      <width>89</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>start</string>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="Log_GB">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>210</y>
-      <width>711</width>
-      <height>261</height>
+      <x>20</x>
+      <y>390</y>
+      <width>811</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="title">
@@ -47,89 +34,50 @@
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>691</width>
-       <height>221</height>
+       <width>791</width>
+       <height>211</height>
       </rect>
      </property>
     </widget>
    </widget>
-   <widget class="QPushButton" name="PB_connection">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>40</y>
-      <width>89</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Initialize</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="PB_enablePLC">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>40</y>
-      <width>89</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>connection</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="PB_suspend">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>100</y>
-      <width>89</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>suspend</string>
-    </property>
-   </widget>
-   <widget class="QGroupBox" name="groupBox">
+   <widget class="QGroupBox" name="control_model_I">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>20</y>
+      <y>10</y>
       <width>171</width>
       <height>181</height>
      </rect>
     </property>
     <property name="title">
-     <string>Control Mode</string>
+     <string>Control Mode --- I vessel</string>
     </property>
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>30</y>
-       <width>131</width>
+       <width>151</width>
        <height>141</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QRadioButton" name="RB_headhold">
+       <widget class="QRadioButton" name="RB_headholdI">
         <property name="text">
          <string>Heading hold</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="RB_PID">
+       <widget class="QRadioButton" name="RB_PIDI">
         <property name="text">
          <string>PID</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="RB_manual">
+       <widget class="QRadioButton" name="RB_manualI">
         <property name="text">
          <string>Manual</string>
         </property>
@@ -139,7 +87,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="RB_MPC">
+       <widget class="QRadioButton" name="RB_MPCI">
         <property name="text">
          <string>MPC</string>
         </property>
@@ -148,18 +96,327 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QLineEdit" name="Projectname">
+   <widget class="QGroupBox" name="setpointI">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>40</y>
-      <width>113</width>
-      <height>22</height>
+      <x>20</x>
+      <y>200</y>
+      <width>171</width>
+      <height>181</height>
      </rect>
     </property>
-    <property name="text">
-     <string>DPdata</string>
+    <property name="title">
+     <string>Setpoint Mode --- I vessel</string>
     </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>151</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QRadioButton" name="RB_fixedpointI">
+        <property name="text">
+         <string>Fixed point</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RB_straightlineI">
+        <property name="text">
+         <string>Straight Line</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioButton_3">
+        <property name="text">
+         <string>RadioButton</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="control_mode_II">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>10</y>
+      <width>181</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Control Mode --- II vessel</string>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>30</y>
+       <width>151</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QRadioButton" name="RB_headholdII">
+        <property name="text">
+         <string>Heading hold</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RB_PIDII">
+        <property name="text">
+         <string>PID</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RB_manualII">
+        <property name="text">
+         <string>Manual</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RB_MPCII">
+        <property name="text">
+         <string>MPC</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="setmode_II">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>200</y>
+      <width>181</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Setpoint Mode --- II vessel</string>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>161</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QRadioButton" name="RB_fixedpointII">
+        <property name="text">
+         <string>Fixed point</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RB_straightlineII">
+        <property name="text">
+         <string>Straight Line</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioButton_4">
+        <property name="text">
+         <string>RadioButton</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="Button">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>10</y>
+      <width>171</width>
+      <height>371</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Button</string>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>19</x>
+       <y>30</y>
+       <width>131</width>
+       <height>331</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <widget class="QLineEdit" name="Projectname">
+        <property name="text">
+         <string>DPdata</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_connection">
+        <property name="text">
+         <string>Initialize</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_start">
+        <property name="text">
+         <string>start</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_enablePLC">
+        <property name="text">
+         <string>connection</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="PB_suspend">
+        <property name="text">
+         <string>suspend</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="controlmodeII">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>10</y>
+      <width>181</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Control Mode --- III vessel</string>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>29</y>
+       <width>161</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_6">
+      <item>
+       <widget class="QRadioButton" name="RB_headholdIII">
+        <property name="text">
+         <string>Heading hold</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RB_PIDIII">
+        <property name="text">
+         <string>PID</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RB_manualIII">
+        <property name="text">
+         <string>Manual</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RB_MPCIII">
+        <property name="text">
+         <string>MPC</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="SetmodelII">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>200</y>
+      <width>181</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Setpoint Mode --- III vessel</string>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>161</width>
+       <height>141</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_7">
+      <item>
+       <widget class="QRadioButton" name="RB_fixedpointIII">
+        <property name="text">
+         <string>Fixed point</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RB_straightlineIII">
+        <property name="text">
+         <string>Straight Line</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioButton">
+        <property name="text">
+         <string>RadioButton</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -167,7 +424,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>770</width>
+     <width>847</width>
      <height>19</height>
     </rect>
    </property>

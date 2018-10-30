@@ -12,6 +12,14 @@ MainWindow::MainWindow(QWidget *parent)
   ui->PB_start->setEnabled(false);
   ui->PB_enablePLC->setEnabled(false);
   ui->PB_suspend->setEnabled(false);
+
+  ui->RB_fixedpointI->setEnabled(false);
+  ui->RB_straightlineI->setEnabled(false);
+  ui->RB_fixedpointII->setEnabled(false);
+  ui->RB_straightlineII->setEnabled(false);
+  ui->RB_fixedpointIII->setEnabled(false);
+  ui->RB_straightlineIII->setEnabled(false);
+
   GetCurrentPath();
   initializeLoglist();
   updatelog();
@@ -117,18 +125,121 @@ void MainWindow::updatelog() {
   timer->start(1000);
 }
 
-void MainWindow::on_RB_headhold_clicked() {
-  globalvar::_threadloop.setcontrolmode(1);
+void MainWindow::on_RB_headholdI_clicked() {
+  globalvar::_threadloop.setcontrolmode_first(1);
 }
 
-void MainWindow::on_RB_PID_clicked() {
-  globalvar::_threadloop.setcontrolmode(2);
+void MainWindow::on_RB_PIDI_clicked() {
+  globalvar::_threadloop.setcontrolmode_first(2);
+  // ui operation
+  ui->RB_fixedpointI->setEnabled(true);
+  ui->RB_straightlineI->setEnabled(true);
 }
 
-void MainWindow::on_RB_manual_clicked() {
-  globalvar::_threadloop.setcontrolmode(0);
+void MainWindow::on_RB_manualI_clicked() {
+  globalvar::_threadloop.setcontrolmode_first(0);
+  // ui operation
+  ui->RB_fixedpointI->setEnabled(false);
+  ui->RB_straightlineI->setEnabled(false);
 }
 
-void MainWindow::on_RB_MPC_clicked() {
-  globalvar::_threadloop.setcontrolmode(2);
+void MainWindow::on_RB_MPCI_clicked() {
+  globalvar::_threadloop.setcontrolmode_first(2);
+}
+
+void MainWindow::on_RB_headholdII_clicked() {
+  globalvar::_threadloop.setcontrolmode_second(1);
+}
+
+void MainWindow::on_RB_PIDII_clicked() {
+  globalvar::_threadloop.setcontrolmode_second(2);
+  // ui operation
+  ui->RB_fixedpointII->setEnabled(true);
+  ui->RB_straightlineII->setEnabled(true);
+}
+
+void MainWindow::on_RB_manualII_clicked() {
+  globalvar::_threadloop.setcontrolmode_second(0);
+  // ui operation
+  ui->RB_fixedpointII->setEnabled(false);
+  ui->RB_straightlineII->setEnabled(false);
+}
+
+void MainWindow::on_RB_MPCII_clicked() {
+  globalvar::_threadloop.setcontrolmode_second(2);
+}
+
+void MainWindow::on_RB_headholdIII_clicked() {
+  globalvar::_threadloop.setcontrolmode_third(1);
+}
+
+void MainWindow::on_RB_PIDIII_clicked() {
+  globalvar::_threadloop.setcontrolmode_third(2);
+  // ui operation
+  ui->RB_fixedpointIII->setEnabled(true);
+  ui->RB_straightlineIII->setEnabled(true);
+}
+
+void MainWindow::on_RB_manualIII_clicked() {
+  globalvar::_threadloop.setcontrolmode_third(0);
+  // ui operation
+  ui->RB_fixedpointIII->setEnabled(false);
+  ui->RB_straightlineIII->setEnabled(false);
+}
+
+void MainWindow::on_RB_MPCIII_clicked() {
+  globalvar::_threadloop.setcontrolmode_third(2);
+}
+
+void MainWindow::on_RB_fixedpointI_clicked() {
+  globalvar::_threadloop.setsetpointmode_first(1);
+  globalvar::_threadloop.updatesetpoints_t();
+
+  // ui operation
+  ui->RB_fixedpointI->setEnabled(false);
+  ui->RB_straightlineI->setEnabled(false);
+}
+
+void MainWindow::on_RB_straightlineI_clicked() {
+  globalvar::_threadloop.setsetpointmode_first(2);
+  globalvar::_threadloop.updatesetpoints_t();
+  // ui operation
+  ui->RB_fixedpointI->setEnabled(false);
+  ui->RB_straightlineI->setEnabled(false);
+}
+
+void MainWindow::on_RB_fixedpointII_clicked() {
+  globalvar::_threadloop.setsetpointmode_second(1);
+  globalvar::_threadloop.updatesetpoints_t();
+
+  // ui operation
+  ui->RB_fixedpointII->setEnabled(false);
+  ui->RB_straightlineII->setEnabled(false);
+}
+
+void MainWindow::on_RB_straightlineII_clicked() {
+  globalvar::_threadloop.setsetpointmode_second(2);
+  globalvar::_threadloop.updatesetpoints_t();
+
+  // ui operation
+  ui->RB_fixedpointII->setEnabled(false);
+  ui->RB_straightlineII->setEnabled(false);
+}
+
+void MainWindow::on_RB_fixedpointIII_clicked() {
+  globalvar::_threadloop.setsetpointmode_third(1);
+  globalvar::_threadloop.updatesetpoints_t();
+
+  // ui operation
+  ui->RB_fixedpointIII->setEnabled(false);
+  ui->RB_straightlineIII->setEnabled(false);
+}
+
+void MainWindow::on_RB_straightlineIII_clicked() {
+  globalvar::_threadloop.setsetpointmode_third(2);
+  globalvar::_threadloop.updatesetpoints_t();
+
+  // ui operation
+  ui->RB_fixedpointIII->setEnabled(false);
+  ui->RB_straightlineIII->setEnabled(false);
 }
