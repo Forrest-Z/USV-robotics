@@ -33,8 +33,8 @@ struct strightlinedata {
   double desired_theta;
   double desired_finalx;
   double desired_finaly;
-  double initialx;
-  double initialy;
+  double desired_initialx;
+  double desired_initialy;
 
   int orientation_adjustment_time;  // elapsed time for orientation
                                     // adjustment(seconds)
@@ -59,21 +59,15 @@ class setpoints {
   }
   // Enable each vessel to go with a stright line independently
   void gostraightline_first(realtimevessel_first &_realtimevessel,
-                            strightlinedata &_strightlinedata) {
-    _strightlinedata.initialx = _realtimevessel.State(0);
-    _strightlinedata.initialy = _realtimevessel.State(1);
+                            const strightlinedata &_strightlinedata) {
     gostraightline(_realtimevessel.setPoints, _strightlinedata);
   }
   void gostraightline_second(realtimevessel_second &_realtimevessel,
-                             strightlinedata &_strightlinedata) {
-    _strightlinedata.initialx = _realtimevessel.State(0);
-    _strightlinedata.initialy = _realtimevessel.State(1);
+                             const strightlinedata &_strightlinedata) {
     gostraightline(_realtimevessel.setPoints, _strightlinedata);
   }
   void gostraightline_third(realtimevessel_third &_realtimevessel,
-                            strightlinedata &_strightlinedata) {
-    _strightlinedata.initialx = _realtimevessel.State(0);
-    _strightlinedata.initialy = _realtimevessel.State(1);
+                            const strightlinedata &_strightlinedata) {
     gostraightline(_realtimevessel.setPoints, _strightlinedata);
   }
 
@@ -101,16 +95,16 @@ class setpoints {
     long int mt_elapsed = 0;
 
     // We reach the desired orientation first.
-    _setpoints << _strightlinedata.initialx, _strightlinedata.initialy,
-        _strightlinedata.desired_theta;
+    _setpoints << _strightlinedata.desired_initialx,
+        _strightlinedata.desired_initialy, _strightlinedata.desired_theta;
     std::this_thread::sleep_for(
         std::chrono::seconds(_strightlinedata.orientation_adjustment_time));
 
     // then we keep the straight line and reach the desired points
     double total_delta_x =
-        _strightlinedata.desired_finalx - _strightlinedata.initialx;
+        _strightlinedata.desired_finalx - _strightlinedata.desired_initialx;
     double total_delta_y =
-        _strightlinedata.desired_finaly - _strightlinedata.initialy;
+        _strightlinedata.desired_finaly - _strightlinedata.desired_initialy;
     double total_length = std::sqrt(total_delta_x * total_delta_x +
                                     total_delta_y * total_delta_y);
     long int total_mt_elapsed =
@@ -121,9 +115,9 @@ class setpoints {
       t_elapsed = t_end - t_start;
       mt_elapsed = t_elapsed.total_milliseconds();
       _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed +
-                      _strightlinedata.initialx;
+                      _strightlinedata.desired_initialx;
       _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed +
-                      _strightlinedata.initialy;
+                      _strightlinedata.desired_initialy;
       _setpoints(2) = _strightlinedata.desired_theta;
     } while (mt_elapsed < total_mt_elapsed);
   }

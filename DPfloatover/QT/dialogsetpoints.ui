@@ -61,7 +61,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>theta (deg)</string>
+     <string>V (m/s)</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -149,15 +149,15 @@
    <property name="geometry">
     <rect>
      <x>260</x>
-     <y>200</y>
+     <y>190</y>
      <width>211</width>
-     <height>121</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="title">
     <string>Button --- I vessel</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>

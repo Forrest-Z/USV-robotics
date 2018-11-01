@@ -138,6 +138,9 @@ class threadloop {
     _threadid_setpoints = _thread.native_handle();
     _thread.detach();
   }
+  // kill the thread of setpoints
+  void closeupdatesetpoints() { pthread_cancel(_threadid_setpoints); }
+
   // reset all data, close controller, database and PN driver, and kill all
   // threads
   void closelooop() {
@@ -150,12 +153,37 @@ class threadloop {
       closemotioncapture();  // close qtm clients
 
       // // close all thread
-      pthread_cancel(_threadid_setpoints);
+
       pthread_cancel(_threadid_gamepad);
       pthread_cancel(_threadid_motion);
       pthread_cancel(_threadid_database);
 
       _closepncontroller();  // close pn server
+    }
+  }
+
+  void setsetpoint_first(double _startx, double _starty,
+                         double _desired_velocity, double _endx, double _endy,
+                         double _endtheta) {
+    switch (index_setpointmode_first) {
+      case 1: {
+        _fixedpointdata_first.desired_finalx = _endx;
+        _fixedpointdata_first.desired_finaly = _endy;
+        _fixedpointdata_first.desired_theta = _endtheta;
+        break;
+      }
+      case 2: {
+        _strightlinedata_first.desired_velocity = _desired_velocity;
+        _strightlinedata_first.desired_theta = desired_theta;
+        _strightlinedata_first.desired_finalx = _endx;
+        _strightlinedata_first.desired_finaly = _endy;
+        _strightlinedata_first.desired_initialx = _startx;
+        _strightlinedata_first.desired_initialy = _starty;
+
+        break;
+      }
+      default:
+        break;
     }
   }
 
@@ -223,6 +251,10 @@ class threadloop {
                  _projectname + ".db";
   }
   int get_connection_status() const { return connection_status; }
+
+  int getsetpointmode_first() const { return index_setpointmode_first; }
+  int getsetpointmode_second() const { return index_setpointmode_second; }
+  int getsetpointmode_third() const { return index_setpointmode_third; }
 
   Vector6d getrealtimestate_first() const {
     return _realtimevessel_first.State;
@@ -551,10 +583,34 @@ class threadloop {
   };
 
   // setpoints
-  fixedpointdata _fixedpointdata_first{0.6, 2, 0};
-  strightlinedata _strightlinedata_first{0.0, 0, 0, 0, 0, 0, 0};
-  fixedpointdata _fixedpointdata_second{0.6, -2, 0};
-  strightlinedata _strightlinedata_second{0.01, 0, 6, 4, 0, 0, 30};
+  fixedpointdata _fixedpointdata_first{
+      0.6,  // desired_finalx
+      2,    // desired_finaly
+      0     // desired_theta
+  };
+  strightlinedata _strightlinedata_first{
+      0.0,  // desired_velocity
+      0,    // desired_theta
+      0,    // desired_finalx
+      0,    // desired_finaly
+      0,    // desired_initialx
+      0,    // desired_initialy
+      0     // orientation_adjustment_time
+  };
+  fixedpointdata _fixedpointdata_second{
+      0.6,  // desired_finalx
+      -2,   // desired_finaly
+      0     // desired_theta
+  };
+  strightlinedata _strightlinedata_second{
+      0.0,  // desired_velocity
+      0,    // desired_theta
+      0,    // desired_finalx
+      0,    // desired_finaly
+      0,    // desired_initialx
+      0,    // desired_initialy
+      0     // orientation_adjustment_time
+  };
   setpoints mysetpoints;
   // controller of each vessel
   controller_first _controller_first;
@@ -740,28 +796,24 @@ class threadloop {
   }
   // update setpoints of each vessel
   void updatesetpoints() {
-    mysetpoints.gofixedpoint_first(_realtimevessel_first,
-                                   _fixedpointdata_first);
-    mysetpoints.gofixedpoint_second(_realtimevessel_second,
-                                    _fixedpointdata_second);
-    // switch (index_setpointmode_first) {
-    //   case 1: {
-    //     mysetpoints.gofixedpoint_first(_realtimevessel_first,
-    //                                    _fixedpointdata_first);
-    //     mysetpoints.gofixedpoint_second(_realtimevessel_second,
-    //                                     _fixedpointdata_second);
-    //     break;
-    //   }
-    //   case 2: {
-    //     mysetpoints.gostraightline_first(_realtimevessel_first,
-    //                                      _strightlinedata_first);
-    //     mysetpoints.gostraightline_second(_realtimevessel_second,
-    //                                       _strightlinedata_second);
-    //     break;
-    //   }
-    //   default:
-    //     break;
-    // }
+    switch (index_setpointmode_first) {
+      case 1: {
+        mysetpoints.gofixedpoint_first(_realtimevessel_first,
+                                       _fixedpointdata_first);
+        // mysetpoints.gofixedpoint_second(_realtimevessel_second,
+        //                                 _fixedpointdata_second);
+        break;
+      }
+      case 2: {
+        mysetpoints.gostraightline_first(_realtimevessel_first,
+                                         _strightlinedata_first);
+        // mysetpoints.gostraightline_second(_realtimevessel_second,
+        //                                   _strightlinedata_second);
+        break;
+      }
+      default:
+        break;
+    }
   }
 
   // reset realtime data of each vessel
