@@ -21,7 +21,7 @@ const double max_velocity_u = 1;              // m/s
 const double max_velocity_v = 0.5;            // m/s
 const double max_velocity_orientation = 0.5;  // rad/s
 const double qtm_max_position = 30000;        // mm
-const int num_average_point = 200;            // delay 2 s when frequenc=50Hz
+const int num_average_point = 400;            // delay 2 s when frequenc=50Hz
 
 using T_BOOST_CLOCK =
     boost::date_time::microsec_clock<boost::posix_time::ptime>;

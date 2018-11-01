@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QString>
 #include <fstream>
+#include "dialogsetparameter.h"
+#include "dialogsetpoints.h"
 #include "display2ddialog.h"
 #include "globalvar.h"
 #include "thrusterdiag.h"
@@ -58,22 +60,16 @@ class MainWindow : public QMainWindow {
 
   void on_RB_MPCIII_clicked();
 
-  void on_RB_fixedpointI_clicked();
+  void on_actionGamepad_G_triggered();
 
-  void on_RB_straightlineI_clicked();
-
-  void on_RB_fixedpointII_clicked();
-
-  void on_RB_straightlineII_clicked();
-
-  void on_RB_fixedpointIII_clicked();
-
-  void on_RB_straightlineIII_clicked();
+  void on_actionSetpoints_triggered();
 
  private:
   Ui::MainWindow *ui;
   Display2DDialog *myDisplay2DDialog;
   ThrusterDiag *myThrusterDiag;
+  Dialogsetparameter *myDialogsetparameter;
+  Dialogsetpoints *myDialogsetpoints;
   QStringListModel *_model;
   Qt::WindowFlags flags = nullptr;
 

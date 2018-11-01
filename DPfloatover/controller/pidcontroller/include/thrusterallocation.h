@@ -44,30 +44,30 @@ class thrusterallocation_first {
   friend void outputmatrices(const thrusterallocation_first &);
 
  public:
-  explicit thrusterallocation_first(const vessel_first &_vessel_first,
+  explicit thrusterallocation_first(const vessel_first &_vessel,
                                     realtimevessel_first &_realtimevessel)
-      : m(_vessel_first.m),
-        n(_vessel_first.n),
-        numvar(_vessel_first.numvar),
-        num_constraints(_vessel_first.num_constraints),
-        Kbar_positive(_vessel_first.Kbar_positive),
-        Kbar_negative(_vessel_first.Kbar_negative),
-        max_delta_rotation_bow(_vessel_first.max_delta_rotation_bow),
-        max_rotation_bow(_vessel_first.max_rotation_bow),
-        max_thrust_bow_positive(_vessel_first.max_thrust_bow_positive),
-        max_thrust_bow_negative(_vessel_first.max_thrust_bow_negative),
-        K_left(_vessel_first.K_left),
-        K_right(_vessel_first.K_right),
-        max_delta_rotation_azimuth(_vessel_first.max_delta_rotation_azimuth),
-        max_thrust_azimuth_left(_vessel_first.max_thrust_azimuth_left),
-        max_thrust_azimuth_right(_vessel_first.max_thrust_azimuth_right),
-        min_thrust_azimuth_left(_vessel_first.min_thrust_azimuth_left),
-        min_thrust_azimuth_right(_vessel_first.min_thrust_azimuth_right),
-        max_delta_alpha_azimuth(_vessel_first.max_delta_alpha_azimuth),
-        max_alpha_azimuth_left(_vessel_first.max_alpha_azimuth_left),
-        min_alpha_azimuth_left(_vessel_first.min_alpha_azimuth_left),
-        max_alpha_azimuth_right(_vessel_first.max_alpha_azimuth_right),
-        min_alpha_azimuth_right(_vessel_first.min_alpha_azimuth_right),
+      : m(_vessel.m),
+        n(_vessel.n),
+        numvar(_vessel.numvar),
+        num_constraints(_vessel.num_constraints),
+        Kbar_positive(_vessel.Kbar_positive),
+        Kbar_negative(_vessel.Kbar_negative),
+        max_delta_rotation_bow(_vessel.max_delta_rotation_bow),
+        max_rotation_bow(_vessel.max_rotation_bow),
+        max_thrust_bow_positive(_vessel.max_thrust_bow_positive),
+        max_thrust_bow_negative(_vessel.max_thrust_bow_negative),
+        K_left(_vessel.K_left),
+        K_right(_vessel.K_right),
+        max_delta_rotation_azimuth(_vessel.max_delta_rotation_azimuth),
+        max_thrust_azimuth_left(_vessel.max_thrust_azimuth_left),
+        max_thrust_azimuth_right(_vessel.max_thrust_azimuth_right),
+        min_thrust_azimuth_left(_vessel.min_thrust_azimuth_left),
+        min_thrust_azimuth_right(_vessel.min_thrust_azimuth_right),
+        max_delta_alpha_azimuth(_vessel.max_delta_alpha_azimuth),
+        max_alpha_azimuth_left(_vessel.max_alpha_azimuth_left),
+        min_alpha_azimuth_left(_vessel.min_alpha_azimuth_left),
+        max_alpha_azimuth_right(_vessel.max_alpha_azimuth_right),
+        min_alpha_azimuth_right(_vessel.min_alpha_azimuth_right),
         index_twice_bow(0),
         upper_delta_alpha_left(0),
         lower_delta_alpha_left(0),
@@ -93,7 +93,7 @@ class thrusterallocation_first {
         qsubi{0, 1, 2, 3, 4, 5, 6, 7, 8},
         qsubj{0, 1, 2, 3, 4, 5, 6, 7, 8},
         qval{0, 0, 0, 0, 0, 0, 0, 0, 0} {
-    initializethrusterallocation(_vessel_first, _realtimevessel);
+    initializethrusterallocation(_vessel, _realtimevessel);
   }
   thrusterallocation_first() = delete;
   ~thrusterallocation_first() {
@@ -260,14 +260,14 @@ class thrusterallocation_first {
   MSKtask_t task = NULL;
   MSKrescodee r;
 
-  void initializethrusterallocation(const vessel_first &_vessel_first,
+  void initializethrusterallocation(const vessel_first &_vessel,
                                     realtimevessel_first &_realtimevessel) {
     upper_delta_alpha_bow.setZero();
     lower_delta_alpha_bow.setZero();
     upper_delta_u_bow.setZero();
     lower_delta_u_bow.setZero();
-    lx << _vessel_first.bow_x, _vessel_first.left_x, _vessel_first.right_x;
-    ly << _vessel_first.bow_y, _vessel_first.left_y, _vessel_first.right_y;
+    lx << _vessel.bow_x, _vessel.left_x, _vessel.right_x;
+    ly << _vessel.bow_y, _vessel.left_y, _vessel.right_y;
     Q.setZero();
     Omega.setZero();
     Q_deltau.setZero();
@@ -285,12 +285,12 @@ class thrusterallocation_first {
     // update BalphaU
     _realtimevessel.BalphaU =
         calculateBalphau(_realtimevessel.alpha, _realtimevessel.u);
-    initializeMosekAPI(_vessel_first);
+    initializeMosekAPI(_vessel);
   }
 
   void initializeQuadraticObjective() {
     Q(0, 0) = 1000;
-    Q(1, 1) = 2000;
+    Q(1, 1) = 1000;
     Q(2, 2) = 1000;
     Omega(0, 0) = 1;
     Omega(1, 1) = 10;
@@ -1121,7 +1121,7 @@ class thrusterallocation_second {
 
   void initializeQuadraticObjective() {
     Q(0, 0) = 1000;
-    Q(1, 1) = 2000;
+    Q(1, 1) = 1000;
     Q(2, 2) = 1000;
     Omega(0, 0) = 1;
     Omega(1, 1) = 10;

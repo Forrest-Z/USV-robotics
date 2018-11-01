@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>847</width>
-    <height>670</height>
+    <height>559</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>390</y>
+      <y>260</y>
       <width>811</width>
       <height>231</height>
      </rect>
@@ -46,7 +46,7 @@
       <x>20</x>
       <y>10</y>
       <width>171</width>
-      <height>181</height>
+      <height>241</height>
      </rect>
     </property>
     <property name="title">
@@ -58,7 +58,7 @@
        <x>10</x>
        <y>30</y>
        <width>151</width>
-       <height>141</height>
+       <height>201</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -96,65 +96,13 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="setpointI">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>200</y>
-      <width>171</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Setpoint Mode --- I vessel</string>
-    </property>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>151</width>
-       <height>141</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QRadioButton" name="RB_fixedpointI">
-        <property name="text">
-         <string>Fixed point</string>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="RB_straightlineI">
-        <property name="text">
-         <string>Straight Line</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="radioButton_3">
-        <property name="text">
-         <string>RadioButton</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
    <widget class="QGroupBox" name="control_mode_II">
     <property name="geometry">
      <rect>
       <x>230</x>
       <y>10</y>
       <width>181</width>
-      <height>181</height>
+      <height>241</height>
      </rect>
     </property>
     <property name="title">
@@ -166,7 +114,7 @@
        <x>13</x>
        <y>30</y>
        <width>151</width>
-       <height>141</height>
+       <height>201</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -204,62 +152,13 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="setmode_II">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>200</y>
-      <width>181</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Setpoint Mode --- II vessel</string>
-    </property>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>161</width>
-       <height>141</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
-      <item>
-       <widget class="QRadioButton" name="RB_fixedpointII">
-        <property name="text">
-         <string>Fixed point</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="RB_straightlineII">
-        <property name="text">
-         <string>Straight Line</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="radioButton_4">
-        <property name="text">
-         <string>RadioButton</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
    <widget class="QGroupBox" name="Button">
     <property name="geometry">
      <rect>
       <x>660</x>
       <y>10</y>
       <width>171</width>
-      <height>371</height>
+      <height>241</height>
      </rect>
     </property>
     <property name="title">
@@ -269,9 +168,9 @@
      <property name="geometry">
       <rect>
        <x>19</x>
-       <y>30</y>
+       <y>10</y>
        <width>131</width>
-       <height>331</height>
+       <height>231</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -319,7 +218,7 @@
       <x>450</x>
       <y>10</y>
       <width>181</width>
-      <height>181</height>
+      <height>241</height>
      </rect>
     </property>
     <property name="title">
@@ -331,7 +230,7 @@
        <x>13</x>
        <y>29</y>
        <width>161</width>
-       <height>141</height>
+       <height>201</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -369,55 +268,6 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="SetmodelII">
-    <property name="geometry">
-     <rect>
-      <x>450</x>
-      <y>200</y>
-      <width>181</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Setpoint Mode --- III vessel</string>
-    </property>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>161</width>
-       <height>141</height>
-      </rect>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_7">
-      <item>
-       <widget class="QRadioButton" name="RB_fixedpointIII">
-        <property name="text">
-         <string>Fixed point</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="RB_straightlineIII">
-        <property name="text">
-         <string>Straight Line</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="radioButton">
-        <property name="text">
-         <string>RadioButton</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -442,9 +292,10 @@
    </widget>
    <widget class="QMenu" name="menuJoystick">
     <property name="title">
-     <string>Joystick(&amp;J)</string>
+     <string>Parameter</string>
     </property>
     <addaction name="actionGamepad_G"/>
+    <addaction name="actionSetpoints"/>
    </widget>
    <addaction name="menuOpen"/>
    <addaction name="menuJoystick"/>
@@ -477,7 +328,12 @@
   </action>
   <action name="actionGamepad_G">
    <property name="text">
-    <string>Gamepad (&amp;G)</string>
+    <string>PID (&amp;G)</string>
+   </property>
+  </action>
+  <action name="actionSetpoints">
+   <property name="text">
+    <string>Setpoints (&amp;S)</string>
    </property>
   </action>
  </widget>

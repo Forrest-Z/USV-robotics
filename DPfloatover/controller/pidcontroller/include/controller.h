@@ -66,6 +66,14 @@ class controller_first {
     mythrusterallocation.onestepthrusterallocation(_realtimedata, t_file);
   }
 
+  void setPID(double _P_x, double _P_y, double _P_theta, double _I_x,
+              double _I_y, double _I_theta, double _D_x, double _D_y,
+              double _D_theta) {
+    mypidcontroller.setPmatrix(_P_x, _P_y, _P_theta);
+    mypidcontroller.setImatrix(_I_x, _I_y, _I_theta);
+    mypidcontroller.setDmatrix(_D_x, _D_y, _D_theta);
+  }
+
  private:
   kalmanfilter_first mykalmanfilter;              // kalman filter
   pidcontroller_first mypidcontroller;            // pid controller
@@ -177,6 +185,13 @@ class controller_second {
     setGeneralizeForce(_realtimedata, xforce, yforce, zmoment);
     mythrusterallocation.onestepthrusterallocation(_realtimedata, t_file);
   }
+  void setPID(double _P_x, double _P_y, double _P_theta, double _I_x,
+              double _I_y, double _I_theta, double _D_x, double _D_y,
+              double _D_theta) {
+    mypidcontroller.setPmatrix(_P_x, _P_y, _P_theta);
+    mypidcontroller.setImatrix(_I_x, _I_y, _I_theta);
+    mypidcontroller.setDmatrix(_D_x, _D_y, _D_theta);
+  }
 
  private:
   kalmanfilter_second mykalmanfilter;              // kalman filter
@@ -284,6 +299,14 @@ class controller_third {
                              realtimevessel_third &_realtimedata) {
     setGeneralizeForce(_realtimedata, xforce, yforce, zmoment);
     mythrusterallocation.onestepthrusterallocation(_realtimedata);
+  }
+
+  void setPID(double _P_x, double _P_y, double _P_theta, double _I_x,
+              double _I_y, double _I_theta, double _D_x, double _D_y,
+              double _D_theta) {
+    mypidcontroller.setPmatrix(_P_x, _P_y, _P_theta);
+    mypidcontroller.setImatrix(_I_x, _I_y, _I_theta);
+    mypidcontroller.setDmatrix(_D_x, _D_y, _D_theta);
   }
 
  private:

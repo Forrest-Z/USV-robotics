@@ -187,7 +187,9 @@ SOURCES += \
     ../motioncapture/src/qtmOperations.cpp \
     ../motioncapture/src/qtmOutput.cpp \
     ../motioncapture/src/RTPacket.cpp \
-    ../motioncapture/src/RTProtocol.cpp
+    ../motioncapture/src/RTProtocol.cpp \
+    dialogsetparameter.cpp \
+    dialogsetpoints.cpp
 
 
 
@@ -567,6 +569,8 @@ HEADERS += \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcp_timr.h \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcp_var.h \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcpip.h \
+    dialogsetparameter.h \
+    dialogsetpoints.h
 
 
 
@@ -574,4 +578,6 @@ HEADERS += \
 FORMS += \
         mainwindow.ui \
         display2ddialog.ui \
-        thrusterdiag.ui
+        thrusterdiag.ui \
+    dialogsetparameter.ui \
+    dialogsetpoints.ui

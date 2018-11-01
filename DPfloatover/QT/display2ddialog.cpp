@@ -288,7 +288,6 @@ void Display2DDialog::initializePlanarMotion(QCustomPlot *customPlot) {
     customPlot->graph(c_index)->setScatterStyle(myQCPScatterStyle);
     customPlot->graph(c_index)->setData(planarmotion_x[c_index],
                                         planarmotion_y[c_index]);
-
     customPlot->graph(c_index)->rescaleAxes(true);
   }
   // trajectory display
@@ -304,6 +303,20 @@ void Display2DDialog::initializePlanarMotion(QCustomPlot *customPlot) {
         ->setData(trajectory_x[c_index], trajectory_y[c_index]);
     customPlot->graph(c_index + MAXCONNECTION)->rescaleAxes(true);
   }
+  // setpoint display
+  // for (int c_index = 0; c_index != MAXCONNECTION; ++c_index) {
+  //   customPlot->addGraph();
+
+  //   customPlot->graph(c_index + 2 * MAXCONNECTION)
+  //       ->setLineStyle(QCPGraph::lsNone);
+  //   QCPScatterStyle myQCPScatterStyle(QCPScatterStyle::ssDisc,
+  //                                     V_Qcolor[c_index], 2);
+  //   customPlot->graph(c_index + 2 * MAXCONNECTION)
+  //       ->setScatterStyle(myQCPScatterStyle);
+  //   customPlot->graph(c_index + 2 * MAXCONNECTION)
+  //       ->setData(trajectory_x[c_index], trajectory_y[c_index]);
+  //   customPlot->graph(c_index + MAXCONNECTION)->rescaleAxes(true);
+  // }
   // setup x,y axis
   customPlot->xAxis->setRangeReversed(true);
   customPlot->yAxis->setRangeReversed(true);

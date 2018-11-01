@@ -67,6 +67,25 @@ class pidcontroller_first {
     }
   }
 
+  // change the P parameters
+  void setPmatrix(double _P_x, double _P_y, double _P_theta) {
+    matrix_P(0, 0) = _P_x;
+    matrix_P(1, 1) = _P_y;
+    matrix_P(2, 2) = _P_theta;
+  }
+  // change the I parameters
+  void setImatrix(double _I_x, double _I_y, double _I_theta) {
+    matrix_I(0, 0) = _I_x;
+    matrix_I(1, 1) = _I_y;
+    matrix_I(2, 2) = _I_theta;
+  }
+  // change the D parameters
+  void setDmatrix(double _D_x, double _D_y, double _D_theta) {
+    matrix_D(0, 0) = _D_x;
+    matrix_D(1, 1) = _D_y;
+    matrix_D(2, 2) = _D_theta;
+  }
+
  private:
   // constant
   Eigen::Matrix3d matrix_P;
@@ -199,6 +218,25 @@ class pidcontroller_second {
     }
   }
 
+  // change the P parameters
+  void setPmatrix(double _P_x, double _P_y, double _P_theta) {
+    matrix_P(0, 0) = _P_x;
+    matrix_P(1, 1) = _P_y;
+    matrix_P(2, 2) = _P_theta;
+  }
+  // change the I parameters
+  void setImatrix(double _I_x, double _I_y, double _I_theta) {
+    matrix_I(0, 0) = _I_x;
+    matrix_I(1, 1) = _I_y;
+    matrix_I(2, 2) = _I_theta;
+  }
+  // change the D parameters
+  void setDmatrix(double _D_x, double _D_y, double _D_theta) {
+    matrix_D(0, 0) = _D_x;
+    matrix_D(1, 1) = _D_y;
+    matrix_D(2, 2) = _D_theta;
+  }
+
  private:
   // constant
   Eigen::Matrix3d matrix_P;
@@ -325,6 +363,24 @@ class pidcontroller_third {
       // restrict desired force
       restrictdesiredforce(_realtimedata.tau);
     }
+  }
+  // change the P parameters
+  void setPmatrix(double _P_x, double _P_y, double _P_theta) {
+    matrix_P(0, 0) = _P_x;
+    matrix_P(1, 1) = _P_y;
+    matrix_P(2, 2) = _P_theta;
+  }
+  // change the I parameters
+  void setImatrix(double _I_x, double _I_y, double _I_theta) {
+    matrix_I(0, 0) = _I_x;
+    matrix_I(1, 1) = _I_y;
+    matrix_I(2, 2) = _I_theta;
+  }
+  // change the D parameters
+  void setDmatrix(double _D_x, double _D_y, double _D_theta) {
+    matrix_D(0, 0) = _D_x;
+    matrix_D(1, 1) = _D_y;
+    matrix_D(2, 2) = _D_theta;
   }
 
  private:

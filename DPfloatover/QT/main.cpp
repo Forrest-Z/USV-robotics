@@ -1,7 +1,6 @@
 #include <QApplication>
 #include "mainwindow.h"
 
-
 threadloop globalvar::_threadloop = {};
 QString globalvar::pwd("");
 QVector<double> globalvar::vesselshape_x = {

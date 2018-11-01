@@ -159,6 +159,27 @@ class threadloop {
     }
   }
 
+  // set pid of I vessel
+  void setPID_first(double _P_x, double _P_y, double _P_theta, double _I_x,
+                    double _I_y, double _I_theta, double _D_x, double _D_y,
+                    double _D_theta) {
+    _controller_first.setPID(_P_x, _P_y, _P_theta, _I_x, _I_y, _I_theta, _D_x,
+                             _D_y, _D_theta);
+  }
+  // set pid of II vessel
+  void setPID_second(double _P_x, double _P_y, double _P_theta, double _I_x,
+                     double _I_y, double _I_theta, double _D_x, double _D_y,
+                     double _D_theta) {
+    _controller_second.setPID(_P_x, _P_y, _P_theta, _I_x, _I_y, _I_theta, _D_x,
+                              _D_y, _D_theta);
+  }
+  // set pid of III vessel
+  void setPID_third(double _P_x, double _P_y, double _P_theta, double _I_x,
+                    double _I_y, double _I_theta, double _D_x, double _D_y,
+                    double _D_theta) {
+    _controller_third.setPID(_P_x, _P_y, _P_theta, _I_x, _I_y, _I_theta, _D_x,
+                             _D_y, _D_theta);
+  }
   // setup the control mode of I vessel
   void setcontrolmode_first(int _controlmode) {
     index_controlmode_first = _controlmode;
@@ -249,6 +270,51 @@ class threadloop {
   Eigen::Vector3i getrealtimerotation_third() const {
     return _realtimevessel_third.rotation;
   }
+  Eigen::Vector3d getpmatrix_first() const {
+    Eigen::Vector3d pmatrix = Eigen::Vector3d::Zero();
+    pmatrix << _vessel_first.P_x, _vessel_first.P_y, _vessel_first.P_theta;
+    return pmatrix;
+  }
+  Eigen::Vector3d getpmatrix_second() const {
+    Eigen::Vector3d pmatrix = Eigen::Vector3d::Zero();
+    pmatrix << _vessel_second.P_x, _vessel_second.P_y, _vessel_second.P_theta;
+    return pmatrix;
+  }
+  Eigen::Vector3d getpmatrix_third() const {
+    Eigen::Vector3d pmatrix = Eigen::Vector3d::Zero();
+    pmatrix << _vessel_third.P_x, _vessel_third.P_y, _vessel_third.P_theta;
+    return pmatrix;
+  }
+  Eigen::Vector3d getImatrix_first() const {
+    Eigen::Vector3d pmatrix = Eigen::Vector3d::Zero();
+    pmatrix << _vessel_first.I_x, _vessel_first.I_y, _vessel_first.I_theta;
+    return pmatrix;
+  }
+  Eigen::Vector3d getImatrix_second() const {
+    Eigen::Vector3d pmatrix = Eigen::Vector3d::Zero();
+    pmatrix << _vessel_second.I_x, _vessel_second.I_y, _vessel_second.I_theta;
+    return pmatrix;
+  }
+  Eigen::Vector3d getImatrix_third() const {
+    Eigen::Vector3d pmatrix = Eigen::Vector3d::Zero();
+    pmatrix << _vessel_third.I_x, _vessel_third.I_y, _vessel_third.I_theta;
+    return pmatrix;
+  }
+  Eigen::Vector3d getDmatrix_first() const {
+    Eigen::Vector3d pmatrix = Eigen::Vector3d::Zero();
+    pmatrix << _vessel_first.D_x, _vessel_first.D_y, _vessel_first.D_theta;
+    return pmatrix;
+  }
+  Eigen::Vector3d getDmatrix_second() const {
+    Eigen::Vector3d pmatrix = Eigen::Vector3d::Zero();
+    pmatrix << _vessel_second.D_x, _vessel_second.D_y, _vessel_second.D_theta;
+    return pmatrix;
+  }
+  Eigen::Vector3d getDmatrix_third() const {
+    Eigen::Vector3d pmatrix = Eigen::Vector3d::Zero();
+    pmatrix << _vessel_third.D_x, _vessel_third.D_y, _vessel_third.D_theta;
+    return pmatrix;
+  }
 
  private:
   // thread pool
@@ -288,48 +354,48 @@ class threadloop {
   vessel_first _vessel_first{
       {623, 0, 0, 0, 706, 444, 0, 444, 1298},  // mass
       {17, 0, 0, 0, 20, 0, 0, 0, 100},         // damping
-      4,                                       // P_x
-      1,                                       // P_y
-      5,                                       // P_theta
+      20,                                      // P_x
+      10,                                      // P_y
+      30.0,                                    // P_theta
       0.0,                                     // I_x
       0.0,                                     // I_y
       0.0,                                     // I_theta
-      0.1,                                     // D_x
-      0.1,                                     // D_y
-      0.2,                                     // D_theta
+      200.0,                                   // D_x
+      150.0,                                   // D_y
+      300.0,                                   // D_theta
       0.01,                                    // allowed_error_x
       0.01,                                    // allowed_error_y;
       0.01,                                    // allowed_error_orientation;
       6.0,                                     // maxpositive_x_thrust(N)
       5.0,                                     // maxnegative_x_thrust(N)
       3,                                       // maxpositive_y_thrust(N)
-      1.5,                                     // maxnegative_y_thrust(N)
+      2,                                       // maxnegative_y_thrust(N)
       5,                                       // maxpositive_Mz_thrust(N*m)
       3,                                       // maxnegative_Mz_thrust(N*m)
       3,                                       // m
       3,                                       // n
       9,                                       // numvar
       3,                                       // num_constraints
-      5.6e-7,                                  // Kbar_positive
-      2.0e-7,                                  // Kbar_negative
+      5.5e-7,                                  // Kbar_positive
+      1.3e-7,                                  // Kbar_negative
       100,                                     // max_delta_rotation_bow
-      4000,                                    // max_rotation_bow
-      8.96,                                    // max_thrust_bow_positive
-      3.2,                                     // max_thrust_bow_negative
+      3000,                                    // max_rotation_bow
+      4.95,                                    // max_thrust_bow_positive
+      1.17,                                    // max_thrust_bow_negative
       2e-5,                                    // K_left
       2e-5,                                    // K_right
       20,                                      // max_delta_rotation_azimuth
       1000,                                    // max_rotation_azimuth
-      50,                                      // min_rotation_azimuth
+      20,                                      // min_rotation_azimuth
       20,                                      // max_thrust_azimuth_left
       20,                                      // max_thrust_azimuth_right
-      0.05,                                    // min_thrust_azimuth_left
-      0.05,                                    // min_thrust_azimuth_right
+      0.008,                                   // min_thrust_azimuth_left
+      0.008,                                   // min_thrust_azimuth_right
       0.1277,                                  // max_delta_alpha_azimuth
-      M_PI,                                    // max_alpha_azimuth_left
-      0,                                       // min_alpha_azimuth_left
-      0,                                       // max_alpha_azimuth_right
-      -M_PI,                                   // min_alpha_azimuth_right
+      M_PI * 175 / 180,                        // max_alpha_azimuth_left
+      M_PI / 60,                               // min_alpha_azimuth_left
+      -M_PI / 60,                              // max_alpha_azimuth_right
+      -M_PI * 175 / 180,                       // min_alpha_azimuth_right
       1.9,                                     // bow_x
       0,                                       // bow_y
       -1.893,                                  // left_x
@@ -341,15 +407,15 @@ class threadloop {
   vessel_second _vessel_second{
       {623, 0, 0, 0, 706, 444, 0, 444, 1298},  // mass
       {17, 0, 0, 0, 20, 0, 0, 0, 100},         // damping
-      2.0,                                     // P_x
-      1.5,                                     // P_y
-      8.0,                                     // P_theta
+      20,                                      // P_x
+      10,                                      // P_y
+      30.0,                                    // P_theta
       0.0,                                     // I_x
       0.0,                                     // I_y
       0.0,                                     // I_theta
-      20.0,                                    // D_x
-      5.0,                                     // D_y
-      30.0,                                    // D_theta
+      200.0,                                   // D_x
+      150.0,                                   // D_y
+      300.0,                                   // D_theta
       0.01,                                    // allowed_error_x
       0.01,                                    // allowed_error_y;
       0.02,                                    // allowed_error_orientation;
@@ -379,10 +445,10 @@ class threadloop {
       0.008,                                   // min_thrust_azimuth_left
       0.008,                                   // min_thrust_azimuth_right
       0.1277,                                  // max_delta_alpha_azimuth
-      M_PI,                                    // max_alpha_azimuth_left
-      M_PI / 180,                              // min_alpha_azimuth_left
-      -M_PI / 180,                             // max_alpha_azimuth_right
-      -M_PI,                                   // min_alpha_azimuth_right
+      M_PI * 175 / 180,                        // max_alpha_azimuth_left
+      M_PI / 60,                               // min_alpha_azimuth_left
+      -M_PI / 60,                              // max_alpha_azimuth_right
+      -M_PI * 175 / 180,                       // min_alpha_azimuth_right
       1.9,                                     // bow_x
       0,                                       // bow_y
       -1.893,                                  // left_x
@@ -449,7 +515,7 @@ class threadloop {
       Vector6d::Zero(),         // state
       Eigen::Vector3d::Zero(),  // tau
       Eigen::Vector3d::Zero(),  // BalphaU
-      (Eigen::Vector3d() << -M_PI / 2, M_PI / 30, -M_PI / 30)
+      (Eigen::Vector3d() << -M_PI / 2, M_PI / 10, -M_PI / 4)
           .finished(),                                   // alpha
       Eigen::Vector3i::Zero(),                           // alpha_deg
       (Eigen::Vector3d() << 0.01, 0.2, 0.2).finished(),  // u
@@ -485,9 +551,9 @@ class threadloop {
   };
 
   // setpoints
-  fixedpointdata _fixedpointdata_first{0, 0, 0};
+  fixedpointdata _fixedpointdata_first{0.6, 2, 0};
   strightlinedata _strightlinedata_first{0.0, 0, 0, 0, 0, 0, 0};
-  fixedpointdata _fixedpointdata_second{6, 4, 0};
+  fixedpointdata _fixedpointdata_second{0.6, -2, 0};
   strightlinedata _strightlinedata_second{0.01, 0, 6, 4, 0, 0, 30};
   setpoints mysetpoints;
   // controller of each vessel
@@ -542,20 +608,17 @@ class threadloop {
         boost::posix_time::second_clock::local_time();
     boost::posix_time::time_duration t_elapsed = t_end - t_start;
     long int mt_elapsed = 0;
-    Eigen::Vector3d mysetpoint = _realtimevessel_first.State.head(3);
     while (1) {
-      mysetpoint = _realtimevessel_first.State.head(3);
       // real-time control and optimization for each client
       t_start = boost::posix_time::second_clock::local_time();
 
       if (index_controlmode_first == 1) {
         _controller_first.headingcontrolleronestep(
-            _realtimevessel_first, mysetpoint,
-            mygamepad_first.getGamepadXforce(),
+            _realtimevessel_first, mygamepad_first.getGamepadXforce(),
             mygamepad_first.getGamepadYforce(), myfile_first);
       } else if (index_controlmode_first == 2) {
         _controller_first.pidcontrolleronestep(_realtimevessel_first,
-                                               mysetpoint, myfile_first);
+                                               myfile_first);
       } else {
         _controller_first.fullymanualcontroller(
             mygamepad_first.getGamepadXforce(),
@@ -578,7 +641,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      // realtimeprint_first();
+      realtimeprint_first();
     }
   }
 
@@ -623,7 +686,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      realtimeprint_second();
+      // realtimeprint_second();
     }
   }
 
@@ -677,20 +740,28 @@ class threadloop {
   }
   // update setpoints of each vessel
   void updatesetpoints() {
-    switch (index_setpointmode_first) {
-      case 1: {
-        mysetpoints.gofixedpoint_second(_realtimevessel_second,
-                                        _fixedpointdata_second);
-        break;
-      }
-      case 2: {
-        mysetpoints.gostraightline_second(_realtimevessel_second,
-                                          _strightlinedata_second);
-        break;
-      }
-      default:
-        break;
-    }
+    mysetpoints.gofixedpoint_first(_realtimevessel_first,
+                                   _fixedpointdata_first);
+    mysetpoints.gofixedpoint_second(_realtimevessel_second,
+                                    _fixedpointdata_second);
+    // switch (index_setpointmode_first) {
+    //   case 1: {
+    //     mysetpoints.gofixedpoint_first(_realtimevessel_first,
+    //                                    _fixedpointdata_first);
+    //     mysetpoints.gofixedpoint_second(_realtimevessel_second,
+    //                                     _fixedpointdata_second);
+    //     break;
+    //   }
+    //   case 2: {
+    //     mysetpoints.gostraightline_first(_realtimevessel_first,
+    //                                      _strightlinedata_first);
+    //     mysetpoints.gostraightline_second(_realtimevessel_second,
+    //                                       _strightlinedata_second);
+    //     break;
+    //   }
+    //   default:
+    //     break;
+    // }
   }
 
   // reset realtime data of each vessel

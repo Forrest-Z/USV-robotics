@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialogsetparameter</class>
+ <widget class="QDialog" name="Dialogsetparameter">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>457</width>
+    <height>569</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PID parameters</string>
+  </property>
+  <widget class="QGroupBox" name="GB_I">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>201</width>
+     <height>521</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>PID --- I vessel</string>
+   </property>
+   <widget class="QLabel" name="Px">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Px</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Px_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Py</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Px_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>140</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ptheta</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Px_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>280</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Itheta</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Px_5">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>180</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ix</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Px_6">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>230</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Iy</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Px_7">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>330</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dx</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Px_8">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>370</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dy</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Px_9">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>420</y>
+      <width>51</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dtheta</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="PIDsetupI">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>480</y>
+      <width>181</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Setup</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>20</y>
+      <width>121</width>
+      <height>441</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLineEdit" name="LE_PXI"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_PYI"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_PTHETAI"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_IXI"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_IYI"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_ITHETAI"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_DXI"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_DYI"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_DTHETAI"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>20</y>
+     <width>201</width>
+     <height>521</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>PID --- II vessel</string>
+   </property>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Px</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Py</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>140</y>
+      <width>51</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ptheta</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>180</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ix</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>230</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Iy</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>280</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Itheta</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>330</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dx</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>370</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dy</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>420</y>
+      <width>51</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dtheta</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="GB_II">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>480</y>
+      <width>181</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Setup</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>20</y>
+      <width>121</width>
+      <height>441</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLineEdit" name="LE_PXII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_PYII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_PTHETAII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_IXII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_IYII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_ITHETAII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_DXII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_DYII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_DTHETAII"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
