@@ -296,6 +296,9 @@
     </property>
     <addaction name="actionGamepad_G"/>
     <addaction name="actionSetpoints"/>
+    <addaction name="actionStraightLine"/>
+    <addaction name="actionRotation"/>
+    <addaction name="actionBox"/>
    </widget>
    <addaction name="menuOpen"/>
    <addaction name="menuJoystick"/>
@@ -333,7 +336,22 @@
   </action>
   <action name="actionSetpoints">
    <property name="text">
-    <string>Setpoints (&amp;S)</string>
+    <string>Fixed Point (&amp;S)</string>
+   </property>
+  </action>
+  <action name="actionStraightLine">
+   <property name="text">
+    <string>StraightLine</string>
+   </property>
+  </action>
+  <action name="actionRotation">
+   <property name="text">
+    <string>Rotation</string>
+   </property>
+  </action>
+  <action name="actionBox">
+   <property name="text">
+    <string>Box</string>
    </property>
   </action>
  </widget>

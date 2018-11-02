@@ -115,7 +115,7 @@ void MainWindow::readfilebyline() {
 void MainWindow::updatelog() {
   QTimer *timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(readfilebyline()));
-  timer->start(1000);
+  timer->start(10000);
 }
 
 void MainWindow::on_RB_headholdI_clicked() {
@@ -172,6 +172,21 @@ void MainWindow::on_actionGamepad_G_triggered() {
 }
 
 void MainWindow::on_actionSetpoints_triggered() {
-  myDialogsetpoints = new Dialogsetpoints(this);
-  myDialogsetpoints->show();
+  myDialogfixedsetpoint = new Dialogfixedsetpoint(this);
+  myDialogfixedsetpoint->show();
+}
+
+void MainWindow::on_actionStraightLine_triggered() {
+  myDialogstraightline = new Dialogstraightline(this);
+  myDialogstraightline->show();
+}
+
+void MainWindow::on_actionRotation_triggered() {
+  myDialogRotation = new DialogRotation(this);
+  myDialogRotation->show();
+}
+
+void MainWindow::on_actionBox_triggered() {
+  myDialogBox = new DialogBox(this);
+  myDialogBox->show();
 }

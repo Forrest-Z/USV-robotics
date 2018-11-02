@@ -4,8 +4,11 @@
 #include <QMainWindow>
 #include <QString>
 #include <fstream>
+#include "dialogbox.h"
+#include "dialogfixedsetpoint.h"
+#include "dialogrotation.h"
 #include "dialogsetparameter.h"
-#include "dialogsetpoints.h"
+#include "dialogstraightline.h"
 #include "display2ddialog.h"
 #include "globalvar.h"
 #include "thrusterdiag.h"
@@ -64,12 +67,21 @@ class MainWindow : public QMainWindow {
 
   void on_actionSetpoints_triggered();
 
+  void on_actionStraightLine_triggered();
+
+  void on_actionRotation_triggered();
+
+  void on_actionBox_triggered();
+
  private:
   Ui::MainWindow *ui;
   Display2DDialog *myDisplay2DDialog;
   ThrusterDiag *myThrusterDiag;
   Dialogsetparameter *myDialogsetparameter;
-  Dialogsetpoints *myDialogsetpoints;
+  DialogBox *myDialogBox;
+  Dialogfixedsetpoint *myDialogfixedsetpoint;
+  DialogRotation *myDialogRotation;
+  Dialogstraightline *myDialogstraightline;
   QStringListModel *_model;
   Qt::WindowFlags flags = nullptr;
 

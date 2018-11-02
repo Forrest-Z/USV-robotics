@@ -73,7 +73,7 @@ class kalmanfilter_first {
 
   // coordinate transformation matrix
   Eigen::Matrix3d CT;
-
+  Vector6d MeasurementInBody;
   /* Do prediction based of physical system (with external input)
    * U: Control vector
    */
@@ -128,6 +128,8 @@ class kalmanfilter_first {
     Q = 0.01 * Matrix66d::Identity();
     R = 0.1 * Matrix66d::Identity();
     P = 1 * Matrix66d::Identity();
+
+    MeasurementInBody.setZero();
   }
 
   // real time update the Kalman filter matrix using setpoint orientation
@@ -145,8 +147,12 @@ class kalmanfilter_first {
     CT(0, 1) = -svalue;
     CT(1, 0) = svalue;
   }
-  // // real time lowpass filter (moving average)
-  // void movingaverage(int average_num = 3) {}
+
+  // convert global coordinate to body coordinate,
+  // as the QTM get the global position of vessel
+  // index = 0, use the setpoint orientation
+  // index = 1, use the realtime orientation
+  void convert2bodycoordiate(int index = 0) {}
 };
 
 class kalmanfilter_second {

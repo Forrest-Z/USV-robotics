@@ -26,7 +26,7 @@
 #define FILEORNOT 1
 
 // refresh period of each variable
-#define VIEWERREFRESH 20  // ms
+#define VIEWERREFRESH 30  // ms
 
 const double sample_time = 0.1;            // second
 const int sample_mtime = 100;              // ms

@@ -189,7 +189,10 @@ SOURCES += \
     ../motioncapture/src/RTPacket.cpp \
     ../motioncapture/src/RTProtocol.cpp \
     dialogsetparameter.cpp \
-    dialogsetpoints.cpp
+    dialogfixedsetpoint.cpp \
+    dialogstraightline.cpp \
+    dialogrotation.cpp \
+    dialogbox.cpp
 
 
 
@@ -570,7 +573,11 @@ HEADERS += \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcp_var.h \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcpip.h \
     dialogsetparameter.h \
-    dialogsetpoints.h
+    dialogsetpoints.h \
+    dialogfixedsetpoint.h \
+    dialogstraightline.h \
+    dialogrotation.h \
+    dialogbox.h
 
 
 
@@ -580,4 +587,7 @@ FORMS += \
         display2ddialog.ui \
         thrusterdiag.ui \
     dialogsetparameter.ui \
-    dialogsetpoints.ui
+    dialogfixedsetpoint.ui \
+    dialogstraightline.ui \
+    dialogrotation.ui \
+    dialogbox.ui

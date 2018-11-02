@@ -40,6 +40,13 @@ struct strightlinedata {
                                     // adjustment(seconds)
 };
 
+// go rotation
+struct rotationaroundpoint {
+  double rotation_center_x;
+  double rotation_center_y;
+  double rotation_speed;
+};
+
 class setpoints {
  public:
   setpoints() {}
@@ -86,14 +93,6 @@ class setpoints {
   // points
   void gostraightline(Eigen::Vector3d &_setpoints,
                       const strightlinedata &_strightlinedata) {
-    // setup timer
-    boost::posix_time::ptime t_start =
-        boost::posix_time::second_clock::local_time();
-    boost::posix_time::ptime t_end =
-        boost::posix_time::second_clock::local_time();
-    boost::posix_time::time_duration t_elapsed = t_end - t_start;
-    long int mt_elapsed = 0;
-
     // We reach the desired orientation first.
     _setpoints << _strightlinedata.desired_initialx,
         _strightlinedata.desired_initialy, _strightlinedata.desired_theta;
@@ -107,6 +106,15 @@ class setpoints {
         _strightlinedata.desired_finaly - _strightlinedata.desired_initialy;
     double total_length = std::sqrt(total_delta_x * total_delta_x +
                                     total_delta_y * total_delta_y);
+
+    // setup timer
+    boost::posix_time::ptime t_start =
+        boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime t_end =
+        boost::posix_time::second_clock::local_time();
+    boost::posix_time::time_duration t_elapsed = t_end - t_start;
+    long int mt_elapsed = 0;
+
     long int total_mt_elapsed =
         (long int)(1000 * total_length / _strightlinedata.desired_velocity);
     // update the desired position step by step

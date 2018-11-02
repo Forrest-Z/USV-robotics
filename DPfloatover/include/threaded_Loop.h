@@ -40,23 +40,17 @@ class threadloop {
         index_controlmode_first(0),
         index_controlmode_second(0),
         index_controlmode_third(0),
-        index_setpointmode_first(0),
-        index_setpointmode_second(0),
-        index_setpointmode_third(0),
+        index_setpointmode_first(1),
+        index_setpointmode_second(1),
+        index_setpointmode_third(1),
         _controller_first(_vessel_first, _realtimevessel_first),
         _controller_second(_vessel_second, _realtimevessel_second),
         _controller_third(_vessel_third, _realtimevessel_third) {}
   ~threadloop() {}
 
   void initializelooop() {
-    // open system file descriptors
-    if (FILEORNOT) {
-      // initialize pn server
-      pnd_init();
-    } else {
-      // initialize socket server
-      pnd_init();
-    }
+    // initialize pn server
+    pnd_init();
     mydb = databasecpp(dbsavepath);
     // sqlite to create master table
     mydb.create_mastertable();
@@ -174,7 +168,7 @@ class threadloop {
       }
       case 2: {
         _strightlinedata_first.desired_velocity = _desired_velocity;
-        _strightlinedata_first.desired_theta = desired_theta;
+        _strightlinedata_first.desired_theta = _endtheta;
         _strightlinedata_first.desired_finalx = _endx;
         _strightlinedata_first.desired_finaly = _endy;
         _strightlinedata_first.desired_initialx = _startx;
@@ -186,7 +180,30 @@ class threadloop {
         break;
     }
   }
+  void setsetpoint_second(double _startx, double _starty,
+                          double _desired_velocity, double _endx, double _endy,
+                          double _endtheta) {
+    switch (index_setpointmode_second) {
+      case 1: {
+        _fixedpointdata_second.desired_finalx = _endx;
+        _fixedpointdata_second.desired_finaly = _endy;
+        _fixedpointdata_second.desired_theta = _endtheta;
+        break;
+      }
+      case 2: {
+        _strightlinedata_second.desired_velocity = _desired_velocity;
+        _strightlinedata_second.desired_theta = _endtheta;
+        _strightlinedata_second.desired_finalx = _endx;
+        _strightlinedata_second.desired_finaly = _endy;
+        _strightlinedata_second.desired_initialx = _startx;
+        _strightlinedata_second.desired_initialy = _starty;
 
+        break;
+      }
+      default:
+        break;
+    }
+  }
   // set pid of I vessel
   void setPID_first(double _P_x, double _P_y, double _P_theta, double _I_x,
                     double _I_y, double _I_theta, double _D_x, double _D_y,
@@ -222,28 +239,15 @@ class threadloop {
   }
   // setup the setpoint mode of I vessel
   void setsetpointmode_first(int _setpointmode) {
-    if (index_controlmode_first == 2) {
-      index_setpointmode_first = _setpointmode;
-
-    } else {
-      index_setpointmode_first = 0;
-    }
+    index_setpointmode_first = _setpointmode;
   }
   // setup the setpoint mode of II vessel
   void setsetpointmode_second(int _setpointmode) {
-    if (index_controlmode_second == 2) {
-      index_setpointmode_second = _setpointmode;
-    } else {
-      index_setpointmode_second = 0;
-    }
+    index_setpointmode_second = _setpointmode;
   }
   // setup the setpoint mode of III vessel
   void setsetpointmode_third(int _setpointmode) {
-    if (index_controlmode_third == 2) {
-      index_setpointmode_third = _setpointmode;
-    } else {
-      index_setpointmode_third = 0;
-    }
+    index_setpointmode_third = 0;
   }
   // setup the sqlite db path
   void setdbsavepath(const std::string &_projectname) {
@@ -348,6 +352,21 @@ class threadloop {
     return pmatrix;
   }
 
+  // setpoints
+  fixedpointdata getfixedpointdata_first() const {
+    return _fixedpointdata_first;
+  }
+  fixedpointdata getfixedpointdata_second() const {
+    return _fixedpointdata_second;
+  }
+  strightlinedata getstrightlinedata_first() const {
+    return _strightlinedata_first;
+  }
+
+  strightlinedata getstrightlinedata_second() const {
+    return _strightlinedata_second;
+  }
+
  private:
   // thread pool
   typedef std::unordered_map<int, pthread_t> ThreadMap;
@@ -425,8 +444,8 @@ class threadloop {
       0.008,                                   // min_thrust_azimuth_right
       0.1277,                                  // max_delta_alpha_azimuth
       M_PI * 175 / 180,                        // max_alpha_azimuth_left
-      M_PI / 60,                               // min_alpha_azimuth_left
-      -M_PI / 60,                              // max_alpha_azimuth_right
+      M_PI / 18,                               // min_alpha_azimuth_left
+      -M_PI / 18,                              // max_alpha_azimuth_right
       -M_PI * 175 / 180,                       // min_alpha_azimuth_right
       1.9,                                     // bow_x
       0,                                       // bow_y
@@ -441,13 +460,13 @@ class threadloop {
       {17, 0, 0, 0, 20, 0, 0, 0, 100},         // damping
       20,                                      // P_x
       10,                                      // P_y
-      30.0,                                    // P_theta
+      50.0,                                    // P_theta
       0.0,                                     // I_x
       0.0,                                     // I_y
       0.0,                                     // I_theta
-      200.0,                                   // D_x
-      150.0,                                   // D_y
-      300.0,                                   // D_theta
+      600.0,                                   // D_x
+      500.0,                                   // D_y
+      500.0,                                   // D_theta
       0.01,                                    // allowed_error_x
       0.01,                                    // allowed_error_y;
       0.02,                                    // allowed_error_orientation;
@@ -471,15 +490,15 @@ class threadloop {
       2e-5,                                    // K_right
       20,                                      // max_delta_rotation_azimuth
       1000,                                    // max_rotation_azimuth
-      20,                                      // min_rotation_azimuth
+      50,                                      // min_rotation_azimuth
       20,                                      // max_thrust_azimuth_left
       20,                                      // max_thrust_azimuth_right
-      0.008,                                   // min_thrust_azimuth_left
-      0.008,                                   // min_thrust_azimuth_right
+      0.05,                                    // min_thrust_azimuth_left
+      0.05,                                    // min_thrust_azimuth_right
       0.1277,                                  // max_delta_alpha_azimuth
       M_PI * 175 / 180,                        // max_alpha_azimuth_left
-      M_PI / 60,                               // min_alpha_azimuth_left
-      -M_PI / 60,                              // max_alpha_azimuth_right
+      M_PI / 18,                               // min_alpha_azimuth_left
+      -M_PI / 18,                              // max_alpha_azimuth_right
       -M_PI * 175 / 180,                       // min_alpha_azimuth_right
       1.9,                                     // bow_x
       0,                                       // bow_y
@@ -589,27 +608,27 @@ class threadloop {
       0     // desired_theta
   };
   strightlinedata _strightlinedata_first{
-      0.0,  // desired_velocity
-      0,    // desired_theta
-      0,    // desired_finalx
-      0,    // desired_finaly
-      0,    // desired_initialx
-      0,    // desired_initialy
-      0     // orientation_adjustment_time
+      0.01,  // desired_velocity
+      0,     // desired_theta
+      0.6,   // desired_finalx
+      2,     // desired_finaly
+      0.6,   // desired_initialx
+      0,     // desired_initialy
+      100    // orientation_adjustment_time
   };
   fixedpointdata _fixedpointdata_second{
-      0.6,  // desired_finalx
-      -2,   // desired_finaly
+      0.0,  // desired_finalx
+      -6,   // desired_finaly
       0     // desired_theta
   };
   strightlinedata _strightlinedata_second{
-      0.0,  // desired_velocity
+      0.1,  // desired_velocity
       0,    // desired_theta
-      0,    // desired_finalx
-      0,    // desired_finaly
-      0,    // desired_initialx
+      0.0,  // desired_finalx
+      -2,   // desired_finaly
+      0.0,  // desired_initialx
       0,    // desired_initialy
-      0     // orientation_adjustment_time
+      10    // orientation_adjustment_time
   };
   setpoints mysetpoints;
   // controller of each vessel
@@ -697,7 +716,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      realtimeprint_first();
+      // realtimeprint_first();
     }
   }
 
@@ -742,7 +761,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      // realtimeprint_second();
+      realtimeprint_second();
     }
   }
 
@@ -796,19 +815,19 @@ class threadloop {
   }
   // update setpoints of each vessel
   void updatesetpoints() {
-    switch (index_setpointmode_first) {
+    switch (index_setpointmode_second) {
       case 1: {
         mysetpoints.gofixedpoint_first(_realtimevessel_first,
                                        _fixedpointdata_first);
-        // mysetpoints.gofixedpoint_second(_realtimevessel_second,
-        //                                 _fixedpointdata_second);
+        mysetpoints.gofixedpoint_second(_realtimevessel_second,
+                                        _fixedpointdata_second);
         break;
       }
       case 2: {
-        mysetpoints.gostraightline_first(_realtimevessel_first,
-                                         _strightlinedata_first);
-        // mysetpoints.gostraightline_second(_realtimevessel_second,
-        //                                   _strightlinedata_second);
+        // mysetpoints.gostraightline_first(_realtimevessel_first,
+        //                                  _strightlinedata_first);
+        mysetpoints.gostraightline_second(_realtimevessel_second,
+                                          _strightlinedata_second);
         break;
       }
       default:
@@ -865,10 +884,8 @@ class threadloop {
               << _realtimevessel_second.tau << std::endl;
     std::cout << "Second: Estimated force:" << std::endl
               << _realtimevessel_second.BalphaU << std::endl;
-    std::cout << "Second: thruster angle:" << std::endl
-              << _realtimevessel_second.alpha_deg << std::endl;
-    std::cout << "Second: thruster speed:" << std::endl
-              << _realtimevessel_second.rotation << std::endl;
+    std::cout << "Second: setPoints:" << std::endl
+              << _realtimevessel_second.setPoints << std::endl;
   }
   void realtimeprint_third() {
     std::cout << "Desired force:" << std::endl
