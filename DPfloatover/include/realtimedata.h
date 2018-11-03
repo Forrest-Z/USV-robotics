@@ -20,23 +20,42 @@ typedef Eigen::Matrix<double, 6, 1> Vector6d;
 
 // real time data of the first vessel (K class-I)
 struct realtimevessel_first {
-  /* data wroten by motion capture system */
-  // x(surge: m), y(sway: m), orientation(theta: rad), u, v, r (next time
-  // stamp) ---- in the global coordinate
-  Vector6d Measurement;
+  /********************* raw motion data ***********************************/
   // x(surge: m), y(sway: m), z(heave: m), roll(deg), pitch(deg), yaw(theta:
-  // deg)
-  Vector6d Position;
-  // x(surge: m), y(sway: m), orientation(theta: rad)
-  Eigen::Vector3d setPoints;
-  /* data wroten by controller (e.g. kalman, pid, thruster allocation) */
+  // deg)  data wroten by motion capture system
+  Vector6d Position;  // raw motion data
+
+  /********************* measured data after low pass  *********************/
+  // x(m), y(m), orientation(theta: rad), u, v, r (next time stamp)
+  // data wroten by motion capture system
+  Vector6d Measurement;  // measured data after low pass
+
+  /********************* state *********************************************/
   // x(surge: m), y(sway: m), yaw(theta: rad), u, v, r
-  Vector6d State;
-  /* xb(surge: m), yb(sway: m), yaw(theta: rad), u, v, r --- in the body
-   * coordinate*/
-  Vector6d State4control;
-  Eigen::Vector3d tau;        // << x, y, Mz (desired force)
-  Eigen::Vector3d BalphaU;    // << x, y, Mz (estimated force)
+  // data wroten by Kalman
+  Vector6d State;  // state
+
+  /********************* state for control  ********************************/
+  // xb(surge: m), yb(sway: m), yaw(theta: rad), u, v, r
+  // in the body-fixed coordinate
+  Vector6d State4control;  // state for control
+
+  /********************* setPoints   ***************************************/
+  // x(surge: m), y(sway: m), orientation(theta: rad)
+  // in the global coordinate
+  Eigen::Vector3d setPoints;  // setPoints
+
+  /********************* coordinate transform matrix  **********************/
+  Eigen::Matrix3d CTG2B;  // global --> body
+  Eigen::Matrix3d CTB2G;  // body   --> global
+
+  /********************* PID force   ***************************************/
+  // << Fx, Fy, Mz (desired force) --- in the body coordinate
+  Eigen::Vector3d tau;
+
+  /********************* thruster allocation *******************************/
+  // << Fx, Fy, Mz (estimated force)--- in the body coordinate
+  Eigen::Vector3d BalphaU;
   Eigen::Vector3d alpha;      // rad, <<  bow_alpha, left_alpha, right_alpha
   Eigen::Vector3i alpha_deg;  // deg, <<  bow_alpha, left_alpha, right_alpha
   Eigen::Vector3d u;          // << bow_thrust, left_thrust, right_thrust
