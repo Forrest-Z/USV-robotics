@@ -28,6 +28,7 @@
 // refresh period of each variable
 #define VIEWERREFRESH 30  // ms
 
+const double motion_sample_time = 0.02;    // second (QTM 50 Hz)
 const double sample_time = 0.1;            // second
 const int sample_mtime = 100;              // ms
 const unsigned int sample_utime = 100000;  // us

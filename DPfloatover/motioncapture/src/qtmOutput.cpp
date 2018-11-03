@@ -372,12 +372,13 @@ void COutput::updaterealtimevesseldata(Vector6d& _measurement,
     _position(4) = _fAng2;
     _position(5) = _fAng3;
 
-    _measurement.tail(3) = movingaverage(m_fx, m_fy, rad_orientation);
-
     _measurement(0) = m_fx;
     _measurement(1) = m_fy;
     // _measurement(2) = rad_orientation;
-    _measurement(2) = movingaverage_yaw(rad_orientation);
+    double average_orientation = movingaverage_yaw(rad_orientation);
+    calculateGlobal2Body(average_orientation);
+    _measurement(2) = average_orientation;
+    _measurement.tail(3) = movingaverage(m_fx, m_fy, rad_orientation);
   }
 
   // else {
@@ -396,6 +397,7 @@ void COutput::initializemovingaverage() {
   Matrix_average.setZero();
   average_vector.setZero();
   average_yaw.setZero();
+  CTG2B.setIdentity();
 }
 
 Eigen::Vector3d COutput::movingaverage(double _dx, double _dy, double _dtheta) {
@@ -414,8 +416,9 @@ Eigen::Vector3d COutput::movingaverage(double _dx, double _dy, double _dtheta) {
   for (int i = 0; i != 3; ++i) average_vector(i) = Matrix_average.row(i).mean();
   // calculate the velocity
   Eigen::Vector3d average_velocity = Eigen::Vector3d::Zero();
-  average_velocity = (average_vector - former_average_vector) / sample_time;
-  return average_velocity;
+  average_velocity =
+      (average_vector - former_average_vector) / motion_sample_time;
+  return CTG2B * average_velocity;
 }
 
 double COutput::movingaverage_yaw(double _dtheta) {
@@ -427,6 +430,15 @@ double COutput::movingaverage_yaw(double _dtheta) {
   t_average_yaw(index) = _dtheta;
   average_yaw = t_average_yaw;
   // calculate the mean value
-  double meanyaw = average_yaw.mean();
-  return meanyaw;
+  return average_yaw.mean();
+}
+
+// calculate the real time coordinate transform matrix
+void COutput::calculateGlobal2Body(double orientation) {
+  double cvalue = std::cos(orientation);
+  double svalue = std::sin(orientation);
+  CTG2B(0, 0) = cvalue;
+  CTG2B(1, 1) = cvalue;
+  CTG2B(0, 1) = svalue;
+  CTG2B(1, 0) = -svalue;
 }

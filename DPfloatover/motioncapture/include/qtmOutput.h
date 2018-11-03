@@ -76,6 +76,9 @@ class COutput {
   void initializemovingaverage();
   Eigen::Vector3d movingaverage(double _dx, double _dy, double _dtheta);
   double movingaverage_yaw(double _dtheta);
+
+  // calculate the real time coordinate transform matrix
+  void calculateGlobal2Body(double orientation);
   // How many cameras can be measured noise on
   static const int mcnMaxCameras = 20;
   // How many markers can be measured noise on
@@ -115,6 +118,9 @@ class COutput {
   Matrix3100d Matrix_average;
   Eigen::Vector3d average_vector;
   VectorAYaw average_yaw;
+
+  // cooridnate transform matrix(global --> body)
+  Eigen::Matrix3d CTG2B;
 };
 
 #endif  // OUTPUT_H

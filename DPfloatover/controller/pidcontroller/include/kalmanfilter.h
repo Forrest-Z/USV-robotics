@@ -72,8 +72,8 @@ class kalmanfilter_first {
   Matrix66d K;  // Kalman Gain matrix
 
   // coordinate transformation matrix
-  Eigen::Matrix3d CT;
-  Vector6d MeasurementInBody;
+  Eigen::Matrix3d CTG2B;
+  Eigen::Matrix3d CTB2G;
   /* Do prediction based of physical system (with external input)
    * U: Control vector
    */
@@ -111,12 +111,13 @@ class kalmanfilter_first {
     Eigen::Matrix3d Damping(_vessel_first.Damping);
 
     // initialize coordinate transformation matrix
-    CT.setIdentity();
+    CTG2B.setIdentity();
+    CTB2G.setIdentity();
     // calcualte the A and B in continous equation
     Matrix63d Bk = Matrix63d::Zero();
     Matrix66d Ak = Matrix66d::Zero();
     Eigen::Matrix3d Inv_Mass = Mass.inverse();
-    Ak.topRightCorner(3, 3) = CT;
+    Ak.topRightCorner(3, 3) = CTB2G;
     Ak.bottomRightCorner(3, 3) = -Inv_Mass * Damping;
     Bk.bottomRows(3) = Inv_Mass;
 
@@ -128,31 +129,31 @@ class kalmanfilter_first {
     Q = 0.01 * Matrix66d::Identity();
     R = 0.1 * Matrix66d::Identity();
     P = 1 * Matrix66d::Identity();
-
-    MeasurementInBody.setZero();
   }
 
-  // real time update the Kalman filter matrix using setpoint orientation
-  void updateKalmanA(double theta_setpoint) {
-    calculateCoordinateTransform(theta_setpoint);
-    A.topRightCorner(3, 3) = sample_time * CT;
+  // real time update the Kalman filter matrix using orientation
+  void updateKalmanA(double theta) {
+    calculateCoordinateTransform(theta);
+    A.topRightCorner(3, 3) = sample_time * CTB2G;
   }
 
+  // convert state to state4control
+  void convertstate4control(realtimevessel_first &_realtimedata) {
+    _realtimedata.State4control.head(3) = CTG2B * _realtimedata.State.head(3);
+  }
   // calculate the real time coordinate transform matrix
   void calculateCoordinateTransform(double orientation) {
     double cvalue = std::cos(orientation);
     double svalue = std::sin(orientation);
-    CT(0, 0) = cvalue;
-    CT(1, 1) = cvalue;
-    CT(0, 1) = -svalue;
-    CT(1, 0) = svalue;
+    CTB2G(0, 0) = cvalue;
+    CTB2G(1, 1) = cvalue;
+    CTB2G(0, 1) = -svalue;
+    CTB2G(1, 0) = svalue;
+    CTG2B(0, 0) = cvalue;
+    CTG2B(1, 1) = cvalue;
+    CTG2B(0, 1) = svalue;
+    CTG2B(1, 0) = -svalue;
   }
-
-  // convert global coordinate to body coordinate,
-  // as the QTM get the global position of vessel
-  // index = 0, use the setpoint orientation
-  // index = 1, use the realtime orientation
-  void convert2bodycoordiate(int index = 0) {}
 };
 
 class kalmanfilter_second {
