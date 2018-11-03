@@ -135,21 +135,19 @@ class threadloop {
   // reset all data, close controller, database and PN driver, and kill all
   // threads
   void closelooop() {
-    if (FILEORNOT) {
-      for (int i = 0; i != MAXCONNECTION; ++i) stopmosekthread(i);
-      resetallvessels();  // set zero of each vessel
-      std::this_thread::sleep_for(std::chrono::seconds(1));
-      pthread_cancel(_threadid_pnsend);
+    for (int i = 0; i != MAXCONNECTION; ++i) stopmosekthread(i);
+    resetallvessels();  // set zero of each vessel
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    pthread_cancel(_threadid_pnsend);
 
-      closemotioncapture();  // close qtm clients
+    closemotioncapture();  // close qtm clients
 
-      // close all thread
-      pthread_cancel(_threadid_gamepad);
-      pthread_cancel(_threadid_motion);
-      pthread_cancel(_threadid_database);
+    // close all thread
+    pthread_cancel(_threadid_gamepad);
+    pthread_cancel(_threadid_motion);
+    pthread_cancel(_threadid_database);
 
-      _closepncontroller();  // close pn server
-    }
+    _closepncontroller();  // close pn server
   }
 
   // setup the fixed setpoint of each vessel
@@ -163,6 +161,11 @@ class threadloop {
   }
   void setFixedpoint_third(double _setx, double _sety, double _settheta) {
     mysetpoints.gofixedpoint_third(_realtimevessel_third, _setx, _sety,
+                                   _settheta);
+  }
+  // setup the straightline of each vessel
+  void setStraightline_first(double _setx, double _sety, double _settheta) {
+    mysetpoints.gofixedpoint_first(_realtimevessel_first, _setx, _sety,
                                    _settheta);
   }
   // set pid of I vessel

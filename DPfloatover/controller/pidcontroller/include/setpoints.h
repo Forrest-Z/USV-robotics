@@ -75,16 +75,28 @@ class setpoints {
   }
   // Enable each vessel to go with a stright line independently
   void gostraightline_first(realtimevessel_first &_realtimevessel,
-                            const strightlinedata &_strightlinedata) {
-    gostraightline(_realtimevessel.setPoints, _strightlinedata);
+                            double _initialx, double _initialy,
+                            double _desired_velocity, double _finalx,
+                            double _finaly, double _desired_theta) {
+    setstraightlinedata(mystrightlinedata_first, _initialx, _initialy,
+                        _desired_velocity, _finalx, _finaly, _desired_theta);
+    gostraightline(_realtimevessel.setPoints, mystrightlinedata_first);
   }
   void gostraightline_second(realtimevessel_second &_realtimevessel,
-                             const strightlinedata &_strightlinedata) {
-    gostraightline(_realtimevessel.setPoints, _strightlinedata);
+                             double _initialx, double _initialy,
+                             double _desired_velocity, double _finalx,
+                             double _finaly, double _desired_theta) {
+    setstraightlinedata(mystrightlinedata_second, _initialx, _initialy,
+                        _desired_velocity, _finalx, _finaly, _desired_theta);
+    gostraightline(_realtimevessel.setPoints, mystrightlinedata_second);
   }
   void gostraightline_third(realtimevessel_third &_realtimevessel,
-                            const strightlinedata &_strightlinedata) {
-    gostraightline(_realtimevessel.setPoints, _strightlinedata);
+                            double _initialx, double _initialy,
+                            double _desired_velocity, double _finalx,
+                            double _finaly, double _desired_theta) {
+    setstraightlinedata(mystrightlinedata_third, _initialx, _initialy,
+                        _desired_velocity, _finalx, _finaly, _desired_theta);
+    gostraightline(_realtimevessel.setPoints, mystrightlinedata_third);
   }
 
   fixedpointdata getfixedpointdata_first() const {
@@ -95,6 +107,16 @@ class setpoints {
   }
   fixedpointdata getfixedpointdata_third() const {
     return myfixedpointdata_third;
+  }
+
+  strightlinedata getstrightlinedata_first() const {
+    return mystrightlinedata_first;
+  }
+  strightlinedata getstrightlinedata_second() const {
+    return mystrightlinedata_second;
+  }
+  strightlinedata getstrightlinedata_third() const {
+    return mystrightlinedata_third;
   }
 
  private:
@@ -150,6 +172,18 @@ class setpoints {
     _fixedpointdata.desired_theta = _desired_theta;
   }
 
+  // setup the straight line data
+  void setstraightlinedata(strightlinedata &_strightlinedata, double _initialx,
+                           double _initialy, double _desired_velocity,
+                           double _finalx, double _finaly,
+                           double _desired_theta) {
+    _strightlinedata.desired_velocity = _desired_velocity;
+    _strightlinedata.desired_theta = _desired_theta;
+    _strightlinedata.desired_finalx = _finalx;
+    _strightlinedata.desired_finaly = _finaly;
+    _strightlinedata.desired_initialx = _initialx;
+    _strightlinedata.desired_initialy = _initialy;
+  }
   void gofixedpoint(Eigen::Vector3d &_setpoints,
                     const fixedpointdata &_fixedpointdata) {
     _setpoints << _fixedpointdata.desired_finalx,
