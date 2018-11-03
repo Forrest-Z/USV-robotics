@@ -40,9 +40,6 @@ class threadloop {
         index_controlmode_first(0),
         index_controlmode_second(0),
         index_controlmode_third(0),
-        index_setpointmode_first(1),
-        index_setpointmode_second(1),
-        index_setpointmode_third(1),
         _controller_first(_vessel_first, _realtimevessel_first),
         _controller_second(_vessel_second, _realtimevessel_second),
         _controller_third(_vessel_third, _realtimevessel_third) {}
@@ -146,8 +143,7 @@ class threadloop {
 
       closemotioncapture();  // close qtm clients
 
-      // // close all thread
-
+      // close all thread
       pthread_cancel(_threadid_gamepad);
       pthread_cancel(_threadid_motion);
       pthread_cancel(_threadid_database);
@@ -156,53 +152,18 @@ class threadloop {
     }
   }
 
-  void setsetpoint_first(double _startx, double _starty,
-                         double _desired_velocity, double _endx, double _endy,
-                         double _endtheta) {
-    switch (index_setpointmode_first) {
-      case 1: {
-        _fixedpointdata_first.desired_finalx = _endx;
-        _fixedpointdata_first.desired_finaly = _endy;
-        _fixedpointdata_first.desired_theta = _endtheta;
-        break;
-      }
-      case 2: {
-        _strightlinedata_first.desired_velocity = _desired_velocity;
-        _strightlinedata_first.desired_theta = _endtheta;
-        _strightlinedata_first.desired_finalx = _endx;
-        _strightlinedata_first.desired_finaly = _endy;
-        _strightlinedata_first.desired_initialx = _startx;
-        _strightlinedata_first.desired_initialy = _starty;
-
-        break;
-      }
-      default:
-        break;
-    }
+  // setup the fixed setpoint of each vessel
+  void setFixedpoint_first(double _setx, double _sety, double _settheta) {
+    mysetpoints.gofixedpoint_first(_realtimevessel_first, _setx, _sety,
+                                   _settheta);
   }
-  void setsetpoint_second(double _startx, double _starty,
-                          double _desired_velocity, double _endx, double _endy,
-                          double _endtheta) {
-    switch (index_setpointmode_second) {
-      case 1: {
-        _fixedpointdata_second.desired_finalx = _endx;
-        _fixedpointdata_second.desired_finaly = _endy;
-        _fixedpointdata_second.desired_theta = _endtheta;
-        break;
-      }
-      case 2: {
-        _strightlinedata_second.desired_velocity = _desired_velocity;
-        _strightlinedata_second.desired_theta = _endtheta;
-        _strightlinedata_second.desired_finalx = _endx;
-        _strightlinedata_second.desired_finaly = _endy;
-        _strightlinedata_second.desired_initialx = _startx;
-        _strightlinedata_second.desired_initialy = _starty;
-
-        break;
-      }
-      default:
-        break;
-    }
+  void setFixedpoint_second(double _setx, double _sety, double _settheta) {
+    mysetpoints.gofixedpoint_second(_realtimevessel_second, _setx, _sety,
+                                    _settheta);
+  }
+  void setFixedpoint_third(double _setx, double _sety, double _settheta) {
+    mysetpoints.gofixedpoint_third(_realtimevessel_third, _setx, _sety,
+                                   _settheta);
   }
   // set pid of I vessel
   void setPID_first(double _P_x, double _P_y, double _P_theta, double _I_x,
@@ -237,28 +198,12 @@ class threadloop {
   void setcontrolmode_third(int _controlmode) {
     index_controlmode_third = _controlmode;
   }
-  // setup the setpoint mode of I vessel
-  void setsetpointmode_first(int _setpointmode) {
-    index_setpointmode_first = _setpointmode;
-  }
-  // setup the setpoint mode of II vessel
-  void setsetpointmode_second(int _setpointmode) {
-    index_setpointmode_second = _setpointmode;
-  }
-  // setup the setpoint mode of III vessel
-  void setsetpointmode_third(int _setpointmode) {
-    index_setpointmode_third = 0;
-  }
   // setup the sqlite db path
   void setdbsavepath(const std::string &_projectname) {
     dbsavepath = "/home/skloe/Coding/CPP1X/USV/DPfloatover/QT/build/data/" +
                  _projectname + ".db";
   }
   int get_connection_status() const { return connection_status; }
-
-  int getsetpointmode_first() const { return index_setpointmode_first; }
-  int getsetpointmode_second() const { return index_setpointmode_second; }
-  int getsetpointmode_third() const { return index_setpointmode_third; }
 
   Vector6d getrealtimestate_first() const {
     return _realtimevessel_first.State;
@@ -269,7 +214,6 @@ class threadloop {
   Vector6d getrealtimestate_third() const {
     return _realtimevessel_third.State;
   }
-
   Vector6d getrealtime6dmotionmeasurement_first() const {
     return _realtimevessel_first.Measurement;
   }
@@ -352,19 +296,28 @@ class threadloop {
     return pmatrix;
   }
 
-  // setpoints
-  fixedpointdata getfixedpointdata_first() const {
-    return _fixedpointdata_first;
+  // get fixed setpoints data
+  void getfixedpointdata_first(double &_desired_finalx, double &_desired_finaly,
+                               double &_desired_theta) const {
+    fixedpointdata _fixedpointdata = mysetpoints.getfixedpointdata_first();
+    _desired_finalx = _fixedpointdata.desired_finalx;
+    _desired_finaly = _fixedpointdata.desired_finaly;
+    _desired_theta = _fixedpointdata.desired_theta;
   }
-  fixedpointdata getfixedpointdata_second() const {
-    return _fixedpointdata_second;
+  void getfixedpointdata_second(double &_desired_finalx,
+                                double &_desired_finaly,
+                                double &_desired_theta) const {
+    fixedpointdata _fixedpointdata = mysetpoints.getfixedpointdata_second();
+    _desired_finalx = _fixedpointdata.desired_finalx;
+    _desired_finaly = _fixedpointdata.desired_finaly;
+    _desired_theta = _fixedpointdata.desired_theta;
   }
-  strightlinedata getstrightlinedata_first() const {
-    return _strightlinedata_first;
-  }
-
-  strightlinedata getstrightlinedata_second() const {
-    return _strightlinedata_second;
+  void getfixedpointdata_third(double &_desired_finalx, double &_desired_finaly,
+                               double &_desired_theta) const {
+    fixedpointdata _fixedpointdata = mysetpoints.getfixedpointdata_third();
+    _desired_finalx = _fixedpointdata.desired_finalx;
+    _desired_finaly = _fixedpointdata.desired_finaly;
+    _desired_theta = _fixedpointdata.desired_theta;
   }
 
  private:
@@ -394,13 +347,6 @@ class threadloop {
   int index_controlmode_first;
   int index_controlmode_second;
   int index_controlmode_third;
-  // index for setpoint mode
-  // 0: No automatic control
-  // 1: fixed points
-  // 2: straight line
-  int index_setpointmode_first;
-  int index_setpointmode_second;
-  int index_setpointmode_third;
   // constant parameters of the first vessel
   vessel_first _vessel_first{
       {623, 0, 0, 0, 706, 444, 0, 444, 1298},  // mass
@@ -560,12 +506,15 @@ class threadloop {
 
   // realtime parameters of the first vessel (K class-I)
   realtimevessel_first _realtimevessel_first{
-      Vector6d::Zero(),         // measurement
-      Vector6d::Zero(),         // position
-      Eigen::Vector3d::Zero(),  // setPoints
-      Vector6d::Zero(),         // state
-      Eigen::Vector3d::Zero(),  // tau
-      Eigen::Vector3d::Zero(),  // BalphaU
+      Vector6d::Zero(),             // position
+      Vector6d::Zero(),             // measurement
+      Vector6d::Zero(),             // state
+      Vector6d::Zero(),             // state4control
+      Eigen::Vector3d::Zero(),      // setPoints
+      Eigen::Matrix3d::Identity(),  // CTG2B
+      Eigen::Matrix3d::Identity(),  // CTB2G
+      Eigen::Vector3d::Zero(),      // tau
+      Eigen::Vector3d::Zero(),      // BalphaU
       (Eigen::Vector3d() << -M_PI / 2, M_PI / 10, -M_PI / 4)
           .finished(),                                   // alpha
       Eigen::Vector3i::Zero(),                           // alpha_deg
@@ -574,12 +523,15 @@ class threadloop {
   };
   // realtime parameters of the second vessel (K class-II)
   realtimevessel_second _realtimevessel_second{
-      Vector6d::Zero(),         // measurement
-      Vector6d::Zero(),         // position
-      Eigen::Vector3d::Zero(),  // setPoints
-      Vector6d::Zero(),         // state
-      Eigen::Vector3d::Zero(),  // tau
-      Eigen::Vector3d::Zero(),  // BalphaU
+      Vector6d::Zero(),             // position
+      Vector6d::Zero(),             // measurement
+      Vector6d::Zero(),             // state
+      Vector6d::Zero(),             // state4control
+      Eigen::Vector3d::Zero(),      // setPoints
+      Eigen::Matrix3d::Identity(),  // CTG2B
+      Eigen::Matrix3d::Identity(),  // CTB2G
+      Eigen::Vector3d::Zero(),      // tau
+      Eigen::Vector3d::Zero(),      // BalphaU
       (Eigen::Vector3d() << M_PI / 2, M_PI / 10, -M_PI / 4)
           .finished(),                                   // alpha
       Eigen::Vector3i::Zero(),                           // alpha_deg
@@ -588,12 +540,15 @@ class threadloop {
   };
   // realtime parameters of the third vessel (X class)
   realtimevessel_third _realtimevessel_third{
-      Vector6d::Zero(),         // measurement
-      Vector6d::Zero(),         // position
-      Eigen::Vector3d::Zero(),  // setPoints
-      Vector6d::Zero(),         // state
-      Eigen::Vector3d::Zero(),  // tau
-      Eigen::Vector3d::Zero(),  // BalphaU
+      Vector6d::Zero(),             // position
+      Vector6d::Zero(),             // measurement
+      Vector6d::Zero(),             // state
+      Vector6d::Zero(),             // state4control
+      Eigen::Vector3d::Zero(),      // setPoints
+      Eigen::Matrix3d::Identity(),  // CTG2B
+      Eigen::Matrix3d::Identity(),  // CTB2G
+      Eigen::Vector3d::Zero(),      // tau
+      Eigen::Vector3d::Zero(),      // BalphaU
       (Eigen::Vector3d() << -M_PI / 2, M_PI / 180, -M_PI / 30)
           .finished(),                                    // alpha
       Eigen::Vector3i::Zero(),                            // alpha_deg
@@ -601,35 +556,6 @@ class threadloop {
       Eigen::Vector3i::Zero()                             // rotation
   };
 
-  // setpoints
-  fixedpointdata _fixedpointdata_first{
-      0.6,  // desired_finalx
-      2,    // desired_finaly
-      0     // desired_theta
-  };
-  strightlinedata _strightlinedata_first{
-      0.01,  // desired_velocity
-      0,     // desired_theta
-      0.6,   // desired_finalx
-      2,     // desired_finaly
-      0.6,   // desired_initialx
-      0,     // desired_initialy
-      100    // orientation_adjustment_time
-  };
-  fixedpointdata _fixedpointdata_second{
-      0.0,  // desired_finalx
-      -6,   // desired_finaly
-      0     // desired_theta
-  };
-  strightlinedata _strightlinedata_second{
-      0.1,  // desired_velocity
-      0,    // desired_theta
-      0.0,  // desired_finalx
-      -2,   // desired_finaly
-      0.0,  // desired_initialx
-      0,    // desired_initialy
-      10    // orientation_adjustment_time
-  };
   setpoints mysetpoints;
   // controller of each vessel
   controller_first _controller_first;

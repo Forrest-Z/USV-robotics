@@ -206,9 +206,8 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket, CRTProtocol* poRTProtocol,
     if (nCount > 0) {
       poRTPacket->Get6DOFEulerBody(0, fX, fY, fZ, fAng1, fAng2, fAng3);
       // determine if the measured data is out of range or NaN
-      updaterealtimevesseldata(_realtimevessel_first.Measurement,
-                               _realtimevessel_first.Position, fX, fY, fZ,
-                               fAng1, fAng2, fAng3);
+      updaterealtimevesseldata_first(_realtimevessel_first, fX, fY, fZ, fAng1,
+                                     fAng2, fAng3);
 
     } else {
       resetmeasurement(_realtimevessel_first.Measurement,
@@ -232,16 +231,14 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket, CRTProtocol* poRTProtocol,
       // the first vessel
       poRTPacket->Get6DOFEulerBody(0, fX, fY, fZ, fAng1, fAng2, fAng3);
       // determine if the measured data is out of range or NaN
-      updaterealtimevesseldata(_realtimevessel_first.Measurement,
-                               _realtimevessel_first.Position, fX, fY, fZ,
-                               fAng1, fAng2, fAng3);
+      updaterealtimevesseldata_first(_realtimevessel_first, fX, fY, fZ, fAng1,
+                                     fAng2, fAng3);
 
       // the second vessel
       poRTPacket->Get6DOFEulerBody(1, fX, fY, fZ, fAng1, fAng2, fAng3);
       // determine if the measured data is out of range or NaN
-      updaterealtimevesseldata(_realtimevessel_second.Measurement,
-                               _realtimevessel_second.Position, fX, fY, fZ,
-                               fAng1, fAng2, fAng3);
+      updaterealtimevesseldata_second(_realtimevessel_second, fX, fY, fZ, fAng1,
+                                      fAng2, fAng3);
 
     } else {
       resetmeasurement(_realtimevessel_first.Measurement,
@@ -269,23 +266,20 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket, CRTProtocol* poRTProtocol,
       // the first vessel
       poRTPacket->Get6DOFEulerBody(0, fX, fY, fZ, fAng1, fAng2, fAng3);
       // determine if the measured data is out of range or NaN
-      updaterealtimevesseldata(_realtimevessel_first.Measurement,
-                               _realtimevessel_first.Position, fX, fY, fZ,
-                               fAng1, fAng2, fAng3);
+      updaterealtimevesseldata_first(_realtimevessel_first, fX, fY, fZ, fAng1,
+                                     fAng2, fAng3);
 
       // the second vessel
       poRTPacket->Get6DOFEulerBody(1, fX, fY, fZ, fAng1, fAng2, fAng3);
       // determine if the measured data is out of range or NaN
-      updaterealtimevesseldata(_realtimevessel_second.Measurement,
-                               _realtimevessel_second.Position, fX, fY, fZ,
-                               fAng1, fAng2, fAng3);
+      updaterealtimevesseldata_second(_realtimevessel_second, fX, fY, fZ, fAng1,
+                                      fAng2, fAng3);
 
       // the third vessel
       poRTPacket->Get6DOFEulerBody(2, fX, fY, fZ, fAng1, fAng2, fAng3);
       // determine if the measured data is out of range or NaN
-      updaterealtimevesseldata(_realtimevessel_third.Measurement,
-                               _realtimevessel_third.Position, fX, fY, fZ,
-                               fAng1, fAng2, fAng3);
+      updaterealtimevesseldata_third(_realtimevessel_third, fX, fY, fZ, fAng1,
+                                     fAng2, fAng3);
     } else {
       resetmeasurement(_realtimevessel_first.Measurement,
                        _realtimevessel_first.Position);
@@ -356,36 +350,88 @@ void COutput::ResetCounters() {
 
 }  // ResetCounters
 
-void COutput::updaterealtimevesseldata(Vector6d& _measurement,
-                                       Vector6d& _position, float _fX,
-                                       float _fY, float _fZ, float _fAng1,
-                                       float _fAng2, float _fAng3) {
-  // determine if the measured data is out of range or NaN
+void COutput::updaterealtimevesseldata_first(
+    realtimevessel_first& _realtimevessel, float _fX, float _fY, float _fZ,
+    float _fAng1, float _fAng2,
+    float _fAng3) {  // determine if the measured data is out of range or NaN
   if ((abs(_fX) < qtm_max_position) && (abs(_fY) < qtm_max_position)) {
     double m_fx = _fX / 1000;
     double m_fy = _fY / 1000;
     double rad_orientation = _fAng3 * M_PI / 180;
-    _position(0) = m_fx;
-    _position(1) = m_fy;
-    _position(2) = _fZ / 1000;
-    _position(3) = _fAng1;
-    _position(4) = _fAng2;
-    _position(5) = _fAng3;
+    _realtimevessel.Position(0) = m_fx;
+    _realtimevessel.Position(1) = m_fy;
+    _realtimevessel.Position(2) = _fZ / 1000;
+    _realtimevessel.Position(3) = _fAng1;
+    _realtimevessel.Position(4) = _fAng2;
+    _realtimevessel.Position(5) = _fAng3;
 
-    _measurement(0) = m_fx;
-    _measurement(1) = m_fy;
+    _realtimevessel.Measurement(0) = m_fx;
+    _realtimevessel.Measurement(1) = m_fy;
     // _measurement(2) = rad_orientation;
     double average_orientation = movingaverage_yaw(rad_orientation);
-    calculateGlobal2Body(average_orientation);
-    _measurement(2) = average_orientation;
-    _measurement.tail(3) = movingaverage(m_fx, m_fy, rad_orientation);
+    calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
+                                 average_orientation,
+                                 _realtimevessel.setPoints(2));
+    _realtimevessel.Measurement(2) = average_orientation;
+    _realtimevessel.Measurement.tail(3) =
+        _realtimevessel.CTG2B * movingaverage(m_fx, m_fy, rad_orientation);
   }
+}
 
-  // else {
-  //   // in this case, we don't update the realtime vessel data,
-  //   // and use the former data
-  //   fprintf(stdout, "motion data out of range or NaN!\n");
-  // }
+void COutput::updaterealtimevesseldata_second(
+    realtimevessel_second& _realtimevessel, float _fX, float _fY, float _fZ,
+    float _fAng1, float _fAng2,
+    float _fAng3) {  // determine if the measured data is out of range or NaN
+  if ((abs(_fX) < qtm_max_position) && (abs(_fY) < qtm_max_position)) {
+    double m_fx = _fX / 1000;
+    double m_fy = _fY / 1000;
+    double rad_orientation = _fAng3 * M_PI / 180;
+    _realtimevessel.Position(0) = m_fx;
+    _realtimevessel.Position(1) = m_fy;
+    _realtimevessel.Position(2) = _fZ / 1000;
+    _realtimevessel.Position(3) = _fAng1;
+    _realtimevessel.Position(4) = _fAng2;
+    _realtimevessel.Position(5) = _fAng3;
+
+    _realtimevessel.Measurement(0) = m_fx;
+    _realtimevessel.Measurement(1) = m_fy;
+    // _measurement(2) = rad_orientation;
+    double average_orientation = movingaverage_yaw(rad_orientation);
+    calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
+                                 average_orientation,
+                                 _realtimevessel.setPoints(2));
+    _realtimevessel.Measurement(2) = average_orientation;
+    _realtimevessel.Measurement.tail(3) =
+        _realtimevessel.CTG2B * movingaverage(m_fx, m_fy, rad_orientation);
+  }
+}
+
+void COutput::updaterealtimevesseldata_third(
+    realtimevessel_third& _realtimevessel, float _fX, float _fY, float _fZ,
+    float _fAng1, float _fAng2,
+    float _fAng3) {  // determine if the measured data is out of range or NaN
+  if ((abs(_fX) < qtm_max_position) && (abs(_fY) < qtm_max_position)) {
+    double m_fx = _fX / 1000;
+    double m_fy = _fY / 1000;
+    double rad_orientation = _fAng3 * M_PI / 180;
+    _realtimevessel.Position(0) = m_fx;
+    _realtimevessel.Position(1) = m_fy;
+    _realtimevessel.Position(2) = _fZ / 1000;
+    _realtimevessel.Position(3) = _fAng1;
+    _realtimevessel.Position(4) = _fAng2;
+    _realtimevessel.Position(5) = _fAng3;
+
+    _realtimevessel.Measurement(0) = m_fx;
+    _realtimevessel.Measurement(1) = m_fy;
+    // _measurement(2) = rad_orientation;
+    double average_orientation = movingaverage_yaw(rad_orientation);
+    calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
+                                 average_orientation,
+                                 _realtimevessel.setPoints(2));
+    _realtimevessel.Measurement(2) = average_orientation;
+    _realtimevessel.Measurement.tail(3) =
+        _realtimevessel.CTG2B * movingaverage(m_fx, m_fy, rad_orientation);
+  }
 }
 
 void COutput::resetmeasurement(Vector6d& _measurement, Vector6d& _position) {
@@ -397,7 +443,6 @@ void COutput::initializemovingaverage() {
   Matrix_average.setZero();
   average_vector.setZero();
   average_yaw.setZero();
-  CTG2B.setIdentity();
 }
 
 Eigen::Vector3d COutput::movingaverage(double _dx, double _dy, double _dtheta) {
@@ -418,7 +463,7 @@ Eigen::Vector3d COutput::movingaverage(double _dx, double _dy, double _dtheta) {
   Eigen::Vector3d average_velocity = Eigen::Vector3d::Zero();
   average_velocity =
       (average_vector - former_average_vector) / motion_sample_time;
-  return CTG2B * average_velocity;
+  return average_velocity;  // in the global coordinate
 }
 
 double COutput::movingaverage_yaw(double _dtheta) {
@@ -434,11 +479,27 @@ double COutput::movingaverage_yaw(double _dtheta) {
 }
 
 // calculate the real time coordinate transform matrix
-void COutput::calculateGlobal2Body(double orientation) {
-  double cvalue = std::cos(orientation);
-  double svalue = std::sin(orientation);
-  CTG2B(0, 0) = cvalue;
-  CTG2B(1, 1) = cvalue;
-  CTG2B(0, 1) = svalue;
-  CTG2B(1, 0) = -svalue;
+void COutput::calculateCoordinateTransform(Eigen::Matrix3d& _CTG2B,
+                                           Eigen::Matrix3d& _CTB2G,
+                                           double realtime_orientation,
+                                           double desired_orientation) {
+  double cvalue = 0.0;
+  double svalue = 0.0;
+  if (abs(realtime_orientation - desired_orientation) < M_PI / 36) {
+    // use the fixed setpoint orientation to prevent measurement noise
+    cvalue = std::cos(desired_orientation);
+    svalue = std::sin(desired_orientation);
+  } else {
+    // if larger than 5 deg, we use the realtime orientation
+    cvalue = std::cos(realtime_orientation);
+    svalue = std::sin(realtime_orientation);
+  }
+  _CTG2B(0, 0) = cvalue;
+  _CTG2B(1, 1) = cvalue;
+  _CTG2B(0, 1) = svalue;
+  _CTG2B(1, 0) = -svalue;
+  _CTB2G(0, 0) = cvalue;
+  _CTB2G(1, 1) = cvalue;
+  _CTB2G(0, 1) = -svalue;
+  _CTB2G(1, 0) = svalue;
 }

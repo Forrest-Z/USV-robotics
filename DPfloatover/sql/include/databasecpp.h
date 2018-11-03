@@ -71,7 +71,10 @@ class databasecpp {
                       " alpha_right INT, " /* the angle of each propeller*/
                       " rpm_bow     INT, "
                       " rpm_left    INT, "
-                      " rpm_right   INT); "; /* the speed of each propeller*/
+                      " rpm_right   INT, " /* the speed of each propeller*/
+                      " xb          DOUBLE, "
+                      " yb          DOUBLE); ";
+
     db << str;
   }
 
@@ -88,7 +91,7 @@ class databasecpp {
           "(STATUS, DATETIME, SURGE, SWAY, HEAVE, ROLL, PITCH, "
           "YAW, x, y, theta, u, v, r, tauX, tauY, tauMz, estX, estY, "
           "estMz, alpha_bow, alpha_left, alpha_right, rpm_bow, rpm_left, "
-          "rpm_right) VALUES( 0 , julianday('now')";
+          "rpm_right, xb, yb) VALUES( 0 , julianday('now')";
       convert_Eigendouble2string(_realtimevessel_first, str_end);
       str_end += ");";
     }
@@ -108,7 +111,7 @@ class databasecpp {
           "(STATUS, DATETIME, SURGE, SWAY, HEAVE, ROLL, PITCH, "
           "YAW, x, y, theta, u, v, r, tauX, tauY, tauMz, estX, estY, "
           "estMz, alpha_bow, alpha_left, alpha_right, rpm_bow, rpm_left, "
-          "rpm_right) VALUES( 0 , julianday('now')";
+          "rpm_right, xb, yb) VALUES( 0 , julianday('now')";
       convert_Eigendouble2string(_realtimevessel_second, str_end);
       str_end += ");";
     }
@@ -125,72 +128,82 @@ class databasecpp {
   std::vector<std::string> clientset;
 
   // convert real time data to sql string (the first vessel)
-  void convert_Eigendouble2string(
-      const realtimevessel_first &_realtimevessel_first, std::string &_str) {
+  void convert_Eigendouble2string(const realtimevessel_first &_realtimevessel,
+                                  std::string &_str) {
     // measured 6 DoF motion
     for (int i = 0; i != 6; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_first.Position(i));
+      _str += std::to_string(_realtimevessel.Position(i));
     }
     // real time state
     for (int i = 0; i != 6; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_first.State(i));
+      _str += std::to_string(_realtimevessel.State(i));
     }
     // desired force
     for (int i = 0; i != 3; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_first.tau(i));
+      _str += std::to_string(_realtimevessel.tau(i));
     }
     // estimated force
     for (int i = 0; i != 3; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_first.BalphaU(i));
+      _str += std::to_string(_realtimevessel.BalphaU(i));
     }
     // angle of each propeller
     for (int i = 0; i != 3; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_first.alpha_deg(i));
+      _str += std::to_string(_realtimevessel.alpha_deg(i));
     }
     // speed of each propeller
     for (int i = 0; i != 3; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_first.rotation(i));
+      _str += std::to_string(_realtimevessel.rotation(i));
+    }
+    // body fixed x and y
+    for (int i = 0; i != 2; ++i) {
+      _str += ", ";
+      _str += std::to_string(_realtimevessel.State4control(i));
     }
   }
 
   // convert real time data to sql string (the second vessel)
-  void convert_Eigendouble2string(
-      const realtimevessel_second &_realtimevessel_second, std::string &_str) {
+  void convert_Eigendouble2string(const realtimevessel_second &_realtimevessel,
+                                  std::string &_str) {
     // measured 6 DoF motion
     for (int i = 0; i != 6; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_second.Position(i));
+      _str += std::to_string(_realtimevessel.Position(i));
     }
     // real time state
     for (int i = 0; i != 6; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_second.State(i));
+      _str += std::to_string(_realtimevessel.State(i));
     }
     // desired force
     for (int i = 0; i != 3; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_second.tau(i));
+      _str += std::to_string(_realtimevessel.tau(i));
     }
     // estimated force
     for (int i = 0; i != 3; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_second.BalphaU(i));
+      _str += std::to_string(_realtimevessel.BalphaU(i));
     }
     // angle of each propeller
     for (int i = 0; i != 3; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_second.alpha_deg(i));
+      _str += std::to_string(_realtimevessel.alpha_deg(i));
     }
     // speed of each propeller
     for (int i = 0; i != 3; ++i) {
       _str += ", ";
-      _str += std::to_string(_realtimevessel_second.rotation(i));
+      _str += std::to_string(_realtimevessel.rotation(i));
+    }
+    // body fixed x and y
+    for (int i = 0; i != 2; ++i) {
+      _str += ", ";
+      _str += std::to_string(_realtimevessel.State4control(i));
     }
   }
 };

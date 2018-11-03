@@ -26,31 +26,11 @@ class pidcontroller_first {
   ~pidcontroller_first() {}
 
   // calculate the desired force using PID controller
-  void calculategeneralizeforce(realtimevessel_first &_realtimedata,
-                                const Eigen::Vector3d &_setpoints) {
-    setsetpoints(_setpoints);
-    // calculate error
-    position_error = setpoints - _realtimedata.State.head(3);
-    if (compareerror(position_error)) {
-      _realtimedata.tau.setZero();
-    } else {  // proportional term
-      Eigen::Vector3d Pout = matrix_P * position_error;
-      // integral term
-      position_error_integral += sample_time * position_error;
-      Eigen::Vector3d Iout = matrix_I * position_error_integral;
-      // derivative term
-      Eigen::Vector3d Dout = -matrix_D * _realtimedata.State.tail(3);
-      // output
-      _realtimedata.tau = Pout + Iout + Dout;
-      // restrict desired force
-      restrictdesiredforce(_realtimedata.tau);
-    }
-  }
-  // calculate the desired force using PID controller
   void calculategeneralizeforce(realtimevessel_first &_realtimedata) {
-    setsetpoints(_realtimedata.setPoints);
+    // convert setpoint from global to body coordinate
+    setsetpoints(_realtimedata);
     // calculate error
-    position_error = setpoints - _realtimedata.State.head(3);
+    position_error = setpoints_body - _realtimedata.State4control.head(3);
     if (compareerror(position_error)) {
       _realtimedata.tau.setZero();
     } else {  // proportional term
@@ -59,7 +39,7 @@ class pidcontroller_first {
       position_error_integral += sample_time * position_error;
       Eigen::Vector3d Iout = matrix_I * position_error_integral;
       // derivative term
-      Eigen::Vector3d Dout = -matrix_D * _realtimedata.State.tail(3);
+      Eigen::Vector3d Dout = -matrix_D * _realtimedata.State4control.tail(3);
       // output
       _realtimedata.tau = Pout + Iout + Dout;
       // restrict desired force
@@ -96,7 +76,7 @@ class pidcontroller_first {
   // real time data
   Eigen::Vector3d position_error;
   Eigen::Vector3d position_error_integral;
-  Eigen::Vector3d setpoints;
+  Eigen::Vector3d setpoints_body;
 
   // max value of desired force
   double maxpositive_x_thruster;
@@ -136,11 +116,11 @@ class pidcontroller_first {
   void initializepidcontroller() {
     position_error.setZero();
     position_error_integral.setZero();
-    setpoints.setZero();
+    setpoints_body.setZero();
   }
   // specify the real time setpoints
-  void setsetpoints(const Eigen::Vector3d &_setpoints) {
-    setpoints = _setpoints;
+  void setsetpoints(const realtimevessel_first &_realtimedata) {
+    setpoints_body = _realtimedata.CTG2B * _realtimedata.setPoints;
   }
   // compare the real time error with the allowed error
   bool compareerror(const Eigen::Vector3d &_realtime_error) {
@@ -176,41 +156,20 @@ class pidcontroller_second {
   ~pidcontroller_second() {}
 
   // calculate the desired force using PID controller
-  void calculategeneralizeforce(realtimevessel_second &_realtimedata,
-                                const Eigen::Vector3d &_setpoints) {
-    setsetpoints(_setpoints);
-    // calculate error
-    position_error = setpoints - _realtimedata.State.head(3);
-    if (compareerror(position_error)) {
-      _realtimedata.tau.setZero();
-    } else {
-      // proportional term
-      Eigen::Vector3d Pout = matrix_P * position_error;
-      // integral term
-      position_error_integral += sample_time * position_error;
-      Eigen::Vector3d Iout = matrix_I * position_error_integral;
-      // derivative term
-      Eigen::Vector3d Dout = -matrix_D * _realtimedata.State.tail(3);
-      // output
-      _realtimedata.tau = Pout + Iout + Dout;
-      // restrict desired force
-      restrictdesiredforce(_realtimedata.tau);
-    }
-  }
   void calculategeneralizeforce(realtimevessel_second &_realtimedata) {
-    setsetpoints(_realtimedata.setPoints);
+    // convert setpoint from global to body coordinate
+    setsetpoints(_realtimedata);
     // calculate error
-    position_error = setpoints - _realtimedata.State.head(3);
+    position_error = setpoints_body - _realtimedata.State4control.head(3);
     if (compareerror(position_error)) {
       _realtimedata.tau.setZero();
-    } else {
-      // proportional term
+    } else {  // proportional term
       Eigen::Vector3d Pout = matrix_P * position_error;
       // integral term
       position_error_integral += sample_time * position_error;
       Eigen::Vector3d Iout = matrix_I * position_error_integral;
       // derivative term
-      Eigen::Vector3d Dout = -matrix_D * _realtimedata.State.tail(3);
+      Eigen::Vector3d Dout = -matrix_D * _realtimedata.State4control.tail(3);
       // output
       _realtimedata.tau = Pout + Iout + Dout;
       // restrict desired force
@@ -246,7 +205,7 @@ class pidcontroller_second {
   // real time data
   Eigen::Vector3d position_error;
   Eigen::Vector3d position_error_integral;
-  Eigen::Vector3d setpoints;
+  Eigen::Vector3d setpoints_body;
   // max value of desired force
   double maxpositive_x_thruster;
   double maxnegative_x_thruster;
@@ -284,11 +243,11 @@ class pidcontroller_second {
   void initializepidcontroller() {
     position_error.setZero();
     position_error_integral.setZero();
-    setpoints.setZero();
+    setpoints_body.setZero();
   }
   // specify the real time setpoints
-  void setsetpoints(const Eigen::Vector3d &_setpoints) {
-    setpoints = _setpoints;
+  void setsetpoints(const realtimevessel_second &_realtimedata) {
+    setpoints_body = _realtimedata.CTG2B * _realtimedata.setPoints;
   }
   // compare the real time error with the allowed error
   bool compareerror(const Eigen::Vector3d &_realtime_error) {
@@ -324,11 +283,11 @@ class pidcontroller_third {
   ~pidcontroller_third() {}
 
   // calculate the desired force using PID controller
-  void calculategeneralizeforce(realtimevessel_third &_realtimedata,
-                                const Eigen::Vector3d &_setpoints) {
-    setsetpoints(_setpoints);
+  void calculategeneralizeforce(realtimevessel_third &_realtimedata) {
+    // convert setpoint from global to body coordinate
+    setsetpoints(_realtimedata);
     // calculate error
-    position_error = setpoints - _realtimedata.State.head(3);
+    position_error = setpoints_body - _realtimedata.State4control.head(3);
     if (compareerror(position_error)) {
       _realtimedata.tau.setZero();
     } else {  // proportional term
@@ -337,33 +296,14 @@ class pidcontroller_third {
       position_error_integral += sample_time * position_error;
       Eigen::Vector3d Iout = matrix_I * position_error_integral;
       // derivative term
-      Eigen::Vector3d Dout = -matrix_D * _realtimedata.State.tail(3);
+      Eigen::Vector3d Dout = -matrix_D * _realtimedata.State4control.tail(3);
       // output
       _realtimedata.tau = Pout + Iout + Dout;
       // restrict desired force
       restrictdesiredforce(_realtimedata.tau);
     }
   }
-  void calculategeneralizeforce(realtimevessel_third &_realtimedata) {
-    setsetpoints(_realtimedata.setPoints);
-    // calculate error
-    position_error = setpoints - _realtimedata.State.head(3);
-    if (compareerror(position_error)) {
-      _realtimedata.tau.setZero();
-    } else {
-      // proportional term
-      Eigen::Vector3d Pout = matrix_P * position_error;
-      // integral term
-      position_error_integral += sample_time * position_error;
-      Eigen::Vector3d Iout = matrix_I * position_error_integral;
-      // derivative term
-      Eigen::Vector3d Dout = -matrix_D * _realtimedata.State.tail(3);
-      // output
-      _realtimedata.tau = Pout + Iout + Dout;
-      // restrict desired force
-      restrictdesiredforce(_realtimedata.tau);
-    }
-  }
+
   // change the P parameters
   void setPmatrix(double _P_x, double _P_y, double _P_theta) {
     matrix_P(0, 0) = _P_x;
@@ -392,7 +332,7 @@ class pidcontroller_third {
   // real time data
   Eigen::Vector3d position_error;
   Eigen::Vector3d position_error_integral;
-  Eigen::Vector3d setpoints;
+  Eigen::Vector3d setpoints_body;
 
   // max value of desired force
   double maxpositive_x_thruster;
@@ -432,11 +372,11 @@ class pidcontroller_third {
   void initializepidcontroller() {
     position_error.setZero();
     position_error_integral.setZero();
-    setpoints.setZero();
+    setpoints_body.setZero();
   }
   // specify the real time setpoints
-  void setsetpoints(const Eigen::Vector3d &_setpoints) {
-    setpoints = _setpoints;
+  void setsetpoints(const realtimevessel_third &_realtimedata) {
+    setpoints_body = _realtimedata.CTG2B * _realtimedata.setPoints;
   }
   // compare the real time error with the allowed error
   bool compareerror(const Eigen::Vector3d &_realtime_error) {

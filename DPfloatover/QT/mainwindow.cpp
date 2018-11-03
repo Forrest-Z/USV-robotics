@@ -190,3 +190,8 @@ void MainWindow::on_actionBox_triggered() {
   myDialogBox = new DialogBox(this);
   myDialogBox->show();
 }
+
+void MainWindow::on_actionCooperation_triggered() {
+  myDialogCooperation = new DialogCooperation(this);
+  myDialogCooperation->show();
+}

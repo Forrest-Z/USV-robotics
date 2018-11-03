@@ -5,6 +5,7 @@
 #include <QString>
 #include <fstream>
 #include "dialogbox.h"
+#include "dialogcooperation.h"
 #include "dialogfixedsetpoint.h"
 #include "dialogrotation.h"
 #include "dialogsetparameter.h"
@@ -82,6 +83,7 @@ class MainWindow : public QMainWindow {
   Dialogfixedsetpoint *myDialogfixedsetpoint;
   DialogRotation *myDialogRotation;
   Dialogstraightline *myDialogstraightline;
+  DialogCooperation *myDialogCooperation;
   QStringListModel *_model;
   Qt::WindowFlags flags = nullptr;
 

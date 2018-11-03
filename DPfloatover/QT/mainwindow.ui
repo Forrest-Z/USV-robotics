@@ -299,6 +299,7 @@
     <addaction name="actionStraightLine"/>
     <addaction name="actionRotation"/>
     <addaction name="actionBox"/>
+    <addaction name="actionCooperation"/>
    </widget>
    <addaction name="menuOpen"/>
    <addaction name="menuJoystick"/>
@@ -336,22 +337,27 @@
   </action>
   <action name="actionSetpoints">
    <property name="text">
-    <string>Fixed Point (&amp;S)</string>
+    <string>Fixed Point (&amp;F)</string>
    </property>
   </action>
   <action name="actionStraightLine">
    <property name="text">
-    <string>StraightLine</string>
+    <string>StraightLine (&amp;S)</string>
    </property>
   </action>
   <action name="actionRotation">
    <property name="text">
-    <string>Rotation</string>
+    <string>Rotation (&amp;S)</string>
    </property>
   </action>
   <action name="actionBox">
    <property name="text">
-    <string>Box</string>
+    <string>Box (&amp;B)</string>
+   </property>
+  </action>
+  <action name="actionCooperation">
+   <property name="text">
+    <string>Cooperation (&amp;C)</string>
    </property>
   </action>
  </widget>

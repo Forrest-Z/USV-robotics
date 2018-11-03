@@ -53,16 +53,25 @@ class setpoints {
   ~setpoints() {}
   // Enable each vessel to reach a fixed point independently
   void gofixedpoint_first(realtimevessel_first &_realtimevessel,
-                          const fixedpointdata &_fixedpointdata) {
-    gofixedpoint(_realtimevessel.setPoints, _fixedpointdata);
+                          double _desired_finalx, double _desired_finaly,
+                          double _desired_theta) {
+    setfixedpointdata(myfixedpointdata_first, _desired_finalx, _desired_finaly,
+                      _desired_theta);
+    gofixedpoint(_realtimevessel.setPoints, myfixedpointdata_first);
   }
   void gofixedpoint_second(realtimevessel_second &_realtimevessel,
-                           const fixedpointdata &_fixedpointdata) {
-    gofixedpoint(_realtimevessel.setPoints, _fixedpointdata);
+                           double _desired_finalx, double _desired_finaly,
+                           double _desired_theta) {
+    setfixedpointdata(myfixedpointdata_second, _desired_finalx, _desired_finaly,
+                      _desired_theta);
+    gofixedpoint(_realtimevessel.setPoints, myfixedpointdata_second);
   }
   void gofixedpoint_third(realtimevessel_third &_realtimevessel,
-                          const fixedpointdata &_fixedpointdata) {
-    gofixedpoint(_realtimevessel.setPoints, _fixedpointdata);
+                          double _desired_finalx, double _desired_finaly,
+                          double _desired_theta) {
+    setfixedpointdata(myfixedpointdata_third, _desired_finalx, _desired_finaly,
+                      _desired_theta);
+    gofixedpoint(_realtimevessel.setPoints, myfixedpointdata_third);
   }
   // Enable each vessel to go with a stright line independently
   void gostraightline_first(realtimevessel_first &_realtimevessel,
@@ -78,10 +87,68 @@ class setpoints {
     gostraightline(_realtimevessel.setPoints, _strightlinedata);
   }
 
+  fixedpointdata getfixedpointdata_first() const {
+    return myfixedpointdata_first;
+  }
+  fixedpointdata getfixedpointdata_second() const {
+    return myfixedpointdata_second;
+  }
+  fixedpointdata getfixedpointdata_third() const {
+    return myfixedpointdata_third;
+  }
+
  private:
-  Eigen::Vector3d setpoint_first;
-  Eigen::Vector3d setpoint_second;
-  Eigen::Vector3d setpoint_third;
+  fixedpointdata myfixedpointdata_first{
+      0.6,  // desired_finalx
+      2,    // desired_finaly
+      0     // desired_theta
+  };
+  fixedpointdata myfixedpointdata_second{
+      0.0,  // desired_finalx
+      -6,   // desired_finaly
+      0     // desired_theta
+  };
+  fixedpointdata myfixedpointdata_third{
+      0.0,  // desired_finalx
+      -6,   // desired_finaly
+      0     // desired_theta
+  };
+  strightlinedata mystrightlinedata_first{
+      0.01,  // desired_velocity
+      0,     // desired_theta
+      0.6,   // desired_finalx
+      2,     // desired_finaly
+      0.6,   // desired_initialx
+      0,     // desired_initialy
+      100    // orientation_adjustment_time
+  };
+  strightlinedata mystrightlinedata_second{
+      0.1,  // desired_velocity
+      0,    // desired_theta
+      0.0,  // desired_finalx
+      -2,   // desired_finaly
+      0.0,  // desired_initialx
+      0,    // desired_initialy
+      10    // orientation_adjustment_time
+  };
+  strightlinedata mystrightlinedata_third{
+      0.1,  // desired_velocity
+      0,    // desired_theta
+      0.0,  // desired_finalx
+      -2,   // desired_finaly
+      0.0,  // desired_initialx
+      0,    // desired_initialy
+      10    // orientation_adjustment_time
+  };
+
+  // setup the fixedpoint data
+  void setfixedpointdata(fixedpointdata &_fixedpointdata,
+                         double _desired_finalx, double _desired_finaly,
+                         double _desired_theta) {
+    _fixedpointdata.desired_finalx = _desired_finalx;
+    _fixedpointdata.desired_finaly = _desired_finaly;
+    _fixedpointdata.desired_theta = _desired_theta;
+  }
 
   void gofixedpoint(Eigen::Vector3d &_setpoints,
                     const fixedpointdata &_fixedpointdata) {

@@ -68,9 +68,17 @@ class COutput {
   void PrintData6DEulerRes(FILE* logfile, CRTPacket* poRTPacket,
                            CRTProtocol* poRTProtocol);
 
-  void updaterealtimevesseldata(Vector6d& _measurement, Vector6d& _position,
-                                float _fX, float _fY, float _fZ, float _fAng1,
-                                float _fAng2, float _fAng3);
+  void updaterealtimevesseldata_first(realtimevessel_first& _realtimevessel,
+                                      float _fX, float _fY, float _fZ,
+                                      float _fAng1, float _fAng2, float _fAng3);
+  void updaterealtimevesseldata_second(realtimevessel_second& _realtimevessel,
+                                       float _fX, float _fY, float _fZ,
+                                       float _fAng1, float _fAng2,
+                                       float _fAng3);
+  void updaterealtimevesseldata_third(realtimevessel_third& _realtimevessel,
+                                      float _fX, float _fY, float _fZ,
+                                      float _fAng1, float _fAng2, float _fAng3);
+
   void resetmeasurement(Vector6d& _measurement, Vector6d& _position);
 
   void initializemovingaverage();
@@ -78,7 +86,10 @@ class COutput {
   double movingaverage_yaw(double _dtheta);
 
   // calculate the real time coordinate transform matrix
-  void calculateGlobal2Body(double orientation);
+  void calculateCoordinateTransform(Eigen::Matrix3d& _CTG2B,
+                                    Eigen::Matrix3d& _CTB2G,
+                                    double realtime_orientation,
+                                    double desired_orientation);
   // How many cameras can be measured noise on
   static const int mcnMaxCameras = 20;
   // How many markers can be measured noise on
@@ -118,9 +129,6 @@ class COutput {
   Matrix3100d Matrix_average;
   Eigen::Vector3d average_vector;
   VectorAYaw average_yaw;
-
-  // cooridnate transform matrix(global --> body)
-  Eigen::Matrix3d CTG2B;
 };
 
 #endif  // OUTPUT_H

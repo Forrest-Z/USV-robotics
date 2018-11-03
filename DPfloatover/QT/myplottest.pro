@@ -192,7 +192,8 @@ SOURCES += \
     dialogfixedsetpoint.cpp \
     dialogstraightline.cpp \
     dialogrotation.cpp \
-    dialogbox.cpp
+    dialogbox.cpp \
+    dialogcooperation.cpp
 
 
 
@@ -577,7 +578,8 @@ HEADERS += \
     dialogfixedsetpoint.h \
     dialogstraightline.h \
     dialogrotation.h \
-    dialogbox.h
+    dialogbox.h \
+    dialogcooperation.h
 
 
 
@@ -590,4 +592,5 @@ FORMS += \
     dialogfixedsetpoint.ui \
     dialogstraightline.ui \
     dialogrotation.ui \
-    dialogbox.ui
+    dialogbox.ui \
+    dialogcooperation.ui
