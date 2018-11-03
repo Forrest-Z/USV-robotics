@@ -1,3 +1,12 @@
+/*
+***********************************************************************
+* mainwindow.h: mainwindow of DP controller
+* This header file can be read by C++ compilers
+*
+*  by Hu.ZH(Mr.SJTU)
+***********************************************************************
+*/
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -73,6 +82,8 @@ class MainWindow : public QMainWindow {
   void on_actionRotation_triggered();
 
   void on_actionBox_triggered();
+
+  void on_actionCooperation_triggered();
 
  private:
   Ui::MainWindow *ui;

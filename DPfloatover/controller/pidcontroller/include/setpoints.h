@@ -109,13 +109,13 @@ class setpoints {
     return myfixedpointdata_third;
   }
 
-  strightlinedata getstrightlinedata_first() const {
+  strightlinedata getstraightlinedata_first() const {
     return mystrightlinedata_first;
   }
-  strightlinedata getstrightlinedata_second() const {
+  strightlinedata getstraightlinedata_second() const {
     return mystrightlinedata_second;
   }
-  strightlinedata getstrightlinedata_third() const {
+  strightlinedata getstraightlinedata_third() const {
     return mystrightlinedata_third;
   }
 

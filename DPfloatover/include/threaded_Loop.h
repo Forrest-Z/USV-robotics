@@ -164,9 +164,26 @@ class threadloop {
                                    _settheta);
   }
   // setup the straightline of each vessel
-  void setStraightline_first(double _setx, double _sety, double _settheta) {
-    mysetpoints.gofixedpoint_first(_realtimevessel_first, _setx, _sety,
-                                   _settheta);
+  void setStraightline_first(double _initialx, double _initialy,
+                             double _desired_velocity, double _finalx,
+                             double _finaly, double _desired_theta) {
+    mysetpoints.gostraightline_first(_realtimevessel_first, _initialx,
+                                     _initialy, _desired_velocity, _finalx,
+                                     _finaly, _desired_theta);
+  }
+  void setStraightline_second(double _initialx, double _initialy,
+                              double _desired_velocity, double _finalx,
+                              double _finaly, double _desired_theta) {
+    mysetpoints.gostraightline_second(_realtimevessel_second, _initialx,
+                                      _initialy, _desired_velocity, _finalx,
+                                      _finaly, _desired_theta);
+  }
+  void setStraightline_third(double _initialx, double _initialy,
+                             double _desired_velocity, double _finalx,
+                             double _finaly, double _desired_theta) {
+    mysetpoints.gostraightline_third(_realtimevessel_third, _initialx,
+                                     _initialy, _desired_velocity, _finalx,
+                                     _finaly, _desired_theta);
   }
   // set pid of I vessel
   void setPID_first(double _P_x, double _P_y, double _P_theta, double _I_x,
@@ -321,6 +338,43 @@ class threadloop {
     _desired_finalx = _fixedpointdata.desired_finalx;
     _desired_finaly = _fixedpointdata.desired_finaly;
     _desired_theta = _fixedpointdata.desired_theta;
+  }
+  // get straightline data
+  void getstraightlinedata_first(double &_initialx, double &_initialy,
+                                 double &_desired_velocity, double &_finalx,
+                                 double &_finaly,
+                                 double &_desired_theta) const {
+    strightlinedata _strightlinedata = mysetpoints.getstraightlinedata_first();
+    _initialx = _strightlinedata.desired_initialx;
+    _initialy = _strightlinedata.desired_initialy;
+    _desired_theta = _strightlinedata.desired_theta;
+    _finalx = _strightlinedata.desired_finalx;
+    _finaly = _strightlinedata.desired_finaly;
+    _desired_theta = _strightlinedata.desired_theta;
+  }
+  void getstraightlinedata_second(double &_initialx, double &_initialy,
+                                  double &_desired_velocity, double &_finalx,
+                                  double &_finaly,
+                                  double &_desired_theta) const {
+    strightlinedata _strightlinedata = mysetpoints.getstraightlinedata_second();
+    _initialx = _strightlinedata.desired_initialx;
+    _initialy = _strightlinedata.desired_initialy;
+    _desired_theta = _strightlinedata.desired_theta;
+    _finalx = _strightlinedata.desired_finalx;
+    _finaly = _strightlinedata.desired_finaly;
+    _desired_theta = _strightlinedata.desired_theta;
+  }
+  void getstraightlinedata_third(double &_initialx, double &_initialy,
+                                 double &_desired_velocity, double &_finalx,
+                                 double &_finaly,
+                                 double &_desired_theta) const {
+    strightlinedata _strightlinedata = mysetpoints.getstraightlinedata_third();
+    _initialx = _strightlinedata.desired_initialx;
+    _initialy = _strightlinedata.desired_initialy;
+    _desired_theta = _strightlinedata.desired_theta;
+    _finalx = _strightlinedata.desired_finalx;
+    _finaly = _strightlinedata.desired_finaly;
+    _desired_theta = _strightlinedata.desired_theta;
   }
 
  private:
@@ -744,24 +798,10 @@ class threadloop {
   }
   // update setpoints of each vessel
   void updatesetpoints() {
-    switch (index_setpointmode_second) {
-      case 1: {
-        mysetpoints.gofixedpoint_first(_realtimevessel_first,
-                                       _fixedpointdata_first);
-        mysetpoints.gofixedpoint_second(_realtimevessel_second,
-                                        _fixedpointdata_second);
-        break;
-      }
-      case 2: {
-        // mysetpoints.gostraightline_first(_realtimevessel_first,
-        //                                  _strightlinedata_first);
-        mysetpoints.gostraightline_second(_realtimevessel_second,
-                                          _strightlinedata_second);
-        break;
-      }
-      default:
-        break;
-    }
+    // mysetpoints.gostraightline_first(_realtimevessel_first,
+    //                                  _strightlinedata_first);
+    // mysetpoints.gostraightline_second(_realtimevessel_second,
+    //                                   _strightlinedata_second);
   }
 
   // reset realtime data of each vessel
