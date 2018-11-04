@@ -44,6 +44,8 @@ class Display2DDialog : public QDialog {
   std::unordered_map<int, QVector<double>> planarmotion_y;
   std::unordered_map<int, QVector<double>> trajectory_x;
   std::unordered_map<int, QVector<double>> trajectory_y;
+  std::unordered_map<int, QVector<double>> setpoints_x;
+  std::unordered_map<int, QVector<double>> setpoints_y;
   // data for 6DoF time series
   std::unordered_map<int, QVector<double>> motion_clients;
   QVector<double> motion6Dof_xaxis_data;
@@ -57,7 +59,9 @@ class Display2DDialog : public QDialog {
   void updatetrajectoryvector(double origin_x, double origin_y,
                               QVector<double> &t_trajectory_x,
                               QVector<double> &t_trajectory_y);
-
+  void updatesetpointvector(double set_x, double set_y,
+                            QVector<double> &t_setpoint_x,
+                            QVector<double> &t_setpoint_y);
   void initialize6DOFmotion(QCustomPlot *customPlot);
   void initializePlanarMotion(QCustomPlot *customPlot);
   void initializePlanarMotionData();

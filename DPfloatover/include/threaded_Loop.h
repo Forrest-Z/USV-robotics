@@ -123,11 +123,37 @@ class threadloop {
     _threadid_database = _thread.native_handle();
     _thread.detach();
   }
-  // update setpoints
-  void updatesetpoints_t() {
-    std::thread _thread(&threadloop::updatesetpoints, this);
-    _threadid_setpoints = _thread.native_handle();
-    _thread.detach();
+  // update straightline setpoint using a thread
+  void updatestraightlinesetpoints_t(double _initialx, double _initialy,
+                                     double _desired_velocity, double _finalx,
+                                     double _finaly, double _desired_theta,
+                                     int index) {
+    switch (index) {
+      case 0: {
+        std::thread _thread(&threadloop::setStraightline_first, this, _initialx,
+                            _initialy, _desired_velocity, _finalx, _finaly,
+                            _desired_theta);
+        _threadid_setpoints = _thread.native_handle();
+        _thread.detach();
+        break;
+      }
+      case 1: {
+        std::thread _thread(&threadloop::setStraightline_second, this,
+                            _initialx, _initialy, _desired_velocity, _finalx,
+                            _finaly, _desired_theta);
+        _threadid_setpoints = _thread.native_handle();
+        _thread.detach();
+        break;
+      }
+      case 2: {
+        std::thread _thread(&threadloop::setStraightline_third, this, _initialx,
+                            _initialy, _desired_velocity, _finalx, _finaly,
+                            _desired_theta);
+        _threadid_setpoints = _thread.native_handle();
+        _thread.detach();
+        break;
+      }
+    }
   }
   // kill the thread of setpoints
   void closeupdatesetpoints() { pthread_cancel(_threadid_setpoints); }
@@ -270,6 +296,15 @@ class threadloop {
   Eigen::Vector3i getrealtimerotation_third() const {
     return _realtimevessel_third.rotation;
   }
+  Eigen::Vector3d getSetpoints_first() const {
+    return _realtimevessel_first.setPoints;
+  }
+  Eigen::Vector3d getSetpoints_second() const {
+    return _realtimevessel_second.setPoints;
+  }
+  Eigen::Vector3d getSetpoints_third() const {
+    return _realtimevessel_third.setPoints;
+  }
   Eigen::Vector3d getpmatrix_first() const {
     Eigen::Vector3d pmatrix = Eigen::Vector3d::Zero();
     pmatrix << _vessel_first.P_x, _vessel_first.P_y, _vessel_first.P_theta;
@@ -322,7 +357,7 @@ class threadloop {
     fixedpointdata _fixedpointdata = mysetpoints.getfixedpointdata_first();
     _desired_finalx = _fixedpointdata.desired_finalx;
     _desired_finaly = _fixedpointdata.desired_finaly;
-    _desired_theta = _fixedpointdata.desired_theta;
+    _desired_theta = _fixedpointdata.desired_theta * 180 / M_PI;
   }
   void getfixedpointdata_second(double &_desired_finalx,
                                 double &_desired_finaly,
@@ -330,14 +365,14 @@ class threadloop {
     fixedpointdata _fixedpointdata = mysetpoints.getfixedpointdata_second();
     _desired_finalx = _fixedpointdata.desired_finalx;
     _desired_finaly = _fixedpointdata.desired_finaly;
-    _desired_theta = _fixedpointdata.desired_theta;
+    _desired_theta = _fixedpointdata.desired_theta * 180 / M_PI;
   }
   void getfixedpointdata_third(double &_desired_finalx, double &_desired_finaly,
                                double &_desired_theta) const {
     fixedpointdata _fixedpointdata = mysetpoints.getfixedpointdata_third();
     _desired_finalx = _fixedpointdata.desired_finalx;
     _desired_finaly = _fixedpointdata.desired_finaly;
-    _desired_theta = _fixedpointdata.desired_theta;
+    _desired_theta = _fixedpointdata.desired_theta * 180 / M_PI;
   }
   // get straightline data
   void getstraightlinedata_first(double &_initialx, double &_initialy,
@@ -347,7 +382,7 @@ class threadloop {
     strightlinedata _strightlinedata = mysetpoints.getstraightlinedata_first();
     _initialx = _strightlinedata.desired_initialx;
     _initialy = _strightlinedata.desired_initialy;
-    _desired_theta = _strightlinedata.desired_theta;
+    _desired_velocity = _strightlinedata.desired_velocity;
     _finalx = _strightlinedata.desired_finalx;
     _finaly = _strightlinedata.desired_finaly;
     _desired_theta = _strightlinedata.desired_theta;
@@ -359,7 +394,7 @@ class threadloop {
     strightlinedata _strightlinedata = mysetpoints.getstraightlinedata_second();
     _initialx = _strightlinedata.desired_initialx;
     _initialy = _strightlinedata.desired_initialy;
-    _desired_theta = _strightlinedata.desired_theta;
+    _desired_velocity = _strightlinedata.desired_velocity;
     _finalx = _strightlinedata.desired_finalx;
     _finaly = _strightlinedata.desired_finaly;
     _desired_theta = _strightlinedata.desired_theta;
@@ -371,7 +406,7 @@ class threadloop {
     strightlinedata _strightlinedata = mysetpoints.getstraightlinedata_third();
     _initialx = _strightlinedata.desired_initialx;
     _initialy = _strightlinedata.desired_initialy;
-    _desired_theta = _strightlinedata.desired_theta;
+    _desired_velocity = _strightlinedata.desired_velocity;
     _finalx = _strightlinedata.desired_finalx;
     _finaly = _strightlinedata.desired_finaly;
     _desired_theta = _strightlinedata.desired_theta;
@@ -699,7 +734,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      // realtimeprint_first();
+      realtimeprint_first();
     }
   }
 
@@ -744,7 +779,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      realtimeprint_second();
+      // realtimeprint_second();
     }
   }
 
@@ -843,10 +878,8 @@ class threadloop {
               << _realtimevessel_first.tau << std::endl;
     std::cout << "First:Estimated force:" << std::endl
               << _realtimevessel_first.BalphaU << std::endl;
-    std::cout << "First:thruster angle:" << std::endl
-              << _realtimevessel_first.alpha_deg << std::endl;
-    std::cout << "First:thruster speed:" << std::endl
-              << _realtimevessel_first.rotation << std::endl;
+    std::cout << "First: setPoints:" << std::endl
+              << _realtimevessel_first.setPoints << std::endl;
   }
   void realtimeprint_second() {
     std::cout << "Second: Desired force:" << std::endl

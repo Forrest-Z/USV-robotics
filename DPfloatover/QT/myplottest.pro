@@ -169,6 +169,12 @@ SOURCES += \
     mainwindow.cpp \
     qcustomplot.cpp \
     thrusterdiag.cpp \
+    dialogsetparameter.cpp \
+    dialogfixedsetpoint.cpp \
+    dialogstraightline.cpp \
+    dialogrotation.cpp \
+    dialogbox.cpp \
+    dialogcooperation.cpp \
     ../network/src/crccheck.c \
     ../network/src/datapack.c \
     ../network/libcrc/src/crc8.c \
@@ -188,12 +194,7 @@ SOURCES += \
     ../motioncapture/src/qtmOutput.cpp \
     ../motioncapture/src/RTPacket.cpp \
     ../motioncapture/src/RTProtocol.cpp \
-    dialogsetparameter.cpp \
-    dialogfixedsetpoint.cpp \
-    dialogstraightline.cpp \
-    dialogrotation.cpp \
-    dialogbox.cpp \
-    dialogcooperation.cpp
+
 
 
 
@@ -203,6 +204,12 @@ HEADERS += \
     qcustomplot.h \
     thrusterdiag.h \
     display2ddialog.h \
+    dialogsetparameter.h \
+    dialogfixedsetpoint.h \
+    dialogstraightline.h \
+    dialogrotation.h \
+    dialogbox.h \
+    dialogcooperation.h \
     ../include/constants.h \
     ../include/threaded_Loop.h \
     ../include/realtimedata.h \
@@ -573,13 +580,6 @@ HEADERS += \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcp_timr.h \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcp_var.h \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcpip.h \
-    dialogsetparameter.h \
-    dialogsetpoints.h \
-    dialogfixedsetpoint.h \
-    dialogstraightline.h \
-    dialogrotation.h \
-    dialogbox.h \
-    dialogcooperation.h
 
 
 
@@ -588,9 +588,9 @@ FORMS += \
         mainwindow.ui \
         display2ddialog.ui \
         thrusterdiag.ui \
-    dialogsetparameter.ui \
-    dialogfixedsetpoint.ui \
-    dialogstraightline.ui \
-    dialogrotation.ui \
-    dialogbox.ui \
-    dialogcooperation.ui
+        dialogsetparameter.ui \
+        dialogfixedsetpoint.ui \
+        dialogstraightline.ui \
+        dialogrotation.ui \
+        dialogbox.ui \
+        dialogcooperation.ui

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>469</width>
-    <height>522</height>
+    <width>468</width>
+    <height>472</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,58 +19,19 @@
      <x>10</x>
      <y>10</y>
      <width>211</width>
-     <height>161</height>
+     <height>311</height>
     </rect>
    </property>
    <property name="title">
-    <string>startpoint --- I vessel</string>
+    <string>I vessel</string>
    </property>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>41</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>x (m)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>80</y>
-      <width>41</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>y (m)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>130</y>
-      <width>71</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>V (m/s)</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>20</y>
-      <width>111</width>
-      <height>141</height>
+      <x>91</x>
+      <y>10</y>
+      <width>110</width>
+      <height>301</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -81,7 +42,70 @@
       <widget class="QLineEdit" name="LE_setyI0"/>
      </item>
      <item>
+      <widget class="QLineEdit" name="LE_setxI1"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_setyI1"/>
+     </item>
+     <item>
       <widget class="QLineEdit" name="LE_setvelocityI"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_setthetaI1"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>74</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>start_x (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>start_ y (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>end_x (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>end_y (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>V (m/s)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>theta (deg)</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -90,7 +114,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>370</y>
+     <y>330</y>
      <width>211</width>
      <height>131</height>
     </rect>
@@ -125,140 +149,28 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="GB_setI_2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>190</y>
-     <width>211</width>
-     <height>161</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Endpoint --- I vessel</string>
-   </property>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>41</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>x (m)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>80</y>
-      <width>41</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>y (m)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_6">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>130</y>
-      <width>71</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>theta (deg)</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget_4">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>20</y>
-      <width>111</width>
-      <height>141</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_5">
-     <item>
-      <widget class="QLineEdit" name="LE_setxI1"/>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="LE_setyI1"/>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="LE_setthetaI1"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QGroupBox" name="GB_setI_3">
    <property name="geometry">
     <rect>
      <x>240</x>
      <y>10</y>
      <width>211</width>
-     <height>161</height>
+     <height>311</height>
     </rect>
    </property>
    <property name="title">
-    <string>startpoint --- II vessel</string>
+    <string>II vessel</string>
    </property>
-   <widget class="QLabel" name="label_13">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>41</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>x (m)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_14">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>80</y>
-      <width>41</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>y (m)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_15">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>130</y>
-      <width>71</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>V (m/s)</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget_7">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>20</y>
+      <y>10</y>
       <width>111</width>
-      <height>141</height>
+      <height>301</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_3">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QLineEdit" name="LE_setxII0"/>
      </item>
@@ -266,80 +178,70 @@
       <widget class="QLineEdit" name="LE_setyII0"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="LE_setvelocityII"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="GB_setI_4">
-   <property name="geometry">
-    <rect>
-     <x>240</x>
-     <y>190</y>
-     <width>211</width>
-     <height>161</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Endpoint --- II vessel</string>
-   </property>
-   <widget class="QLabel" name="label_16">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>41</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>x (m)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_17">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>80</y>
-      <width>41</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>y (m)</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_18">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>130</y>
-      <width>71</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>theta (deg)</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget_8">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>20</y>
-      <width>111</width>
-      <height>141</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_8">
-     <item>
       <widget class="QLineEdit" name="LE_setxII1"/>
      </item>
      <item>
       <widget class="QLineEdit" name="LE_setyII1"/>
      </item>
      <item>
+      <widget class="QLineEdit" name="LE_setvelocityII"/>
+     </item>
+     <item>
       <widget class="QLineEdit" name="LE_setthetaII1"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>74</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <item>
+      <widget class="QLabel" name="label_13">
+       <property name="text">
+        <string>start_x (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_14">
+       <property name="text">
+        <string>start_y (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_16">
+       <property name="text">
+        <string>end_x (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_17">
+       <property name="text">
+        <string>end_y (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>V (m/s)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_18">
+       <property name="text">
+        <string>theta (deg)</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -348,7 +250,7 @@
    <property name="geometry">
     <rect>
      <x>240</x>
-     <y>370</y>
+     <y>330</y>
      <width>211</width>
      <height>131</height>
     </rect>

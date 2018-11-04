@@ -17,10 +17,10 @@ void Dialogstraightline::on_setupsetpointII_clicked() {
   double endy = ui->LE_setyII1->text().toDouble();
   double endtheta = ui->LE_setthetaII1->text().toDouble();
   endtheta *= (M_PI / 180);
-  // stop update setpoints
-  globalvar::_threadloop.setStraightline_second(
-      startx, starty, desired_velocity, endx, endy, endtheta);
-  globalvar::_threadloop.updatesetpoints_t();
+
+  //  update setpoints
+  globalvar::_threadloop.updatestraightlinesetpoints_t(
+      startx, starty, desired_velocity, endx, endy, endtheta, 1);
   // ui operation
   ui->setupsetpointII->setEnabled(false);
   ui->resetsetpointII->setEnabled(true);
@@ -75,10 +75,9 @@ void Dialogstraightline::on_setupsetpointI_clicked() {
   double endy = ui->LE_setyI1->text().toDouble();
   double endtheta = ui->LE_setthetaI1->text().toDouble();
   endtheta *= (M_PI / 180);
-  // stop update setpoints
-  globalvar::_threadloop.setStraightline_first(startx, starty, desired_velocity,
-                                               endx, endy, endtheta);
-  globalvar::_threadloop.updatesetpoints_t();
+  //  update setpoints
+  globalvar::_threadloop.updatestraightlinesetpoints_t(
+      startx, starty, desired_velocity, endx, endy, endtheta, 0);
   // ui operation
   ui->setupsetpointII->setEnabled(false);
   ui->resetsetpointII->setEnabled(false);

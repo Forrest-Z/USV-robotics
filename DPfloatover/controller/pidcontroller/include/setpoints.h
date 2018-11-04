@@ -22,19 +22,19 @@
 
 // go to fixed point
 struct fixedpointdata {
-  double desired_finalx;
-  double desired_finaly;
-  double desired_theta;
+  double desired_finalx;  // m
+  double desired_finaly;  // m
+  double desired_theta;   // rad
 };
 
 // go straight line
 struct strightlinedata {
-  double desired_velocity;
-  double desired_theta;
-  double desired_finalx;
-  double desired_finaly;
-  double desired_initialx;
-  double desired_initialy;
+  double desired_velocity;  // m/s
+  double desired_theta;     // rad
+  double desired_finalx;    // m
+  double desired_finaly;    // m
+  double desired_initialx;  // m
+  double desired_initialy;  // m
 
   int orientation_adjustment_time;  // elapsed time for orientation
                                     // adjustment(seconds)
@@ -42,9 +42,9 @@ struct strightlinedata {
 
 // go rotation
 struct rotationaroundpoint {
-  double rotation_center_x;
-  double rotation_center_y;
-  double rotation_speed;
+  double rotation_center_x;  // m
+  double rotation_center_y;  // m
+  double rotation_speed;     // rad/s
 };
 
 class setpoints {
@@ -121,9 +121,9 @@ class setpoints {
 
  private:
   fixedpointdata myfixedpointdata_first{
-      0.6,  // desired_finalx
-      2,    // desired_finaly
-      0     // desired_theta
+      0.6,       // desired_finalx
+      2,         // desired_finaly
+      M_PI / 18  // desired_theta
   };
   fixedpointdata myfixedpointdata_second{
       0.0,  // desired_finalx
@@ -131,9 +131,9 @@ class setpoints {
       0     // desired_theta
   };
   fixedpointdata myfixedpointdata_third{
-      0.0,  // desired_finalx
-      -6,   // desired_finaly
-      0     // desired_theta
+      0.0,       // desired_finalx
+      -6,        // desired_finaly
+      -M_PI / 3  // desired_theta
   };
   strightlinedata mystrightlinedata_first{
       0.01,  // desired_velocity
@@ -142,7 +142,7 @@ class setpoints {
       2,     // desired_finaly
       0.6,   // desired_initialx
       0,     // desired_initialy
-      100    // orientation_adjustment_time
+      10     // orientation_adjustment_time
   };
   strightlinedata mystrightlinedata_second{
       0.1,  // desired_velocity
