@@ -443,6 +443,8 @@ void COutput::initializemovingaverage() {
   Matrix_average.setZero();
   average_vector.setZero();
   average_yaw.setZero();
+  average_surge.setZero();
+  average_sway.setZero();
 }
 
 Eigen::Vector3d COutput::movingaverage(double _dx, double _dy, double _dtheta) {
@@ -477,6 +479,19 @@ double COutput::movingaverage_yaw(double _dtheta) {
   // calculate the mean value
   return average_yaw.mean();
 }
+
+double COutput::movingaverage_surge(double _dx) {
+  // pop_front
+  VectorASurge t_average_surge = VectorASurge::Zero();
+  int index = num_average_point_surge - 1;
+  t_average_surge.head(index) = average_surge.tail(index);
+  // push back
+  t_average_surge(index) = _dx;
+  average_surge = t_average_surge;
+  // calculate the mean value
+  return average_surge.mean();
+}
+double COutput::movingaverage_sway(double _dy) {}
 
 // calculate the real time coordinate transform matrix
 void COutput::calculateCoordinateTransform(Eigen::Matrix3d& _CTG2B,

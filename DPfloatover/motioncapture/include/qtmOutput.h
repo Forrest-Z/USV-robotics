@@ -23,11 +23,15 @@ const double max_velocity_orientation = 0.5;  // rad/s
 const double qtm_max_position = 30000;        // mm
 const int num_average_point_velocity = 400;   // delay 2 s when frequenc=50Hz
 const int num_average_point_yaw = 50;         // delay 2 s when frequenc=50Hz
-
+const int num_average_point_surge = 50;       // delay 2 s when frequenc=50Hz
+const int num_average_point_sway = 50;        // delay 2 s when frequenc=50Hz
+// average moving low pass to eliminate noise
 using T_BOOST_CLOCK =
     boost::date_time::microsec_clock<boost::posix_time::ptime>;
 typedef Eigen::Matrix<double, 3, num_average_point_velocity> Matrix3100d;
-typedef Eigen::Matrix<double, num_average_point_velocity, 1> VectorAYaw;
+typedef Eigen::Matrix<double, num_average_point_yaw, 1> VectorAYaw;
+typedef Eigen::Matrix<double, num_average_point_surge, 1> VectorASurge;
+typedef Eigen::Matrix<double, num_average_point_sway, 1> VectorASway;
 
 class CDataPacket;
 
@@ -84,7 +88,8 @@ class COutput {
   void initializemovingaverage();
   Eigen::Vector3d movingaverage(double _dx, double _dy, double _dtheta);
   double movingaverage_yaw(double _dtheta);
-
+  double movingaverage_surge(double _dx);
+  double movingaverage_sway(double _dy);
   // calculate the real time coordinate transform matrix
   void calculateCoordinateTransform(Eigen::Matrix3d& _CTG2B,
                                     Eigen::Matrix3d& _CTB2G,
@@ -129,6 +134,8 @@ class COutput {
   Matrix3100d Matrix_average;
   Eigen::Vector3d average_vector;
   VectorAYaw average_yaw;
+  VectorASurge average_surge;
+  VectorASway average_sway;
 };
 
 #endif  // OUTPUT_H

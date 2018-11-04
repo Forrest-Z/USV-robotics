@@ -31,15 +31,16 @@ rpm_second=totaldata_second(:,25:27);
 
 
 %% figure 1 of II vessel
-s_xmin=0000;
-s_xmax=700;
-desiredposition_second=[0.6 -2 0];
+s_xmin=950;
+s_xmax=1200;
+desiredposition_second=[0 0 0];
 figure(1)
 subplot(311)
 plot(timestamp_second,Position_second(:,1),'-r','linewidth',2);hold on;
 plot(timestamp_second,State_second(:,1),':k','linewidth',2); hold on;
 plot([0,timestamp_second(end)],[desiredposition_second(1),desiredposition_second(1)],'--b');
 xlim([s_xmin s_xmax]);
+% ylim([0 0.1]);
 legend('position','State');
 xlabel('time(s)');
 ylabel('surge(m)');
