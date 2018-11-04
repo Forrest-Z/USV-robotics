@@ -47,10 +47,49 @@ struct rotationaroundpoint {
   double rotation_speed;     // rad/s
 };
 
+// go straight line
+struct strightlinedata_both {
+  // common value
+  double desired_velocity;          // m/s
+  double desired_theta;             // rad
+  int orientation_adjustment_time;  // adjustment(seconds)
+
+  // I vessel
+  double desired_initialx_first;  // m
+  double desired_initialy_first;  // m
+  double desired_finalx_first;    // m
+  double desired_finaly_first;    // m
+
+  // II vessel
+  double desired_initialx_second;  // m
+  double desired_initialy_second;  // m
+  double desired_finalx_second;    // m
+  double desired_finaly_second;    // m
+};
+
 class setpoints {
  public:
   setpoints() {}
   ~setpoints() {}
+  // Enable cooperation control for two vesesls to follow a straight line
+  void followstraightline_both(
+      realtimevessel_first &_realtimevessel_first,
+      realtimevessel_second &_realtimevessel_second, double _desired_velocity,
+      double _desired_theta, double _desired_initialx_first,
+      double _desired_initialy_first, double _desired_finalx_first,
+      double _desired_finaly_first, double _desired_initialx_second,
+      double _desired_initialy_second, double _desired_finalx_second,
+      double _desired_finaly_second) {
+    setstraightlinedata_both(mystrightlinedata_both, _desired_velocity,
+                             _desired_theta, _desired_initialx_first,
+                             _desired_initialy_first, _desired_finalx_first,
+                             _desired_finaly_first, _desired_initialx_second,
+                             _desired_initialy_second, _desired_finalx_second,
+                             _desired_finaly_second);
+    gostraightline_both(_realtimevessel_first.setPoints,
+                        _realtimevessel_second.setPoints,
+                        mystrightlinedata_both);
+  }
   // Enable each vessel to reach a fixed point independently
   void gofixedpoint_first(realtimevessel_first &_realtimevessel,
                           double _desired_finalx, double _desired_finaly,
@@ -119,6 +158,10 @@ class setpoints {
     return mystrightlinedata_third;
   }
 
+  strightlinedata_both getstraightlinedata_both() const {
+    return mystrightlinedata_both;
+  }
+
  private:
   fixedpointdata myfixedpointdata_first{
       0.6,       // desired_finalx
@@ -136,33 +179,45 @@ class setpoints {
       -M_PI / 3  // desired_theta
   };
   strightlinedata mystrightlinedata_first{
-      0.01,  // desired_velocity
-      0,     // desired_theta
-      0.6,   // desired_finalx
-      2,     // desired_finaly
-      0.6,   // desired_initialx
-      0,     // desired_initialy
-      10     // orientation_adjustment_time
+      0.01,      // desired_velocity
+      M_PI / 2,  // desired_theta
+      0.6,       // desired_finalx
+      2,         // desired_finaly
+      0.6,       // desired_initialx
+      0,         // desired_initialy
+      10         // orientation_adjustment_time
   };
   strightlinedata mystrightlinedata_second{
-      0.1,  // desired_velocity
-      0,    // desired_theta
-      0.0,  // desired_finalx
-      -2,   // desired_finaly
-      0.0,  // desired_initialx
-      0,    // desired_initialy
-      10    // orientation_adjustment_time
+      0.1,        // desired_velocity
+      -M_PI / 3,  // desired_theta
+      0.0,        // desired_finalx
+      -2,         // desired_finaly
+      0.0,        // desired_initialx
+      0,          // desired_initialy
+      10          // orientation_adjustment_time
   };
   strightlinedata mystrightlinedata_third{
-      0.1,  // desired_velocity
-      0,    // desired_theta
-      0.0,  // desired_finalx
-      -2,   // desired_finaly
-      0.0,  // desired_initialx
-      0,    // desired_initialy
-      10    // orientation_adjustment_time
+      0.1,       // desired_velocity
+      M_PI / 2,  // desired_theta
+      0.0,       // desired_finalx
+      -2,        // desired_finaly
+      0.0,       // desired_initialx
+      0,         // desired_initialy
+      10         // orientation_adjustment_time
   };
-
+  strightlinedata_both mystrightlinedata_both{
+      0.05,      // desired_velocity
+      M_PI / 2,  // desired_theta
+      10,        // orientation_adjustment_time
+      0.0,       // desired_initialx_first
+      0,         // desired_initialy_first
+      0.0,       // desired_finalx_first
+      -2,        // desired_finaly_first
+      0.0,       // desired_initialx_second
+      0,         // desired_initialy_second
+      0.0,       // desired_finalx_second
+      -2         // desired_finaly_second
+  };
   // setup the fixedpoint data
   void setfixedpointdata(fixedpointdata &_fixedpointdata,
                          double _desired_finalx, double _desired_finaly,
@@ -184,6 +239,26 @@ class setpoints {
     _strightlinedata.desired_initialx = _initialx;
     _strightlinedata.desired_initialy = _initialy;
   }
+  // setup the straight line data for cooperation control (two vessels)
+  void setstraightlinedata_both(
+      strightlinedata_both &_strightlinedata_both, double _desired_velocity,
+      double _desired_theta, double _desired_initialx_first,
+      double _desired_initialy_first, double _desired_finalx_first,
+      double _desired_finaly_first, double _desired_initialx_second,
+      double _desired_initialy_second, double _desired_finalx_second,
+      double _desired_finaly_second) {
+    _strightlinedata_both.desired_velocity = _desired_velocity;
+    _strightlinedata_both.desired_theta = _desired_theta;
+    _strightlinedata_both.desired_initialx_first = _desired_initialx_first;
+    _strightlinedata_both.desired_initialy_first = _desired_initialy_first;
+    _strightlinedata_both.desired_finalx_first = _desired_finalx_first;
+    _strightlinedata_both.desired_finaly_first = _desired_finaly_first;
+    _strightlinedata_both.desired_initialx_second = _desired_initialx_second;
+    _strightlinedata_both.desired_initialy_second = _desired_initialy_second;
+    _strightlinedata_both.desired_finalx_second = _desired_finalx_second;
+    _strightlinedata_both.desired_finaly_second = _desired_finaly_second;
+  }
+  // go to a fixed point with any trajectory
   void gofixedpoint(Eigen::Vector3d &_setpoints,
                     const fixedpointdata &_fixedpointdata) {
     _setpoints << _fixedpointdata.desired_finalx,
@@ -228,7 +303,79 @@ class setpoints {
       _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed +
                       _strightlinedata.desired_initialy;
       _setpoints(2) = _strightlinedata.desired_theta;
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
     } while (mt_elapsed < total_mt_elapsed);
   }
+
+  // cooperation control for two vessels
+  void gostraightline_both(Eigen::Vector3d &_setpoints_first,
+                           Eigen::Vector3d &_setpoints_second,
+                           const strightlinedata_both &_strightlinedata_both) {
+    // We reach the desired orientation first.
+    _setpoints_first << _strightlinedata_both.desired_initialx_first,
+        _strightlinedata_both.desired_initialy_first,
+        _strightlinedata_both.desired_theta;
+    _setpoints_second << _strightlinedata_both.desired_initialx_second,
+        _strightlinedata_both.desired_initialy_second,
+        _strightlinedata_both.desired_theta;
+    std::this_thread::sleep_for(std::chrono::seconds(
+        _strightlinedata_both.orientation_adjustment_time));
+
+    // then we keep the straight line and reach the desired points
+    double total_delta_x_first = _strightlinedata_both.desired_finalx_first -
+                                 _strightlinedata_both.desired_initialx_first;
+    double total_delta_y_first = _strightlinedata_both.desired_finaly_first -
+                                 _strightlinedata_both.desired_initialy_first;
+    double total_length_first =
+        std::sqrt(total_delta_x_first * total_delta_x_first +
+                  total_delta_y_first * total_delta_y_first);
+
+    double total_delta_x_second = _strightlinedata_both.desired_finalx_second -
+                                  _strightlinedata_both.desired_initialx_second;
+    double total_delta_y_second = _strightlinedata_both.desired_finaly_second -
+                                  _strightlinedata_both.desired_initialy_second;
+    double total_length_second =
+        std::sqrt(total_delta_x_second * total_delta_x_second +
+                  total_delta_y_second * total_delta_y_second);
+    // setup timer
+    boost::posix_time::ptime t_start =
+        boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime t_end =
+        boost::posix_time::second_clock::local_time();
+    boost::posix_time::time_duration t_elapsed = t_end - t_start;
+    long int mt_elapsed = 0;
+
+    long int total_mt_elapsed =
+        (long int)(500 * (total_length_first + total_length_second) /
+                   _strightlinedata_both.desired_velocity);
+    // update the desired position step by step
+    do {
+      t_end = boost::posix_time::second_clock::local_time();
+      t_elapsed = t_end - t_start;
+      mt_elapsed = t_elapsed.total_milliseconds();
+      double temp = mt_elapsed / total_mt_elapsed;
+      _setpoints_first(0) = total_delta_x_first * temp +
+                            _strightlinedata_both.desired_initialx_first;
+      _setpoints_first(1) = total_delta_y_first * temp +
+                            _strightlinedata_both.desired_initialy_first;
+      _setpoints_first(2) = _strightlinedata_both.desired_theta;
+
+      _setpoints_second(0) = total_delta_x_second * temp +
+                             _strightlinedata_both.desired_initialx_second;
+      _setpoints_second(1) = total_delta_y_second * temp +
+                             _strightlinedata_both.desired_initialy_second;
+      _setpoints_second(2) = _strightlinedata_both.desired_theta;
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    } while (mt_elapsed < total_mt_elapsed);
+  }  // gostraightline_both
+
+  // cooperation control for two vessels, considering the vessel state
+  void gostraightline_both(Eigen::Vector3d &_setpoints_first,
+                           Eigen::Vector3d &_setpoints_second,
+                           const strightlinedata &_strightlinedata_first,
+                           const strightlinedata &_strightlinedata_second,
+                           const Vector6d &_state_first,
+                           const Vector6d &_state_second) {}
 };
 #endif /* _SETPOINTS_H_ */

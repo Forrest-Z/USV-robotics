@@ -298,7 +298,7 @@ void Display2DDialog::initializePlanarMotion(QCustomPlot *customPlot) {
   //  mypen.setColor(QColor(30, 40, 255, 150));
   //  customPlot->graph()->setPen(mypen);
 
-  std::vector<QColor> V_Qcolor = {QColor(255, 0, 0), QColor(0, 180, 180),
+  std::vector<QColor> V_Qcolor = {QColor(255, 0, 0), QColor(0, 0, 0),
                                   QColor(180, 180, 0)};
   // 2d display
   for (int c_index = 0; c_index != MAXCONNECTION; ++c_index) {
@@ -333,8 +333,8 @@ void Display2DDialog::initializePlanarMotion(QCustomPlot *customPlot) {
 
     customPlot->graph(c_index + 2 * MAXCONNECTION)
         ->setLineStyle(QCPGraph::lsLine);
-    QCPScatterStyle myQCPScatterStyle(QCPScatterStyle::ssPlus,
-                                      V_Qcolor[c_index], 8);
+    QCPScatterStyle myQCPScatterStyle(QCPScatterStyle::ssPlusCircle,
+                                      V_Qcolor[c_index], 10);
     customPlot->graph(c_index + 2 * MAXCONNECTION)
         ->setScatterStyle(myQCPScatterStyle);
     customPlot->graph(c_index + 2 * MAXCONNECTION)

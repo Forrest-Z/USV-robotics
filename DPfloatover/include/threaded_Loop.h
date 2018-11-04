@@ -385,7 +385,7 @@ class threadloop {
     _desired_velocity = _strightlinedata.desired_velocity;
     _finalx = _strightlinedata.desired_finalx;
     _finaly = _strightlinedata.desired_finaly;
-    _desired_theta = _strightlinedata.desired_theta;
+    _desired_theta = _strightlinedata.desired_theta * 180 / M_PI;
   }
   void getstraightlinedata_second(double &_initialx, double &_initialy,
                                   double &_desired_velocity, double &_finalx,
@@ -397,7 +397,7 @@ class threadloop {
     _desired_velocity = _strightlinedata.desired_velocity;
     _finalx = _strightlinedata.desired_finalx;
     _finaly = _strightlinedata.desired_finaly;
-    _desired_theta = _strightlinedata.desired_theta;
+    _desired_theta = _strightlinedata.desired_theta * 180 / M_PI;
   }
   void getstraightlinedata_third(double &_initialx, double &_initialy,
                                  double &_desired_velocity, double &_finalx,
@@ -409,7 +409,26 @@ class threadloop {
     _desired_velocity = _strightlinedata.desired_velocity;
     _finalx = _strightlinedata.desired_finalx;
     _finaly = _strightlinedata.desired_finaly;
-    _desired_theta = _strightlinedata.desired_theta;
+    _desired_theta = _strightlinedata.desired_theta * 180 / M_PI;
+  }
+  void getstraightlinedata_both(
+      double &_desired_velocity, double &_desired_theta,
+      double &_desired_initialx_first, double &_desired_initialy_first,
+      double &_desired_finalx_first, double &_desired_finaly_first,
+      double &_desired_initialx_second, double &_desired_initialy_second,
+      double &_desired_finalx_second, double &_desired_finaly_second) const {
+    strightlinedata_both _strightlinedataboth =
+        mysetpoints.getstraightlinedata_both();
+    _desired_velocity = _strightlinedataboth.desired_velocity;
+    _desired_theta = _strightlinedataboth.desired_theta;
+    _desired_initialx_first = _strightlinedataboth.desired_initialx_first;
+    _desired_initialy_first = _strightlinedataboth.desired_initialy_first;
+    _desired_finalx_first = _strightlinedataboth.desired_finalx_first;
+    _desired_finaly_first = _strightlinedataboth.desired_finaly_first;
+    _desired_initialx_second = _strightlinedataboth.desired_initialx_second;
+    _desired_initialy_second = _strightlinedataboth.desired_initialy_second;
+    _desired_finalx_second = _strightlinedataboth.desired_finalx_second;
+    _desired_finaly_second = _strightlinedataboth.desired_finaly_second;
   }
 
  private:
@@ -647,7 +666,7 @@ class threadloop {
       (Eigen::Vector3d() << 0.001, 0.0, 0.0).finished(),  // u
       Eigen::Vector3i::Zero()                             // rotation
   };
-
+  // setpoints for control
   setpoints mysetpoints;
   // controller of each vessel
   controller_first _controller_first;
@@ -690,6 +709,7 @@ class threadloop {
       }
       if (MAXCONNECTION > 2) {
       }
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
   }
 
