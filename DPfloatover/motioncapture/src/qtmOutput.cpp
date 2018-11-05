@@ -352,8 +352,8 @@ void COutput::ResetCounters() {
 
 void COutput::updaterealtimevesseldata_first(
     realtimevessel_first& _realtimevessel, float _fX, float _fY, float _fZ,
-    float _fAng1, float _fAng2,
-    float _fAng3) {  // determine if the measured data is out of range or NaN
+    float _fAng1, float _fAng2, float _fAng3) {
+  // determine if the measured data is out of range or NaN
   if ((abs(_fX) < qtm_max_position) && (abs(_fY) < qtm_max_position)) {
     double m_fx = _fX / 1000;
     double m_fy = _fY / 1000;
@@ -365,8 +365,8 @@ void COutput::updaterealtimevesseldata_first(
     _realtimevessel.Position(4) = _fAng2;
     _realtimevessel.Position(5) = _fAng3;
 
-    _realtimevessel.Measurement(0) = m_fx;
-    _realtimevessel.Measurement(1) = m_fy;
+    _realtimevessel.Measurement(0) = movingaverage_surge(m_fx);
+    _realtimevessel.Measurement(1) = movingaverage_sway(m_fy);
     // _measurement(2) = rad_orientation;
     double average_orientation = movingaverage_yaw(rad_orientation);
     calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
@@ -374,7 +374,8 @@ void COutput::updaterealtimevesseldata_first(
                                  _realtimevessel.setPoints(2));
     _realtimevessel.Measurement(2) = average_orientation;
     _realtimevessel.Measurement.tail(3) =
-        _realtimevessel.CTG2B * movingaverage(m_fx, m_fy, rad_orientation);
+        _realtimevessel.CTG2B *
+        movingaverage_velocity(m_fx, m_fy, rad_orientation);
   }
 }
 
@@ -393,8 +394,8 @@ void COutput::updaterealtimevesseldata_second(
     _realtimevessel.Position(4) = _fAng2;
     _realtimevessel.Position(5) = _fAng3;
 
-    _realtimevessel.Measurement(0) = m_fx;
-    _realtimevessel.Measurement(1) = m_fy;
+    _realtimevessel.Measurement(0) = movingaverage_surge(m_fx);
+    _realtimevessel.Measurement(1) = movingaverage_sway(m_fy);
     // _measurement(2) = rad_orientation;
     double average_orientation = movingaverage_yaw(rad_orientation);
     calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
@@ -402,7 +403,8 @@ void COutput::updaterealtimevesseldata_second(
                                  _realtimevessel.setPoints(2));
     _realtimevessel.Measurement(2) = average_orientation;
     _realtimevessel.Measurement.tail(3) =
-        _realtimevessel.CTG2B * movingaverage(m_fx, m_fy, rad_orientation);
+        _realtimevessel.CTG2B *
+        movingaverage_velocity(m_fx, m_fy, rad_orientation);
   }
 }
 
@@ -421,8 +423,8 @@ void COutput::updaterealtimevesseldata_third(
     _realtimevessel.Position(4) = _fAng2;
     _realtimevessel.Position(5) = _fAng3;
 
-    _realtimevessel.Measurement(0) = m_fx;
-    _realtimevessel.Measurement(1) = m_fy;
+    _realtimevessel.Measurement(0) = movingaverage_surge(m_fx);
+    _realtimevessel.Measurement(1) = movingaverage_sway(m_fy);
     // _measurement(2) = rad_orientation;
     double average_orientation = movingaverage_yaw(rad_orientation);
     calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
@@ -430,7 +432,8 @@ void COutput::updaterealtimevesseldata_third(
                                  _realtimevessel.setPoints(2));
     _realtimevessel.Measurement(2) = average_orientation;
     _realtimevessel.Measurement.tail(3) =
-        _realtimevessel.CTG2B * movingaverage(m_fx, m_fy, rad_orientation);
+        _realtimevessel.CTG2B *
+        movingaverage_velocity(m_fx, m_fy, rad_orientation);
   }
 }
 
@@ -447,7 +450,8 @@ void COutput::initializemovingaverage() {
   average_sway.setZero();
 }
 
-Eigen::Vector3d COutput::movingaverage(double _dx, double _dy, double _dtheta) {
+Eigen::Vector3d COutput::movingaverage_velocity(double _dx, double _dy,
+                                                double _dtheta) {
   // copy the former average vector
   Eigen::Vector3d former_average_vector = average_vector;
   // pop_front
@@ -468,6 +472,7 @@ Eigen::Vector3d COutput::movingaverage(double _dx, double _dy, double _dtheta) {
   return average_velocity;  // in the global coordinate
 }
 
+// moving average lowpass to remove noise
 double COutput::movingaverage_yaw(double _dtheta) {
   // pop_front
   VectorAYaw t_average_yaw = VectorAYaw::Zero();
@@ -479,7 +484,7 @@ double COutput::movingaverage_yaw(double _dtheta) {
   // calculate the mean value
   return average_yaw.mean();
 }
-
+// moving average lowpass to remove noise
 double COutput::movingaverage_surge(double _dx) {
   // pop_front
   VectorASurge t_average_surge = VectorASurge::Zero();
@@ -491,7 +496,18 @@ double COutput::movingaverage_surge(double _dx) {
   // calculate the mean value
   return average_surge.mean();
 }
-double COutput::movingaverage_sway(double _dy) {}
+// moving average lowpass to remove noise
+double COutput::movingaverage_sway(double _dy) {
+  // pop_front
+  VectorASway t_average_sway = VectorASway::Zero();
+  int index = num_average_point_sway - 1;
+  t_average_sway.head(index) = average_sway.tail(index);
+  // push back
+  t_average_sway(index) = _dy;
+  average_sway = t_average_sway;
+  // calculate the mean value
+  return average_sway.mean();
+}
 
 // calculate the real time coordinate transform matrix
 void COutput::calculateCoordinateTransform(Eigen::Matrix3d& _CTG2B,

@@ -155,6 +155,50 @@ class threadloop {
       }
     }
   }
+  // update box setpoint using a thread
+  void updatebox_t(double _desired_velocity, double _desired_theta,
+                   double _desired_initialx, double _desired_initialy,
+                   double _deltax, double _deltay, int index) {
+    switch (index) {
+      case 0: {
+        std::thread _thread(&threadloop::setBox_first, this, _desired_velocity,
+                            _desired_theta, _desired_initialx,
+                            _desired_initialy, _deltax, _deltay);
+        _threadid_setpoints = _thread.native_handle();
+        _thread.detach();
+        break;
+      }
+      case 1: {
+        std::thread _thread(&threadloop::setBox_second, this, _desired_velocity,
+                            _desired_theta, _desired_initialx,
+                            _desired_initialy, _deltax, _deltay);
+        _threadid_setpoints = _thread.native_handle();
+        _thread.detach();
+        break;
+      }
+      case 2: {
+        break;
+      }
+    }
+  }
+
+  // update straightline setpoint using a thread
+  void updatecooperationset_t(
+      double _desired_velocity, double _desired_theta,
+      double _desired_initialx_first, double _desired_initialy_first,
+      double _desired_finalx_first, double _desired_finaly_first,
+      double _desired_initialx_second, double _desired_initialy_second,
+      double _desired_finalx_second, double _desired_finaly_second) {
+    std::thread _thread(&threadloop::setStraightline_both, this,
+                        _desired_velocity, _desired_theta,
+                        _desired_initialx_first, _desired_initialy_first,
+                        _desired_finalx_first, _desired_finaly_first,
+                        _desired_initialx_second, _desired_initialy_second,
+                        _desired_finalx_second, _desired_finaly_second);
+    _threadid_setpoints = _thread.native_handle();
+    _thread.detach();
+  }
+
   // kill the thread of setpoints
   void closeupdatesetpoints() { pthread_cancel(_threadid_setpoints); }
 
@@ -189,28 +233,7 @@ class threadloop {
     mysetpoints.gofixedpoint_third(_realtimevessel_third, _setx, _sety,
                                    _settheta);
   }
-  // setup the straightline of each vessel
-  void setStraightline_first(double _initialx, double _initialy,
-                             double _desired_velocity, double _finalx,
-                             double _finaly, double _desired_theta) {
-    mysetpoints.gostraightline_first(_realtimevessel_first, _initialx,
-                                     _initialy, _desired_velocity, _finalx,
-                                     _finaly, _desired_theta);
-  }
-  void setStraightline_second(double _initialx, double _initialy,
-                              double _desired_velocity, double _finalx,
-                              double _finaly, double _desired_theta) {
-    mysetpoints.gostraightline_second(_realtimevessel_second, _initialx,
-                                      _initialy, _desired_velocity, _finalx,
-                                      _finaly, _desired_theta);
-  }
-  void setStraightline_third(double _initialx, double _initialy,
-                             double _desired_velocity, double _finalx,
-                             double _finaly, double _desired_theta) {
-    mysetpoints.gostraightline_third(_realtimevessel_third, _initialx,
-                                     _initialy, _desired_velocity, _finalx,
-                                     _finaly, _desired_theta);
-  }
+
   // set pid of I vessel
   void setPID_first(double _P_x, double _P_y, double _P_theta, double _I_x,
                     double _I_y, double _I_theta, double _D_x, double _D_y,
@@ -411,6 +434,29 @@ class threadloop {
     _finaly = _strightlinedata.desired_finaly;
     _desired_theta = _strightlinedata.desired_theta * 180 / M_PI;
   }
+
+  void getboxdata_first(double &_desired_velocity, double &_desired_theta,
+                        double &_desired_initialx, double &_desired_initialy,
+                        double &_deltax, double &_deltay) const {
+    boxdata _boxdata = mysetpoints.getboxdata_first();
+    _desired_velocity = _boxdata.desired_velocity;
+    _desired_theta = _boxdata.desired_theta * 180 / M_PI;
+    _desired_initialx = _boxdata.desired_initialx;
+    _desired_initialy = _boxdata.desired_initialy;
+    _deltax = _boxdata.deltax;
+    _deltay = _boxdata.deltay;
+  }
+  void getboxdata_second(double &_desired_velocity, double &_desired_theta,
+                         double &_desired_initialx, double &_desired_initialy,
+                         double &_deltax, double &_deltay) const {
+    boxdata _boxdata = mysetpoints.getboxdata_second();
+    _desired_velocity = _boxdata.desired_velocity;
+    _desired_theta = _boxdata.desired_theta * 180 / M_PI;
+    _desired_initialx = _boxdata.desired_initialx;
+    _desired_initialy = _boxdata.desired_initialy;
+    _deltax = _boxdata.deltax;
+    _deltay = _boxdata.deltay;
+  }
   void getstraightlinedata_both(
       double &_desired_velocity, double &_desired_theta,
       double &_desired_initialx_first, double &_desired_initialy_first,
@@ -420,7 +466,7 @@ class threadloop {
     strightlinedata_both _strightlinedataboth =
         mysetpoints.getstraightlinedata_both();
     _desired_velocity = _strightlinedataboth.desired_velocity;
-    _desired_theta = _strightlinedataboth.desired_theta;
+    _desired_theta = _strightlinedataboth.desired_theta * 180 / M_PI;
     _desired_initialx_first = _strightlinedataboth.desired_initialx_first;
     _desired_initialy_first = _strightlinedataboth.desired_initialy_first;
     _desired_finalx_first = _strightlinedataboth.desired_finalx_first;
@@ -851,14 +897,57 @@ class threadloop {
       mydb.create_client_table(i);
     }
   }
-  // update setpoints of each vessel
-  void updatesetpoints() {
-    // mysetpoints.gostraightline_first(_realtimevessel_first,
-    //                                  _strightlinedata_first);
-    // mysetpoints.gostraightline_second(_realtimevessel_second,
-    //                                   _strightlinedata_second);
-  }
 
+  // setup the straightline of each vessel
+  void setStraightline_first(double _initialx, double _initialy,
+                             double _desired_velocity, double _finalx,
+                             double _finaly, double _desired_theta) {
+    mysetpoints.gostraightline_first(_realtimevessel_first, _initialx,
+                                     _initialy, _desired_velocity, _finalx,
+                                     _finaly, _desired_theta);
+  }
+  void setStraightline_second(double _initialx, double _initialy,
+                              double _desired_velocity, double _finalx,
+                              double _finaly, double _desired_theta) {
+    mysetpoints.gostraightline_second(_realtimevessel_second, _initialx,
+                                      _initialy, _desired_velocity, _finalx,
+                                      _finaly, _desired_theta);
+  }
+  void setStraightline_third(double _initialx, double _initialy,
+                             double _desired_velocity, double _finalx,
+                             double _finaly, double _desired_theta) {
+    mysetpoints.gostraightline_third(_realtimevessel_third, _initialx,
+                                     _initialy, _desired_velocity, _finalx,
+                                     _finaly, _desired_theta);
+  }
+  // setup the box of each vessel
+  void setBox_first(double _desired_velocity, double _desired_theta,
+                    double _desired_initialx, double _desired_initialy,
+                    double _deltax, double _deltay) {
+    mysetpoints.gobox_first(_realtimevessel_first, _desired_velocity,
+                            _desired_theta, _desired_initialx,
+                            _desired_initialy, _deltax, _deltay);
+  }
+  void setBox_second(double _desired_velocity, double _desired_theta,
+                     double _desired_initialx, double _desired_initialy,
+                     double _deltax, double _deltay) {
+    mysetpoints.gobox_second(_realtimevessel_second, _desired_velocity,
+                             _desired_theta, _desired_initialx,
+                             _desired_initialy, _deltax, _deltay);
+  }
+  void setStraightline_both(
+      double _desired_velocity, double _desired_theta,
+      double _desired_initialx_first, double _desired_initialy_first,
+      double _desired_finalx_first, double _desired_finaly_first,
+      double _desired_initialx_second, double _desired_initialy_second,
+      double _desired_finalx_second, double _desired_finaly_second) {
+    mysetpoints.followstraightline_both(
+        _realtimevessel_first, _realtimevessel_second, _desired_velocity,
+        _desired_theta, _desired_initialx_first, _desired_initialy_first,
+        _desired_finalx_first, _desired_finaly_first, _desired_initialx_second,
+        _desired_initialy_second, _desired_finalx_second,
+        _desired_finaly_second);
+  }
   // reset realtime data of each vessel
   void resetallvessels() {
     // reset the data of the first vessel

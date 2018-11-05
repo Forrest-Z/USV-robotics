@@ -289,6 +289,7 @@
     <property name="title">
      <string>About (&amp;O)</string>
     </property>
+    <addaction name="actionLicensing"/>
    </widget>
    <widget class="QMenu" name="menuJoystick">
     <property name="title">
@@ -358,6 +359,11 @@
   <action name="actionCooperation">
    <property name="text">
     <string>Cooperation (&amp;C)</string>
+   </property>
+  </action>
+  <action name="actionLicensing">
+   <property name="text">
+    <string>Licensing</string>
    </property>
   </action>
  </widget>

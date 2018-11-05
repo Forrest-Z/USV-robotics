@@ -13,6 +13,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <fstream>
+#include "dialogabout.h"
 #include "dialogbox.h"
 #include "dialogcooperation.h"
 #include "dialogfixedsetpoint.h"
@@ -85,6 +86,8 @@ class MainWindow : public QMainWindow {
 
   void on_actionCooperation_triggered();
 
+  void on_actionLicensing_triggered();
+
  private:
   Ui::MainWindow *ui;
   Display2DDialog *myDisplay2DDialog;
@@ -95,6 +98,7 @@ class MainWindow : public QMainWindow {
   DialogRotation *myDialogRotation;
   Dialogstraightline *myDialogstraightline;
   DialogCooperation *myDialogCooperation;
+  Dialogabout *myDialogabout;
   QStringListModel *_model;
   Qt::WindowFlags flags = nullptr;
 

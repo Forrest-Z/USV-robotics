@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialogabout</class>
+ <widget class="QDialog" name="Dialogabout">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Notes</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>351</width>
+     <height>181</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>    DPdecom is an open source project licensed under 
+ extremely flexible terms intended to encourage use 
+ by anyone, for any purpose. 
+     When you make a contribution to the DPdecom 
+ project, you are agreeing to do so under those 
+ same terms. 
+ 
+ 
+ Hu Z.H. @ SJTU</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

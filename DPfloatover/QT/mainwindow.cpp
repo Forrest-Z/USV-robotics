@@ -195,3 +195,8 @@ void MainWindow::on_actionCooperation_triggered() {
   myDialogCooperation = new DialogCooperation(this);
   myDialogCooperation->show();
 }
+
+void MainWindow::on_actionLicensing_triggered() {
+  myDialogabout = new Dialogabout(this);
+  myDialogabout->show();
+}

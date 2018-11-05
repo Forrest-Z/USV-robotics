@@ -17,8 +17,14 @@ class DialogCooperation : public QDialog {
   explicit DialogCooperation(QWidget *parent = 0);
   ~DialogCooperation();
 
+ private slots:
+  void on_PB_setup_clicked();
+
+  void on_PB_reset_clicked();
+
  private:
   Ui::DialogCooperation *ui;
+  void initilizeDialogCooperation();
 };
 
 #endif  // DIALOGCOOPERATION_H

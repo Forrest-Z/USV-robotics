@@ -22,7 +22,7 @@ const double max_velocity_v = 0.5;            // m/s
 const double max_velocity_orientation = 0.5;  // rad/s
 const double qtm_max_position = 30000;        // mm
 const int num_average_point_velocity = 400;   // delay 2 s when frequenc=50Hz
-const int num_average_point_yaw = 50;         // delay 2 s when frequenc=50Hz
+const int num_average_point_yaw = 100;        // delay 2 s when frequenc=50Hz
 const int num_average_point_surge = 50;       // delay 2 s when frequenc=50Hz
 const int num_average_point_sway = 50;        // delay 2 s when frequenc=50Hz
 // average moving low pass to eliminate noise
@@ -86,7 +86,8 @@ class COutput {
   void resetmeasurement(Vector6d& _measurement, Vector6d& _position);
 
   void initializemovingaverage();
-  Eigen::Vector3d movingaverage(double _dx, double _dy, double _dtheta);
+  Eigen::Vector3d movingaverage_velocity(double _dx, double _dy,
+                                         double _dtheta);
   double movingaverage_yaw(double _dtheta);
   double movingaverage_surge(double _dx);
   double movingaverage_sway(double _dy);

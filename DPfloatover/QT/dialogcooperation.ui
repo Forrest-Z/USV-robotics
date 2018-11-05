@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>728</width>
+    <width>665</width>
     <height>258</height>
    </rect>
   </property>
@@ -18,19 +18,19 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>231</width>
+     <width>201</width>
      <height>231</height>
     </rect>
    </property>
    <property name="title">
     <string>I vessel</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>90</x>
       <y>10</y>
-      <width>131</width>
+      <width>101</width>
       <height>221</height>
      </rect>
     </property>
@@ -49,10 +49,10 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>20</y>
       <width>69</width>
       <height>201</height>
@@ -93,9 +93,9 @@
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>260</x>
+     <x>230</x>
      <y>10</y>
-     <width>231</width>
+     <width>201</width>
      <height>231</height>
     </rect>
    </property>
@@ -107,7 +107,7 @@
      <rect>
       <x>90</x>
       <y>10</y>
-      <width>131</width>
+      <width>101</width>
       <height>221</height>
      </rect>
     </property>
@@ -129,7 +129,7 @@
    <widget class="QWidget" name="layoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>20</y>
       <width>69</width>
       <height>201</height>
@@ -170,9 +170,9 @@
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>450</x>
      <y>10</y>
-     <width>211</width>
+     <width>201</width>
      <height>231</height>
     </rect>
    </property>
@@ -205,13 +205,13 @@
      <string>reset</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>80</x>
-      <y>10</y>
-      <width>121</width>
-      <height>121</height>
+      <x>90</x>
+      <y>0</y>
+      <width>101</width>
+      <height>131</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -223,10 +223,10 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>20</y>
       <width>76</width>
       <height>91</height>

@@ -16,8 +16,18 @@ class DialogBox : public QDialog {
   explicit DialogBox(QWidget *parent = 0);
   ~DialogBox();
 
+ private slots:
+  void on_PB_setupI_clicked();
+
+  void on_PB_resetI_clicked();
+
+  void on_PB_setupII_clicked();
+
+  void on_PB_resetII_clicked();
+
  private:
   Ui::DialogBox *ui;
+  void initializeDialogBox();
 };
 
 #endif  // DIALOGBOX_H

@@ -40,6 +40,17 @@ struct strightlinedata {
                                     // adjustment(seconds)
 };
 
+// go box
+struct boxdata {
+  double desired_velocity;          // m/s
+  double desired_theta;             // rad
+  double desired_initialx;          // m
+  double desired_initialy;          // m
+  double deltax;                    // m
+  double deltay;                    // m
+  int orientation_adjustment_time;  // second
+};
+
 // go rotation
 struct rotationaroundpoint {
   double rotation_center_x;  // m
@@ -138,6 +149,24 @@ class setpoints {
     gostraightline(_realtimevessel.setPoints, mystrightlinedata_third);
   }
 
+  // enable each vessel to go like a box
+  void gobox_first(realtimevessel_first &_realtimevessel,
+                   double _desired_velocity, double _desired_theta,
+                   double _desired_initialx, double _desired_initialy,
+                   double _deltax, double _deltay) {
+    setboxdata(mybox_first, _desired_velocity, _desired_theta,
+               _desired_initialx, _desired_initialy, _deltax, _deltay);
+    gobox(_realtimevessel.setPoints, mybox_first);
+  }
+  void gobox_second(realtimevessel_second &_realtimevessel,
+                    double _desired_velocity, double _desired_theta,
+                    double _desired_initialx, double _desired_initialy,
+                    double _deltax, double _deltay) {
+    setboxdata(mybox_second, _desired_velocity, _desired_theta,
+               _desired_initialx, _desired_initialy, _deltax, _deltay);
+    gobox(_realtimevessel.setPoints, mybox_second);
+  }
+
   fixedpointdata getfixedpointdata_first() const {
     return myfixedpointdata_first;
   }
@@ -157,6 +186,9 @@ class setpoints {
   strightlinedata getstraightlinedata_third() const {
     return mystrightlinedata_third;
   }
+
+  boxdata getboxdata_first() const { return mybox_first; }
+  boxdata getboxdata_second() const { return mybox_second; }
 
   strightlinedata_both getstraightlinedata_both() const {
     return mystrightlinedata_both;
@@ -205,18 +237,39 @@ class setpoints {
       0,         // desired_initialy
       10         // orientation_adjustment_time
   };
+
+  boxdata mybox_first{
+      0.1,       // desired_velocity
+      M_PI / 2,  // desired_theta
+      0.0,       // desired_initialx
+      -2,        // desired_initialy
+      0.0,       // deltax
+      0,         // deltay
+      10         // orientation_adjustment_time
+  };
+
+  boxdata mybox_second{
+      0.1,       // desired_velocity
+      M_PI / 2,  // desired_theta
+      0.0,       // desired_initialx
+      -2,        // desired_initialy
+      0.0,       // deltax
+      0,         // deltay
+      10         // orientation_adjustment_time
+  };
+
   strightlinedata_both mystrightlinedata_both{
       0.05,      // desired_velocity
       M_PI / 2,  // desired_theta
       10,        // orientation_adjustment_time
       0.0,       // desired_initialx_first
-      0,         // desired_initialy_first
+      0.1,       // desired_initialy_first
       0.0,       // desired_finalx_first
       -2,        // desired_finaly_first
       0.0,       // desired_initialx_second
       0,         // desired_initialy_second
-      0.0,       // desired_finalx_second
-      -2         // desired_finaly_second
+      7.0,       // desired_finalx_second
+      -3         // desired_finaly_second
   };
   // setup the fixedpoint data
   void setfixedpointdata(fixedpointdata &_fixedpointdata,
@@ -227,6 +280,17 @@ class setpoints {
     _fixedpointdata.desired_theta = _desired_theta;
   }
 
+  // setup the box data
+  void setboxdata(boxdata &_boxdata, double _desired_velocity,
+                  double _desired_theta, double _desired_initialx,
+                  double _desired_initialy, double _deltax, double _deltay) {
+    _boxdata.desired_velocity = _desired_velocity;
+    _boxdata.desired_theta = _desired_theta;
+    _boxdata.desired_initialx = _desired_initialx;
+    _boxdata.desired_initialy = _desired_initialy;
+    _boxdata.deltax = _deltax;
+    _boxdata.deltay = _deltay;
+  }
   // setup the straight line data
   void setstraightlinedata(strightlinedata &_strightlinedata, double _initialx,
                            double _initialy, double _desired_velocity,
@@ -307,6 +371,116 @@ class setpoints {
     } while (mt_elapsed < total_mt_elapsed);
   }
 
+  // box for each vessel
+  void gobox(Eigen::Vector3d &_setpoints, const boxdata &_boxdata) {
+    // We reach the desired orientation first. (A)
+    double xA = _boxdata.desired_initialx;
+    double yA = _boxdata.desired_initialy;
+    _setpoints << xA, yA, _boxdata.desired_theta;
+    std::this_thread::sleep_for(
+        std::chrono::seconds(_boxdata.orientation_adjustment_time));
+
+    // then we keep the straight line and reach the desired points (B)
+    double cvalue = std::cos(_boxdata.desired_theta);
+    double svalue = std::sin(_boxdata.desired_theta);
+    double total_delta_x = -svalue * _boxdata.deltay;
+    double total_delta_y = cvalue * _boxdata.deltay;
+
+    // setup timer
+    boost::posix_time::ptime t_start =
+        boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime t_end =
+        boost::posix_time::second_clock::local_time();
+    boost::posix_time::time_duration t_elapsed = t_end - t_start;
+    long int mt_elapsed = 0;
+
+    long int total_mt_elapsed =
+        (long int)(1000 * _boxdata.deltay / _boxdata.desired_velocity);
+    // update the desired position step by step
+    do {
+      t_end = boost::posix_time::second_clock::local_time();
+      t_elapsed = t_end - t_start;
+      mt_elapsed = t_elapsed.total_milliseconds();
+      _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xA;
+      _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yA;
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    } while (mt_elapsed < total_mt_elapsed);
+
+    // B
+    double xB = xA + total_delta_x;
+    double yB = yA + total_delta_y;
+    _setpoints << xB, yB, _boxdata.desired_theta;
+    std::this_thread::sleep_for(
+        std::chrono::seconds(_boxdata.orientation_adjustment_time));
+
+    total_delta_x = cvalue * _boxdata.deltax;
+    total_delta_y = svalue * _boxdata.deltax;
+
+    // setup timer
+    t_start = boost::posix_time::second_clock::local_time();
+
+    total_mt_elapsed =
+        (long int)(1000 * _boxdata.deltax / _boxdata.desired_velocity);
+    // update the desired position step by step
+    do {
+      t_end = boost::posix_time::second_clock::local_time();
+      t_elapsed = t_end - t_start;
+      mt_elapsed = t_elapsed.total_milliseconds();
+      _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xB;
+      _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yB;
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    } while (mt_elapsed < total_mt_elapsed);
+
+    // C
+    double xC = xB + total_delta_x;
+    double yC = yB + total_delta_y;
+    _setpoints << xC, yC, _boxdata.desired_theta;
+    std::this_thread::sleep_for(
+        std::chrono::seconds(_boxdata.orientation_adjustment_time));
+
+    total_delta_x = svalue * _boxdata.deltay;
+    total_delta_y = -cvalue * _boxdata.deltay;
+
+    // setup timer
+    t_start = boost::posix_time::second_clock::local_time();
+
+    total_mt_elapsed =
+        (long int)(1000 * _boxdata.deltay / _boxdata.desired_velocity);
+    // update the desired position step by step
+    do {
+      t_end = boost::posix_time::second_clock::local_time();
+      t_elapsed = t_end - t_start;
+      mt_elapsed = t_elapsed.total_milliseconds();
+      _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xC;
+      _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yC;
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    } while (mt_elapsed < total_mt_elapsed);
+
+    // D
+    double xD = xC + total_delta_x;
+    double yD = yC + total_delta_y;
+    _setpoints << xD, yD, _boxdata.desired_theta;
+    std::this_thread::sleep_for(
+        std::chrono::seconds(_boxdata.orientation_adjustment_time));
+
+    total_delta_x = -cvalue * _boxdata.deltax;
+    total_delta_y = -svalue * _boxdata.deltax;
+
+    // setup timer
+    t_start = boost::posix_time::second_clock::local_time();
+
+    total_mt_elapsed =
+        (long int)(1000 * _boxdata.deltax / _boxdata.desired_velocity);
+    // update the desired position step by step
+    do {
+      t_end = boost::posix_time::second_clock::local_time();
+      t_elapsed = t_end - t_start;
+      mt_elapsed = t_elapsed.total_milliseconds();
+      _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xD;
+      _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yD;
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    } while (mt_elapsed < total_mt_elapsed);
+  }
   // cooperation control for two vessels
   void gostraightline_both(Eigen::Vector3d &_setpoints_first,
                            Eigen::Vector3d &_setpoints_second,
@@ -353,17 +527,20 @@ class setpoints {
       t_end = boost::posix_time::second_clock::local_time();
       t_elapsed = t_end - t_start;
       mt_elapsed = t_elapsed.total_milliseconds();
-      double temp = mt_elapsed / total_mt_elapsed;
-      _setpoints_first(0) = total_delta_x_first * temp +
-                            _strightlinedata_both.desired_initialx_first;
-      _setpoints_first(1) = total_delta_y_first * temp +
-                            _strightlinedata_both.desired_initialy_first;
+      _setpoints_first(0) =
+          total_delta_x_first * mt_elapsed / total_mt_elapsed +
+          _strightlinedata_both.desired_initialx_first;
+      _setpoints_first(1) =
+          total_delta_y_first * mt_elapsed / total_mt_elapsed +
+          _strightlinedata_both.desired_initialy_first;
       _setpoints_first(2) = _strightlinedata_both.desired_theta;
 
-      _setpoints_second(0) = total_delta_x_second * temp +
-                             _strightlinedata_both.desired_initialx_second;
-      _setpoints_second(1) = total_delta_y_second * temp +
-                             _strightlinedata_both.desired_initialy_second;
+      _setpoints_second(0) =
+          total_delta_x_second * mt_elapsed / total_mt_elapsed +
+          _strightlinedata_both.desired_initialx_second;
+      _setpoints_second(1) =
+          total_delta_y_second * mt_elapsed / total_mt_elapsed +
+          _strightlinedata_both.desired_initialy_second;
       _setpoints_second(2) = _strightlinedata_both.desired_theta;
 
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
