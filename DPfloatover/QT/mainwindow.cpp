@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   GetCurrentPath();
   initializeLoglist();
+  initializestatus();
   updatelog();
 }
 
@@ -199,4 +200,18 @@ void MainWindow::on_actionCooperation_triggered() {
 void MainWindow::on_actionLicensing_triggered() {
   myDialogabout = new Dialogabout(this);
   myDialogabout->show();
+}
+
+void MainWindow::initializestatus() {
+  QPixmap onPix(13, 13);
+  onPix.fill(Qt::red);
+  ui->LB_QTML->setPixmap(onPix);
+  ui->LB_joystick1L->setPixmap(onPix);
+  ui->LB_joystick2L->setPixmap(onPix);
+  ui->LB_PNL->setPixmap(onPix);
+
+  ui->LB_QTMT->setText(QString("Offline"));
+  ui->LB_joystick1T->setText(QString("Offline"));
+  ui->LB_joystick2T->setText(QString("Offline"));
+  ui->LB_PNT->setText(QString("Offline"));
 }

@@ -105,6 +105,7 @@ class MainWindow : public QMainWindow {
   void GetCurrentPath();
   void initializeLoglist();
   void updatelog();
+  void initializestatus();
 };
 
 #endif  // MAINWINDOW_H
