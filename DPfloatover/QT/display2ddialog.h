@@ -65,6 +65,7 @@ class Display2DDialog : public QDialog {
   void initialize6DOFmotion(QCustomPlot *customPlot);
   void initializePlanarMotion(QCustomPlot *customPlot);
   void initializePlanarMotionData();
+  void initializeCircle(QCustomPlot *customPlot);
   bool eventFilter(QObject *target, QEvent *event);
 };
 

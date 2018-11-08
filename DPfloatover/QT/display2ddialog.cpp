@@ -50,6 +50,7 @@ void Display2DDialog::initializeAllUI() {
   // initialize the time series of 6DOF motion and planar motion
   initialize6DOFmotion(ui->customPlot_6DOF);
   initializePlanarMotion(ui->customPlot_2Dmotion);
+  initializeCircle(ui->customPlot_2Dmotion);
   // install event filter for mouse
   ui->customPlot_2Dmotion->installEventFilter(this);
 }
@@ -378,5 +379,47 @@ void Display2DDialog::initializePlanarMotionData() {
     trajectory_y[i] = QVector<double>(trajectorylength, 0);
     setpoints_x[i] = QVector<double>(1, 0);
     setpoints_y[i] = QVector<double>(1, 0);
+  }
+}
+
+void Display2DDialog::initializeCircle(QCustomPlot *customPlot) {
+  // generate data
+  const int arraylength_dgsparse = 100;
+  double radius_outer = 4;
+  QVector<QCPCurveData> dataSpiral_outer(arraylength_dgsparse);
+
+  for (unsigned i = 0; i != arraylength_dgsparse; ++i) {
+    double theta = i / (double)(arraylength_dgsparse - 1) * 2 * M_PI;
+    dataSpiral_outer[i] = QCPCurveData(i, radius_outer * std::cos(theta),
+                                       radius_outer * std::sin(theta));
+  }
+  // create curve objects
+  QCPCurve *fermatSpiral_outer =
+      new QCPCurve(customPlot->xAxis, customPlot->yAxis);
+  fermatSpiral_outer->data()->set(dataSpiral_outer, true);
+  fermatSpiral_outer->setPen(QPen(QColor(68, 68, 68, 255), 2));
+
+  const int step_angle_text = 10;  // step of angle and text
+  const int num_angle_text = 36;   // thus, number of angles and text
+
+  // setup text label in the circle
+  QVector<QCPItemText *> dbgtext_sparse;
+  for (int i = 0; i != num_angle_text; ++i) {
+    double angle_t = i * step_angle_text * M_PI / 180;
+
+    double text_posx = 1.05 * radius_outer * std::cos(angle_t);
+    double text_posy = 1.05 * radius_outer * std::sin(angle_t);
+    dbgtext_sparse.push_back(new QCPItemText(customPlot));
+    dbgtext_sparse.back()->position->setCoords(text_posy, text_posx);
+
+    if (i * step_angle_text > 180)
+      dbgtext_sparse.back()->setText(
+          QString::number(i * step_angle_text - 360));
+    else
+      dbgtext_sparse.back()->setText(QString::number(i * step_angle_text));
+
+    dbgtext_sparse.back()->setFont(
+        QFont("SansSerif", 2.5 * radius_outer, QFont::Bold));
+    dbgtext_sparse.back()->setColor(Qt::black);
   }
 }
