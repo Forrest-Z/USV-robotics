@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
   setGeometry(500, 250, 800, 800);
 
-  setupDemo(2);
+  setupDemo(15);
   // setupPlayground(ui->customPlot);
   // 0:  setupQuadraticDemo(ui->customPlot);
   // 1:  setupSimpleDemo(ui->customPlot);
@@ -1107,6 +1107,7 @@ void MainWindow::setupItemDemo(QCustomPlot *customPlot) {
                              phaseTracerText->top->pixelPosition().y()) *
                                 0.85));
 
+
   // add the group velocity tracer (green circle):
   QCPItemTracer *groupTracer = new QCPItemTracer(customPlot);
   groupTracer->setGraph(graph);
@@ -1152,6 +1153,16 @@ void MainWindow::setupItemDemo(QCustomPlot *customPlot) {
   arrow->endDir->setCoords(-5, -0.3);
   arrow->end->setCoords(-10, -0.2);
   arrow->setHead(QCPLineEnding::esSpikeArrow);
+
+  // add my arrow:
+  QCPItemCurve *myarrow = new QCPItemCurve(customPlot);
+  myarrow->setPen(QPen(Qt::red, 0.5));
+  myarrow->start->setCoords(0.01, 0.01);
+  myarrow->startDir->setCoords(0, 0);
+  myarrow->endDir->setCoords(1, 1);
+  myarrow->end->setCoords(0, 0);
+  myarrow->setHead(QCPLineEnding(QCPLineEnding::esSpikeArrow,16.0,20.0));
+
 
   // add the dispersion arrow label:
   QCPItemText *dispersionText = new QCPItemText(customPlot);
@@ -1619,7 +1630,7 @@ void MainWindow::bracketDataSlot() {
       (8 * M_PI + fmod(M_PI * 1.5 - phase, 6 * M_PI)) / k);
 
   ui->customPlot->replot();
-
+  ui->customPlot->yAxis->setScaleRatio(ui->customPlot->xAxis, 1.0);  // axis equal
   // calculate frames per second:
   double key = secs;
   static double lastFpsKey;

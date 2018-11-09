@@ -13,6 +13,7 @@ const uint32_t arraylength = 592;  // length of array for 2D display
 // length of array for trajectory display
 const uint32_t trajectorylength = 2000;
 const uint32_t arraylength_6DoF = 296;  // length of array for 6DoF display
+const double radius_heading = 4;
 
 namespace Ui {
 class Display2DDialog;
@@ -25,7 +26,6 @@ class Display2DDialog : public QDialog {
   explicit Display2DDialog(QWidget *parent = nullptr);
   ~Display2DDialog();
 
-  void setupDemo();
   void setupVesselRealtimeData();
 
  private slots:
@@ -50,9 +50,10 @@ class Display2DDialog : public QDialog {
   std::unordered_map<int, QVector<double>> motion_clients;
   QVector<double> motion6Dof_xaxis_data;
   QVector<double> motion6Dof_yaxis_data;
-
+  std::vector<QColor> V_Qcolor;
   std::vector<QCPAxisRect *> dofmotionplot;
-
+  std::vector<QCPItemCurve *> setheadingarrows;
+  std::vector<QCPItemCurve *> realtimeheadingarrows;
   void initializeAllUI();
   void convertvessel(double origin_x, double origin_y, double t_orient,
                      QVector<double> &t_datax, QVector<double> &t_datay);
@@ -66,6 +67,7 @@ class Display2DDialog : public QDialog {
   void initializePlanarMotion(QCustomPlot *customPlot);
   void initializePlanarMotionData();
   void initializeCircle(QCustomPlot *customPlot);
+  void updateheadingarrow(QCPItemCurve *_arrow, double _orientation);
   bool eventFilter(QObject *target, QEvent *event);
 };
 

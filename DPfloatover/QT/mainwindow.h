@@ -102,6 +102,12 @@ class MainWindow : public QMainWindow {
   QStringListModel *_model;
   Qt::WindowFlags flags = nullptr;
 
+  QString logfilepath;
+  QFile inputfile;
+
+  QPixmap onPixRed;
+  QPixmap onPixGreen;
+
   void GetCurrentPath();
   void initializeLoglist();
   void updatelog();

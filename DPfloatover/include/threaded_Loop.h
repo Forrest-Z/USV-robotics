@@ -35,8 +35,7 @@
 class threadloop {
  public:
   threadloop()
-      : connection_status(0),
-        mydb(defaultdbsavepath),
+      : mydb(defaultdbsavepath),
         index_controlmode_first(0),
         index_controlmode_second(0),
         index_controlmode_third(0),
@@ -272,8 +271,13 @@ class threadloop {
     dbsavepath = "/home/skloe/Coding/CPP1X/USV/DPfloatover/QT/build/data/" +
                  _projectname + ".db";
   }
-  int get_connection_status() const { return connection_status; }
 
+  int getgamepadstatus_first() const {
+    return mygamepad_first.getGamepadStatus();
+  }
+  int getgamepadstatus_second() const {
+    return mygamepad_second.getGamepadStatus();
+  }
   Vector6d getrealtimestate_first() const {
     return _realtimevessel_first.State;
   }
@@ -487,7 +491,6 @@ class threadloop {
   pthread_t _threadid_gamepad;    // the id of thread for gamepad
   pthread_t _threadid_pnsend;     // the id of thread for gamepad
   //
-  int connection_status;
   databasecpp mydb;
   gamepadmonitor_first mygamepad_first;
   gamepadmonitor_second mygamepad_second;

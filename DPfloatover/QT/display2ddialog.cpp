@@ -10,11 +10,14 @@ Display2DDialog::Display2DDialog(QWidget *parent)
     : QDialog(parent),
       ui(new Ui::Display2DDialog),
       motion6Dof_xaxis_data(arraylength_6DoF, 0),
-      motion6Dof_yaxis_data(arraylength_6DoF, 0) {
+      motion6Dof_yaxis_data(arraylength_6DoF, 0),
+      V_Qcolor({QColor(209, 17, 65), QColor(0, 177, 89), QColor(0, 174, 219)}) {
   ui->setupUi(this);
   initializePlanarMotionData();
   initializeAllUI();
-  setupDemo();
+  setupVesselRealtimeData();
+  setWindowTitle(demoName);
+  ui->status_text->clear();
 }
 
 Display2DDialog::~Display2DDialog() { delete ui; }
@@ -53,12 +56,6 @@ void Display2DDialog::initializeAllUI() {
   initializeCircle(ui->customPlot_2Dmotion);
   // install event filter for mouse
   ui->customPlot_2Dmotion->installEventFilter(this);
-}
-
-void Display2DDialog::setupDemo() {
-  setupVesselRealtimeData();
-  setWindowTitle(demoName);
-  ui->status_text->clear();
 }
 
 // start the real-time viewer for 6DOF and 2DOF motion of vessels
@@ -125,7 +122,11 @@ void Display2DDialog::vesselshapeDataSlot() {
         ->setData(trajectory_x[0], trajectory_y[0]);
     ui->customPlot_2Dmotion->graph(2 * MAXCONNECTION)
         ->setData(setpoints_x[0], setpoints_y[0]);
+
+    updateheadingarrow(setheadingarrows[0], _setpoint_first(2) * 180 / M_PI);
+    updateheadingarrow(realtimeheadingarrows[0], _state_first(5));
   }
+
   if (MAXCONNECTION > 1) {
     convertvessel(_state_second(0), _state_second(1), _state_second(5),
                   planarmotion_y[1], planarmotion_x[1]);
@@ -139,6 +140,8 @@ void Display2DDialog::vesselshapeDataSlot() {
         ->setData(trajectory_x[1], trajectory_y[1]);
     ui->customPlot_2Dmotion->graph(1 + 2 * MAXCONNECTION)
         ->setData(setpoints_x[1], setpoints_y[1]);
+    updateheadingarrow(setheadingarrows[1], _setpoint_second(2) * 180 / M_PI);
+    updateheadingarrow(realtimeheadingarrows[1], _state_second(5));
   }
   if (MAXCONNECTION > 2) {
     convertvessel(_state_third(0), _state_third(1), _state_third(5),
@@ -153,6 +156,8 @@ void Display2DDialog::vesselshapeDataSlot() {
         ->setData(trajectory_x[2], trajectory_y[2]);
     ui->customPlot_2Dmotion->graph(2 + 2 * MAXCONNECTION)
         ->setData(setpoints_x[2], setpoints_y[2]);
+    updateheadingarrow(setheadingarrows[2], _setpoint_third(2) * 180 / M_PI);
+    updateheadingarrow(realtimeheadingarrows[2], _state_third(5));
   }
   ui->customPlot_2Dmotion->replot();
 
@@ -299,8 +304,6 @@ void Display2DDialog::initializePlanarMotion(QCustomPlot *customPlot) {
   //  mypen.setColor(QColor(30, 40, 255, 150));
   //  customPlot->graph()->setPen(mypen);
 
-  std::vector<QColor> V_Qcolor = {QColor(255, 0, 0), QColor(0, 0, 0),
-                                  QColor(180, 180, 0)};
   // 2d display
   for (int c_index = 0; c_index != MAXCONNECTION; ++c_index) {
     customPlot->addGraph();
@@ -383,15 +386,14 @@ void Display2DDialog::initializePlanarMotionData() {
 }
 
 void Display2DDialog::initializeCircle(QCustomPlot *customPlot) {
-  // generate data
+  // generate data for circle
   const int arraylength_dgsparse = 100;
-  double radius_outer = 4;
   QVector<QCPCurveData> dataSpiral_outer(arraylength_dgsparse);
 
   for (unsigned i = 0; i != arraylength_dgsparse; ++i) {
     double theta = i / (double)(arraylength_dgsparse - 1) * 2 * M_PI;
-    dataSpiral_outer[i] = QCPCurveData(i, radius_outer * std::cos(theta),
-                                       radius_outer * std::sin(theta));
+    dataSpiral_outer[i] = QCPCurveData(i, radius_heading * std::cos(theta),
+                                       radius_heading * std::sin(theta));
   }
   // create curve objects
   QCPCurve *fermatSpiral_outer =
@@ -399,6 +401,7 @@ void Display2DDialog::initializeCircle(QCustomPlot *customPlot) {
   fermatSpiral_outer->data()->set(dataSpiral_outer, true);
   fermatSpiral_outer->setPen(QPen(QColor(68, 68, 68, 255), 2));
 
+  // generate data for text around circle
   const int step_angle_text = 10;  // step of angle and text
   const int num_angle_text = 36;   // thus, number of angles and text
 
@@ -407,8 +410,8 @@ void Display2DDialog::initializeCircle(QCustomPlot *customPlot) {
   for (int i = 0; i != num_angle_text; ++i) {
     double angle_t = i * step_angle_text * M_PI / 180;
 
-    double text_posx = 1.05 * radius_outer * std::cos(angle_t);
-    double text_posy = 1.05 * radius_outer * std::sin(angle_t);
+    double text_posx = 1.05 * radius_heading * std::cos(angle_t);
+    double text_posy = 1.05 * radius_heading * std::sin(angle_t);
     dbgtext_sparse.push_back(new QCPItemText(customPlot));
     dbgtext_sparse.back()->position->setCoords(text_posy, text_posx);
 
@@ -418,8 +421,37 @@ void Display2DDialog::initializeCircle(QCustomPlot *customPlot) {
     else
       dbgtext_sparse.back()->setText(QString::number(i * step_angle_text));
 
-    dbgtext_sparse.back()->setFont(
-        QFont("SansSerif", 2.5 * radius_outer, QFont::Bold));
+    dbgtext_sparse.back()->setFont(QFont("SansSerif", 2.5 * radius_heading));
     dbgtext_sparse.back()->setColor(Qt::black);
   }
+
+  // initialize the arrow
+  std::vector<double> t_angle = {90, 130, 90};
+  for (int c_index = 0; c_index != MAXCONNECTION; ++c_index) {
+    setheadingarrows.push_back(new QCPItemCurve(customPlot));
+    setheadingarrows[c_index]->setPen(QPen(V_Qcolor[c_index], 0.5));
+    setheadingarrows[c_index]->setHead(
+        QCPLineEnding(QCPLineEnding::esSpikeArrow, 16.0, 20.0));
+    updateheadingarrow(setheadingarrows[c_index], t_angle[c_index]);
+
+    realtimeheadingarrows.push_back(new QCPItemCurve(customPlot));
+    realtimeheadingarrows[c_index]->setPen(QPen(V_Qcolor[c_index], 0.5));
+    realtimeheadingarrows[c_index]->setHead(
+        QCPLineEnding(QCPLineEnding::esFlatArrow, 16.0, 20.0, true));
+    updateheadingarrow(realtimeheadingarrows[c_index], t_angle[c_index]);
+  }
+}
+
+void Display2DDialog::updateheadingarrow(QCPItemCurve *_arrow,
+                                         double _orientation  // deg
+                                         ) {
+  _orientation *= M_PI / 180;
+  _orientation = M_PI / 2 - _orientation;
+  double cvalue = std::cos(_orientation);
+  double svalue = std::sin(_orientation);
+  _arrow->start->setCoords(0.98 * radius_heading * cvalue,
+                           0.98 * radius_heading * svalue);
+  _arrow->end->setCoords(radius_heading * cvalue, radius_heading * svalue);
+  _arrow->startDir->setCoords(0.98 * cvalue, 0.98 * svalue);
+  _arrow->endDir->setCoords(cvalue, svalue);
 }

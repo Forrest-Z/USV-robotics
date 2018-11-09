@@ -2,7 +2,12 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow),
+      logfilepath(QString::fromUtf8(logsavepath.c_str())),
+      inputfile(logfilepath),
+      onPixRed(13, 13),
+      onPixGreen(13, 13) {
   ui->setupUi(this);
   // this->setWindowState(Qt::WindowMaximized);
   // this->setStyleSheet("background-color: black;");
@@ -99,9 +104,6 @@ void MainWindow::initializeLoglist() {
 }
 
 void MainWindow::readfilebyline() {
-  //  QString _path = globalvar::pwd + "/data/log";
-  QString _path = QString::fromUtf8(logsavepath.c_str());
-  QFile inputfile(_path);
   if (inputfile.open(QIODevice::ReadOnly)) {
     QTextStream in(&inputfile);
     QStringList loglist;
@@ -203,15 +205,32 @@ void MainWindow::on_actionLicensing_triggered() {
 }
 
 void MainWindow::initializestatus() {
-  QPixmap onPix(13, 13);
-  onPix.fill(Qt::red);
-  ui->LB_QTML->setPixmap(onPix);
-  ui->LB_joystick1L->setPixmap(onPix);
-  ui->LB_joystick2L->setPixmap(onPix);
-  ui->LB_PNL->setPixmap(onPix);
+  onPixRed.fill(QColor(255, 111, 105));
+  onPixGreen.fill(QColor(150, 206, 180));
 
+  // QTM status
+
+  ui->LB_QTML->setPixmap(onPixRed);
   ui->LB_QTMT->setText(QString("Offline"));
-  ui->LB_joystick1T->setText(QString("Offline"));
-  ui->LB_joystick2T->setText(QString("Offline"));
+
+  // I joystick
+  if (globalvar::_threadloop.getgamepadstatus_first()) {
+    ui->LB_joystick1L->setPixmap(onPixRed);
+    ui->LB_joystick1T->setText(QString("Offline"));
+  } else {
+    ui->LB_joystick1L->setPixmap(onPixGreen);
+    ui->LB_joystick1T->setText(QString("Online"));
+  }
+  // II joystick
+  if (globalvar::_threadloop.getgamepadstatus_second()) {
+    ui->LB_joystick2L->setPixmap(onPixRed);
+    ui->LB_joystick2T->setText(QString("Offline"));
+  } else {
+    ui->LB_joystick2L->setPixmap(onPixGreen);
+    ui->LB_joystick2T->setText(QString("Online"));
+  }
+
+  // PN server
+  ui->LB_PNL->setPixmap(onPixRed);
   ui->LB_PNT->setText(QString("Offline"));
 }
