@@ -52,7 +52,7 @@ class motioncapture {
         _file = fopen(logsavepath.c_str(), "a+");
         fprintf(_file, "Connected.%s.\n", pVer);
         fclose(_file);
-        return 0;
+        acquisitionindex = 0;
       }
 
     } else {
@@ -64,8 +64,9 @@ class motioncapture {
       delete poOutput;
       delete poInput;
       fclose(_file);
-      return 1;
+      acquisitionindex = 1;
     }
+    return acquisitionindex;
   }
   // request and update the motion data, this function could be called by
   // multi-thread
@@ -83,6 +84,8 @@ class motioncapture {
     fprintf(_file, "Shut down QTM client.\n");
     fclose(_file);
   }
+
+  int getmcapstatus() const { return acquisitionindex; }
 
  private:
   // raw data

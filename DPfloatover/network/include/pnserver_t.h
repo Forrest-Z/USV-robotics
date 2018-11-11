@@ -22,7 +22,6 @@ static PNIO_UINT32 g_ApplHandle = 0xFFFF;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 // pnd_test functions
 void pnd_test_buffer_full(PNIO_UINT8 *pBuffer, PNIO_UINT32 BufferSize);
 void pnd_test_set_mode(PNIO_MODE_TYPE mode);

@@ -35,7 +35,8 @@
 class threadloop {
  public:
   threadloop()
-      : mydb(defaultdbsavepath),
+      : pnserver_status(1),
+        mydb(defaultdbsavepath),
         index_controlmode_first(0),
         index_controlmode_second(0),
         index_controlmode_third(0),
@@ -55,6 +56,7 @@ class threadloop {
   void start_connnection_t() {
     if (_SERV_CP_Startup() == 0) {
       _openpncontroller();
+      pnserver_status = 0;
       pnd_test_set_mode(PNIO_MODE_OPERATE);
       createtables();
     }
@@ -278,9 +280,11 @@ class threadloop {
   int getgamepadstatus_second() const {
     return mygamepad_second.getGamepadStatus();
   }
+  int getqtmstatus() const { return mymotioncapture.getmcapstatus(); }
   Vector6d getrealtimestate_first() const {
     return _realtimevessel_first.State;
   }
+  int getpnserver_status() const { return pnserver_status; }
   Vector6d getrealtimestate_second() const {
     return _realtimevessel_second.State;
   }
@@ -491,6 +495,7 @@ class threadloop {
   pthread_t _threadid_gamepad;    // the id of thread for gamepad
   pthread_t _threadid_pnsend;     // the id of thread for gamepad
   //
+  int pnserver_status;
   databasecpp mydb;
   gamepadmonitor_first mygamepad_first;
   gamepadmonitor_second mygamepad_second;

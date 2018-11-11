@@ -47,6 +47,7 @@ class MainWindow : public QMainWindow {
   void on_PB_suspend_clicked();
 
   void readfilebyline();
+  void updatestatus();
 
   void on_PB_enablePLC_clicked();
 
@@ -110,7 +111,7 @@ class MainWindow : public QMainWindow {
 
   void GetCurrentPath();
   void initializeLoglist();
-  void updatelog();
+  void updatelogAndStatus();
   void initializestatus();
 };
 

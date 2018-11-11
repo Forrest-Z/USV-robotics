@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
   GetCurrentPath();
   initializeLoglist();
   initializestatus();
-  updatelog();
+  updatelogAndStatus();
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -104,21 +104,21 @@ void MainWindow::initializeLoglist() {
 }
 
 void MainWindow::readfilebyline() {
-  if (inputfile.open(QIODevice::ReadOnly)) {
-    QTextStream in(&inputfile);
-    QStringList loglist;
-    while (!in.atEnd()) {
-      QString line = in.readLine();
-      loglist << line;
-    }
-    _model->setStringList(loglist);
+  QTextStream in(&inputfile);
+  QStringList loglist;
+  while (!in.atEnd()) {
+    QString line = in.readLine();
+    loglist << line;
   }
+  _model->setStringList(loglist);
 }
 
-void MainWindow::updatelog() {
+void MainWindow::updatelogAndStatus() {
   QTimer *timer = new QTimer(this);
-  connect(timer, SIGNAL(timeout()), this, SLOT(readfilebyline()));
-  timer->start(10000);
+  if (inputfile.open(QIODevice::ReadOnly))
+    connect(timer, SIGNAL(timeout()), this, SLOT(readfilebyline()));
+  connect(timer, SIGNAL(timeout()), this, SLOT(updatestatus()));
+  timer->start(1000);
 }
 
 void MainWindow::on_RB_headholdI_clicked() {
@@ -209,10 +209,30 @@ void MainWindow::initializestatus() {
   onPixGreen.fill(QColor(150, 206, 180));
 
   // QTM status
-
   ui->LB_QTML->setPixmap(onPixRed);
   ui->LB_QTMT->setText(QString("Offline"));
 
+  // I joystick
+  ui->LB_joystick1L->setPixmap(onPixRed);
+  ui->LB_joystick1T->setText(QString("Offline"));
+  // II joystick
+  ui->LB_joystick2L->setPixmap(onPixRed);
+  ui->LB_joystick2T->setText(QString("Offline"));
+
+  // PN server
+  ui->LB_PNL->setPixmap(onPixRed);
+  ui->LB_PNT->setText(QString("Offline"));
+}
+
+void MainWindow::updatestatus() {
+  // QTM status
+  if (globalvar::_threadloop.getqtmstatus()) {
+    ui->LB_QTML->setPixmap(onPixRed);
+    ui->LB_QTMT->setText(QString("Offline"));
+  } else {
+    ui->LB_QTML->setPixmap(onPixGreen);
+    ui->LB_QTMT->setText(QString("Online"));
+  }
   // I joystick
   if (globalvar::_threadloop.getgamepadstatus_first()) {
     ui->LB_joystick1L->setPixmap(onPixRed);
@@ -229,8 +249,12 @@ void MainWindow::initializestatus() {
     ui->LB_joystick2L->setPixmap(onPixGreen);
     ui->LB_joystick2T->setText(QString("Online"));
   }
-
   // PN server
-  ui->LB_PNL->setPixmap(onPixRed);
-  ui->LB_PNT->setText(QString("Offline"));
+  if (globalvar::_threadloop.getpnserver_status()) {
+    ui->LB_PNL->setPixmap(onPixRed);
+    ui->LB_PNT->setText(QString("Offline"));
+  } else {
+    ui->LB_PNL->setPixmap(onPixGreen);
+    ui->LB_PNT->setText(QString("Online"));
+  }
 }
