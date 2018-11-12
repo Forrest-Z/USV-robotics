@@ -208,7 +208,7 @@ class threadloop {
   void closelooop() {
     for (int i = 0; i != MAXCONNECTION; ++i) stopmosekthread(i);
     resetallvessels();  // set zero of each vessel
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     pthread_cancel(_threadid_pnsend);
 
     closemotioncapture();  // close qtm clients
@@ -518,7 +518,7 @@ class threadloop {
       {17, 0, 0, 0, 20, 0, 0, 0, 100},         // damping
       20,                                      // P_x
       10,                                      // P_y
-      30.0,                                    // P_theta
+      50.0,                                    // P_theta
       0.0,                                     // I_x
       0.0,                                     // I_y
       0.0,                                     // I_theta
@@ -576,27 +576,27 @@ class threadloop {
       0.0,                                     // I_y
       0.0,                                     // I_theta
       200.0,                                   // D_x
-      100.0,                                   // D_y
-      100.0,                                   // D_theta
+      150.0,                                   // D_y
+      300.0,                                   // D_theta
       0.01,                                    // allowed_error_x
       0.01,                                    // allowed_error_y;
       0.02,                                    // allowed_error_orientation;
       6.0,                                     // maxpositive_x_thrust(N)
       5.0,                                     // maxnegative_x_thrust(N)
       3,                                       // maxpositive_y_thrust(N)
-      1.5,                                     // maxnegative_y_thrust(N)
+      2,                                       // maxnegative_y_thrust(N)
       5,                                       // maxpositive_Mz_thrust(N*m)
       3,                                       // maxnegative_Mz_thrust(N*m)
       3,                                       // m
       3,                                       // n
       9,                                       // numvar
       3,                                       // num_constraints
-      5.5e-7,                                  // Kbar_positive
-      1.0e-7,                                  // Kbar_negative
+      3.7e-7,                                  // Kbar_positive
+      1.7e-7,                                  // Kbar_negative
       100,                                     // max_delta_rotation_bow
       3000,                                    // max_rotation_bow
-      4.95,                                    // max_thrust_bow_positive
-      0.9,                                     // max_thrust_bow_negative
+      3.33,                                    // max_thrust_bow_positive
+      1.53,                                    // max_thrust_bow_negative
       2e-5,                                    // K_left
       2e-5,                                    // K_right
       20,                                      // max_delta_rotation_azimuth
@@ -808,7 +808,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      realtimeprint_first();
+      // realtimeprint_first();
     }
   }
 
@@ -853,7 +853,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      // realtimeprint_second();
+      realtimeprint_second();
     }
   }
 
@@ -1005,6 +1005,10 @@ class threadloop {
               << _realtimevessel_second.BalphaU << std::endl;
     std::cout << "Second: setPoints:" << std::endl
               << _realtimevessel_second.setPoints << std::endl;
+    std::cout << "Second: CTG2B:" << std::endl
+              << _realtimevessel_second.CTG2B << std::endl;
+    std::cout << "Second: CTB2G:" << std::endl
+              << _realtimevessel_second.CTB2G << std::endl;
   }
   void realtimeprint_third() {
     std::cout << "Desired force:" << std::endl

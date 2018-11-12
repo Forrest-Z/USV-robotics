@@ -73,7 +73,7 @@ class databasecpp {
                       " rpm_left    INT, "
                       " rpm_right   INT, " /* the speed of each propeller*/
                       " xb          DOUBLE, "
-                      " yb          DOUBLE); ";
+                      " yb          DOUBLE );";
 
     db << str;
   }

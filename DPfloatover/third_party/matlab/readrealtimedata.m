@@ -28,11 +28,11 @@ Tau_second=totaldata_second(:,16:18);
 est_second=totaldata_second(:,19:21);
 alpha_second=totaldata_second(:,22:24);
 rpm_second=totaldata_second(:,25:27);
-
+State4control_second=totaldata_second(:,28:29);
 
 %% figure 1 of II vessel
-s_xmin=950;
-s_xmax=1200;
+s_xmin=0;
+s_xmax=300;
 desiredposition_second=[0 0 0];
 figure(1)
 subplot(311)
@@ -119,6 +119,31 @@ xlabel('time(s)');
 ylabel('Yaw(N*m)');
 legend('Desired force','Estimated force');
 
+
+%% figure 5
+% figure(9)
+% subplot(311)
+% plot(timestamp_second, State_second(:,1),'-r','linewidth',2); hold on; 
+% plot(timestamp_second, State_second(:,1),':k','linewidth',2);
+% xlim([s_xmin s_xmax]);
+% xlabel('time(s)');
+% ylabel('surge(N)');
+% legend('Desired force','Estimated force');
+% title('PID force --- II vessel')
+% subplot(312)
+% plot(timestamp_second, State_second(:,2),'-r','linewidth',2); hold on; 
+% plot(timestamp_second, est_second(:,2),':k','linewidth',2);
+% xlim([s_xmin s_xmax]);
+% xlabel('time(s)');
+% ylabel('sway(N)');
+% legend('Desired force','Estimated force');
+% subplot(313)
+% plot(timestamp_second, State_second(:,3)*180/pi,'-r','linewidth',2); hold on; 
+% plot(timestamp_second, est_second(:,3),':k','linewidth',2);
+% xlim([s_xmin s_xmax]);
+% xlabel('time(s)');
+% ylabel('Yaw(N*m)');
+% legend('Desired force','Estimated force');
 
 %% figure 1 of I vessel
 desiredposition_first=[0.6 2 0];

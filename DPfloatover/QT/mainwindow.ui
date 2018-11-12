@@ -478,11 +478,14 @@
      <string>Parameter</string>
     </property>
     <addaction name="actionGamepad_G"/>
-    <addaction name="actionSetpoints"/>
-    <addaction name="actionStraightLine"/>
-    <addaction name="actionRotation"/>
-    <addaction name="actionBox"/>
+    <addaction name="actionCoG"/>
+    <addaction name="separator"/>
     <addaction name="actionCooperation"/>
+    <addaction name="actionBox"/>
+    <addaction name="actionStraightLine"/>
+    <addaction name="actionSetpoints"/>
+    <addaction name="actionRotation"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuOpen"/>
    <addaction name="menuJoystick"/>
@@ -546,6 +549,11 @@
   <action name="actionLicensing">
    <property name="text">
     <string>Licensing</string>
+   </property>
+  </action>
+  <action name="actionCoG">
+   <property name="text">
+    <string>CoG (&amp;C)</string>
    </property>
   </action>
  </widget>

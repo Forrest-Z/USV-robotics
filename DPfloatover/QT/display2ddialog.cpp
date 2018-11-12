@@ -111,7 +111,7 @@ void Display2DDialog::vesselshapeDataSlot() {
   // the first vessel
   if (MAXCONNECTION > 0) {
     convertvessel(_state_first(0), _state_first(1), _state_first(5),
-                  planarmotion_y[0], planarmotion_x[0]);
+                  planarmotion_y[0], planarmotion_x[0], 0);
     updatetrajectoryvector(_state_first(0), _state_first(1), trajectory_y[0],
                            trajectory_x[0]);
     updatesetpointvector(_setpoint_first(0), _setpoint_first(1), setpoints_y[0],
@@ -129,7 +129,7 @@ void Display2DDialog::vesselshapeDataSlot() {
 
   if (MAXCONNECTION > 1) {
     convertvessel(_state_second(0), _state_second(1), _state_second(5),
-                  planarmotion_y[1], planarmotion_x[1]);
+                  planarmotion_y[1], planarmotion_x[1], 1);
     updatetrajectoryvector(_state_second(0), _state_second(1), trajectory_y[1],
                            trajectory_x[1]);
     updatesetpointvector(_setpoint_second(0), _setpoint_second(1),
@@ -145,7 +145,7 @@ void Display2DDialog::vesselshapeDataSlot() {
   }
   if (MAXCONNECTION > 2) {
     convertvessel(_state_third(0), _state_third(1), _state_third(5),
-                  planarmotion_y[2], planarmotion_x[2]);
+                  planarmotion_y[2], planarmotion_x[2], 2);
     updatetrajectoryvector(_state_third(0), _state_third(1), trajectory_y[2],
                            trajectory_x[2]);
     updatesetpointvector(_setpoint_third(0), _setpoint_third(1), setpoints_y[2],
@@ -229,7 +229,7 @@ void Display2DDialog::motion6DOFdataSlot() {
 
 void Display2DDialog::convertvessel(double origin_x, double origin_y,
                                     double t_orient, QVector<double> &t_datax,
-                                    QVector<double> &t_datay) {
+                                    QVector<double> &t_datay, int index) {
   // we should exchange x, y between the display coordinate and global
   // coordinate
 
@@ -238,10 +238,14 @@ void Display2DDialog::convertvessel(double origin_x, double origin_y,
   double c_value = std::cos(t_orient);
   double s_value = std::sin(t_orient);
   for (unsigned i = 0; i != arraylength; ++i) {
-    t_datax[i] = c_value * 0.33 * globalvar::vesselshape_x[i] -
-                 s_value * 0.28 * globalvar::vesselshape_y[i] + origin_x;
-    t_datay[i] = s_value * 0.33 * globalvar::vesselshape_x[i] +
-                 c_value * 0.28 * globalvar::vesselshape_y[i] + origin_y;
+    t_datax[i] =
+        c_value * (0.33 * globalvar::vesselshape_x[i] - CoG4viewer[index][0]) -
+        s_value * (0.28 * globalvar::vesselshape_y[i] - CoG4viewer[index][1]) +
+        origin_x;
+    t_datay[i] =
+        s_value * (0.33 * globalvar::vesselshape_x[i] - CoG4viewer[index][0]) +
+        c_value * (0.28 * globalvar::vesselshape_y[i] - CoG4viewer[index][1]) +
+        origin_y;
   }
 }
 // pop_front and push_back
@@ -308,7 +312,8 @@ void Display2DDialog::initializePlanarMotion(QCustomPlot *customPlot) {
   for (int c_index = 0; c_index != MAXCONNECTION; ++c_index) {
     customPlot->addGraph();
     // convert position and orientation of vessel to global coordinate
-    convertvessel(0, 1, 180, planarmotion_y[c_index], planarmotion_x[c_index]);
+    convertvessel(0, 1, 180, planarmotion_y[c_index], planarmotion_x[c_index],
+                  c_index);
 
     customPlot->graph(c_index)->setLineStyle(QCPGraph::lsNone);
     QCPScatterStyle myQCPScatterStyle(QCPScatterStyle::ssDisc,
@@ -382,6 +387,7 @@ void Display2DDialog::initializePlanarMotionData() {
     trajectory_y[i] = QVector<double>(trajectorylength, 0);
     setpoints_x[i] = QVector<double>(1, 0);
     setpoints_y[i] = QVector<double>(1, 0);
+    CoG4viewer[i] = {2, 0};
   }
 }
 

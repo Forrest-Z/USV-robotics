@@ -46,6 +46,7 @@ class Display2DDialog : public QDialog {
   std::unordered_map<int, QVector<double>> trajectory_y;
   std::unordered_map<int, QVector<double>> setpoints_x;
   std::unordered_map<int, QVector<double>> setpoints_y;
+  std::unordered_map<int, std::vector<double>> CoG4viewer;
   // data for 6DoF time series
   std::unordered_map<int, QVector<double>> motion_clients;
   QVector<double> motion6Dof_xaxis_data;
@@ -56,7 +57,8 @@ class Display2DDialog : public QDialog {
   std::vector<QCPItemCurve *> realtimeheadingarrows;
   void initializeAllUI();
   void convertvessel(double origin_x, double origin_y, double t_orient,
-                     QVector<double> &t_datax, QVector<double> &t_datay);
+                     QVector<double> &t_datax, QVector<double> &t_datay,
+                     int index);
   void updatetrajectoryvector(double origin_x, double origin_y,
                               QVector<double> &t_trajectory_x,
                               QVector<double> &t_trajectory_y);

@@ -89,7 +89,9 @@ class MainWindow : public QMainWindow {
 
   void on_actionLicensing_triggered();
 
- private:
+  void on_actionCoG_triggered();
+
+private:
   Ui::MainWindow *ui;
   Display2DDialog *myDisplay2DDialog;
   ThrusterDiag *myThrusterDiag;
@@ -104,7 +106,6 @@ class MainWindow : public QMainWindow {
   Qt::WindowFlags flags = nullptr;
 
   QString logfilepath;
-  QFile inputfile;
 
   QPixmap onPixRed;
   QPixmap onPixGreen;

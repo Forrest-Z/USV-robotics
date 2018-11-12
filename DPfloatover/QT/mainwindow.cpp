@@ -5,7 +5,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
       ui(new Ui::MainWindow),
       logfilepath(QString::fromUtf8(logsavepath.c_str())),
-      inputfile(logfilepath),
       onPixRed(13, 13),
       onPixGreen(13, 13) {
   ui->setupUi(this);
@@ -104,19 +103,21 @@ void MainWindow::initializeLoglist() {
 }
 
 void MainWindow::readfilebyline() {
-  QTextStream in(&inputfile);
-  QStringList loglist;
-  while (!in.atEnd()) {
-    QString line = in.readLine();
-    loglist << line;
+  QFile inputfile(logfilepath);
+  if (inputfile.open(QIODevice::ReadOnly)) {
+    QTextStream in(&inputfile);
+    QStringList loglist;
+    while (!in.atEnd()) {
+      QString line = in.readLine();
+      loglist << line;
+    }
+    _model->setStringList(loglist);
   }
-  _model->setStringList(loglist);
 }
 
 void MainWindow::updatelogAndStatus() {
   QTimer *timer = new QTimer(this);
-  if (inputfile.open(QIODevice::ReadOnly))
-    connect(timer, SIGNAL(timeout()), this, SLOT(readfilebyline()));
+  connect(timer, SIGNAL(timeout()), this, SLOT(readfilebyline()));
   connect(timer, SIGNAL(timeout()), this, SLOT(updatestatus()));
   timer->start(1000);
 }
@@ -257,4 +258,8 @@ void MainWindow::updatestatus() {
     ui->LB_PNL->setPixmap(onPixGreen);
     ui->LB_PNT->setText(QString("Online"));
   }
+}
+void MainWindow::on_actionCoG_triggered()
+{
+
 }
