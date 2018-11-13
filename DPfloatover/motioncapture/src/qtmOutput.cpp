@@ -660,17 +660,16 @@ void COutput::calculateCoordinateTransform(Eigen::Matrix3d& _CTG2B,
                                            double desired_orientation) {
   double cvalue = 0.0;
   double svalue = 0.0;
-  // if (abs(realtime_orientation - desired_orientation) < M_PI / 36) {
-  //   // use the fixed setpoint orientation to prevent measurement noise
-  //   cvalue = std::cos(desired_orientation);
-  //   svalue = std::sin(desired_orientation);
-  // } else {
-  //   // if larger than 5 deg, we use the realtime orientation
-  //   cvalue = std::cos(realtime_orientation);
-  //   svalue = std::sin(realtime_orientation);
-  // }
-  cvalue = std::cos(desired_orientation);
-  svalue = std::sin(desired_orientation);
+  if (abs(realtime_orientation - desired_orientation) < M_PI / 18) {
+    // use the fixed setpoint orientation to prevent measurement noise
+    cvalue = std::cos(desired_orientation);
+    svalue = std::sin(desired_orientation);
+  } else {
+    // if larger than 5 deg, we use the realtime orientation
+    cvalue = std::cos(realtime_orientation);
+    svalue = std::sin(realtime_orientation);
+  }
+
   _CTG2B(0, 0) = cvalue;
   _CTG2B(1, 1) = cvalue;
   _CTG2B(0, 1) = svalue;
