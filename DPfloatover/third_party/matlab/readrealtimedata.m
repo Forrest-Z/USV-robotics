@@ -31,11 +31,11 @@ rpm_second=totaldata_second(:,25:27);
 State4control_second=totaldata_second(:,28:29);
 
 %% figure 1 of II vessel
-s_xmin=400;
-s_xmax=1900;
+s_xmin=600;
+s_xmax=6780;
 index2view=find(timestamp_second>s_xmin & timestamp_second<s_xmax);
 timestamp_second=timestamp_second(index2view);
-desiredposition_second=[0 0 0];
+desiredposition_second=[0 -2 160];
 figure(1)
 subplot(311)
 plot(timestamp_second,Position_second(index2view,1),'-r','linewidth',2);hold on;
@@ -146,7 +146,7 @@ legend('Desired force','Estimated force');
 
 %% figure 1 of I vessel
 timestamp_first=timestamp_first(index2view);
-desiredposition_first=[0.6 2 0];
+desiredposition_first=[0.0 3 0];
 figure(5)
 subplot(311)
 plot(timestamp_first,Position_first(index2view,1),'-r','linewidth',2);hold on;

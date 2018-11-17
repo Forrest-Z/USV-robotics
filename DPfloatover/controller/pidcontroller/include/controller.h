@@ -65,13 +65,13 @@ class controller_first {
   kalmanfilter_first mykalmanfilter;              // kalman filter
   pidcontroller_first mypidcontroller;            // pid controller
   thrusterallocation_first mythrusterallocation;  // thruster allocation
-
   double maxpositive_x_thruster;
   double maxnegative_x_thruster;
   double maxpositive_y_thruster;
   double maxnegative_y_thruster;
   double maxpositive_Mz_thruster;
   double maxnegative_Mz_thruster;
+
   // initialize the controller
   void initializeController(const vessel_first &_vessel) {
     maxpositive_x_thruster = _vessel.maxpositive_x_thruster;

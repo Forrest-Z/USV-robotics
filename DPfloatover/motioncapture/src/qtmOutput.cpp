@@ -2,13 +2,124 @@
 
 #define WRITE_ANALOG_HEADERS_TO_FILE
 
+motiondataprocess::motiondataprocess() : index_step(0) { initializedata(); }
+motiondataprocess::~motiondataprocess() {}
+void motiondataprocess::initializedata() {
+  formeraverageposition.setZero();
+  average_yaw.setZero();
+  average_surge.setZero();
+  average_sway.setZero();
+  average_yaw_velocity.setZero();
+  average_surge_velocity.setZero();
+  average_sway_velocity.setZero();
+}
+
+Eigen::Vector3d motiondataprocess::movingaverageposition(
+    double _m_fx, double _m_fy, double _rad_orientation) {
+  Eigen::Vector3d position_vector = Eigen::Vector3d::Zero();
+  position_vector << movingaverage_surge(_m_fx), movingaverage_sway(_m_fy),
+      movingaverage_yaw(_rad_orientation);
+  return position_vector;
+}
+
+Eigen::Vector3d motiondataprocess::movingaveragevelocity(
+    const Eigen::Vector3d& _average_position_vector) {
+  Eigen::Vector3d velocity_global = cal_velocity(_average_position_vector);
+  Eigen::Vector3d average_velocity_global = Eigen::Vector3d::Zero();
+  average_velocity_global << movingaverage_surge_velocity(velocity_global(0)),
+      movingaverage_sway_velocity(velocity_global(1)),
+      movingaverage_yaw_velocity(velocity_global(2));
+  return average_velocity_global;
+}
+
+// moving average lowpass to remove noise in yaw
+double motiondataprocess::movingaverage_yaw(double _dtheta) {
+  // pop_front
+  VectorAYaw t_average_yaw = VectorAYaw::Zero();
+  int index = num_average_point_yaw - 1;
+  t_average_yaw.head(index) = average_yaw.tail(index);
+  // push back
+  t_average_yaw(index) = _dtheta;
+  average_yaw = t_average_yaw;
+  // calculate the mean value
+  return average_yaw.mean();
+}
+
+// moving average lowpass to remove noise in surge
+double motiondataprocess::movingaverage_surge(double _dx) {
+  // pop_front
+  VectorASurge t_average_surge = VectorASurge::Zero();
+  int index = num_average_point_surge - 1;
+  t_average_surge.head(index) = average_surge.tail(index);
+  // push back
+  t_average_surge(index) = _dx;
+  average_surge = t_average_surge;
+  // calculate the mean value
+  return average_surge.mean();
+}
+// moving average lowpass to remove noise in sway
+double motiondataprocess::movingaverage_sway(double _dy) {
+  // pop_front
+  VectorASway t_average_sway = VectorASway::Zero();
+  int index = num_average_point_sway - 1;
+  t_average_sway.head(index) = average_sway.tail(index);
+  // push back
+  t_average_sway(index) = _dy;
+  average_sway = t_average_sway;
+  // calculate the mean value
+  return average_sway.mean();
+}
+
+// moving average lowpass to remove noise in yaw velocity
+double motiondataprocess::movingaverage_yaw_velocity(double _vtheta) {
+  // pop_front
+  VectorAYawV t_average_yawV = VectorAYawV::Zero();
+  int index = num_average_yaw_velocity - 1;
+  t_average_yawV.head(index) = average_yaw_velocity.tail(index);
+  // push back
+  t_average_yawV(index) = _vtheta;
+  average_yaw_velocity = t_average_yawV;
+  // calculate the mean value
+  return average_yaw_velocity.mean();
+}
+// moving average lowpass to remove noise in surge velocity
+double motiondataprocess::movingaverage_surge_velocity(double _vx) {
+  // pop_front
+  VectorASurgeV t_average_surgeV = VectorASurgeV::Zero();
+  int index = num_average_surge_velocity - 1;
+  t_average_surgeV.head(index) = average_surge_velocity.tail(index);
+  // push back
+  t_average_surgeV(index) = _vx;
+  average_surge_velocity = t_average_surgeV;
+  // calculate the mean value
+  return average_surge_velocity.mean();
+}
+// moving average lowpass to remove noise in sway velocity
+double motiondataprocess::movingaverage_sway_velocity(double _vy) {
+  // pop_front
+  VectorASwayV t_average_swayV = VectorASwayV::Zero();
+  int index = num_average_sway_velocity - 1;
+  t_average_swayV.head(index) = average_sway_velocity.tail(index);
+  // push back
+  t_average_swayV(index) = _vy;
+  average_sway_velocity = t_average_swayV;
+  // calculate the mean value
+  return average_sway_velocity.mean();
+}
+
+Eigen::Vector3d motiondataprocess::cal_velocity(
+    const Eigen::Vector3d& _average_position_vector) {
+  Eigen::Vector3d velocity =
+      (_average_position_vector - formeraverageposition) / motion_sample_time;
+  formeraverageposition = _average_position_vector;
+  return velocity;
+}
+
 COutput::COutput()
     : mfDist(NULL),
       mbWriteLogFileHeader(true),
       time_start(T_BOOST_CLOCK::local_time()),
-      mbOutputModeScrolling(false) {
-  initializemovingaverage();
-}
+      mbOutputModeScrolling(false) {}
 
 void COutput::HandleDataFrame(FILE* logfile, bool bLogMinimum,
                               CRTProtocol* poRTProtocol) {
@@ -372,17 +483,19 @@ void COutput::updaterealtimevesseldata_first(
     _realtimevessel.Position(4) = _fAng2;
     _realtimevessel.Position(5) = _fAng3;
 
-    _realtimevessel.Measurement(0) = movingaverage_surge_first(m_fx);
-    _realtimevessel.Measurement(1) = movingaverage_sway_first(m_fy);
-    // _measurement(2) = rad_orientation;
-    double average_orientation = movingaverage_yaw_first(rad_orientation);
+    Eigen::Vector3d average_position_vector =
+        motiondataprocess_first.movingaverageposition(m_fx, m_fy,
+                                                      rad_orientation);
+
+    _realtimevessel.Measurement.head(3) = average_position_vector;
+
     calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
-                                 average_orientation,
+                                 average_position_vector(2),
                                  _realtimevessel.setPoints(2));
-    _realtimevessel.Measurement(2) = average_orientation;
+
     _realtimevessel.Measurement.tail(3) =
         _realtimevessel.CTG2B *
-        movingaverage_velocity_first(m_fx, m_fy, rad_orientation);
+        motiondataprocess_first.movingaveragevelocity(average_position_vector);
   }
 }
 
@@ -401,17 +514,19 @@ void COutput::updaterealtimevesseldata_second(
     _realtimevessel.Position(4) = _fAng2;
     _realtimevessel.Position(5) = _fAng3;
 
-    _realtimevessel.Measurement(0) = movingaverage_surge_second(m_fx);
-    _realtimevessel.Measurement(1) = movingaverage_sway_second(m_fy);
-    // _measurement(2) = rad_orientation;
-    double average_orientation = movingaverage_yaw_second(rad_orientation);
+    Eigen::Vector3d average_position_vector =
+        motiondataprocess_second.movingaverageposition(m_fx, m_fy,
+                                                       rad_orientation);
+
+    _realtimevessel.Measurement.head(3) = average_position_vector;
+
     calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
-                                 average_orientation,
+                                 average_position_vector(2),
                                  _realtimevessel.setPoints(2));
-    _realtimevessel.Measurement(2) = average_orientation;
+
     _realtimevessel.Measurement.tail(3) =
         _realtimevessel.CTG2B *
-        movingaverage_velocity_second(m_fx, m_fy, rad_orientation);
+        motiondataprocess_second.movingaveragevelocity(average_position_vector);
   }
 }
 
@@ -430,227 +545,25 @@ void COutput::updaterealtimevesseldata_third(
     _realtimevessel.Position(4) = _fAng2;
     _realtimevessel.Position(5) = _fAng3;
 
-    _realtimevessel.Measurement(0) = movingaverage_surge_third(m_fx);
-    _realtimevessel.Measurement(1) = movingaverage_sway_third(m_fy);
-    // _measurement(2) = rad_orientation;
-    double average_orientation = movingaverage_yaw_third(rad_orientation);
+    Eigen::Vector3d average_position_vector =
+        motiondataprocess_third.movingaverageposition(m_fx, m_fy,
+                                                      rad_orientation);
+
+    _realtimevessel.Measurement.head(3) = average_position_vector;
+
     calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
-                                 average_orientation,
+                                 average_position_vector(2),
                                  _realtimevessel.setPoints(2));
-    _realtimevessel.Measurement(2) = average_orientation;
+
     _realtimevessel.Measurement.tail(3) =
         _realtimevessel.CTG2B *
-        movingaverage_velocity_third(m_fx, m_fy, rad_orientation);
+        motiondataprocess_third.movingaveragevelocity(average_position_vector);
   }
 }
 
 void COutput::resetmeasurement(Vector6d& _measurement, Vector6d& _position) {
   _measurement.setZero();
   _position.setZero();
-}
-
-void COutput::initializemovingaverage() {
-  if (MAXCONNECTION > 0) {
-    Matrix_average_first.setZero();
-    average_vector_first.setZero();
-    average_yaw_first.setZero();
-    average_surge_first.setZero();
-    average_sway_first.setZero();
-  }
-  if (MAXCONNECTION > 1) {
-    Matrix_average_second.setZero();
-    average_vector_second.setZero();
-    average_yaw_second.setZero();
-    average_surge_second.setZero();
-    average_sway_second.setZero();
-  }
-  if (MAXCONNECTION > 2) {
-    Matrix_average_third.setZero();
-    average_vector_third.setZero();
-    average_yaw_third.setZero();
-    average_surge_third.setZero();
-    average_sway_third.setZero();
-  }
-}
-
-Eigen::Vector3d COutput::movingaverage_velocity_first(double _dx, double _dy,
-                                                      double _dtheta) {
-  // copy the former average vector
-  Eigen::Vector3d former_average_vector = average_vector_first;
-  // pop_front
-  Matrix3100d t_Matrix_average = Matrix3100d::Zero();
-  int index = num_average_point_velocity - 1;
-  t_Matrix_average.leftCols(index) = Matrix_average_first.rightCols(index);
-  // push_back
-  t_Matrix_average(0, index) = _dx;
-  t_Matrix_average(1, index) = _dy;
-  t_Matrix_average(2, index) = _dtheta;
-  Matrix_average_first = t_Matrix_average;
-  // calculate the mean value
-  for (int i = 0; i != 3; ++i)
-    average_vector_first(i) = Matrix_average_first.row(i).mean();
-  // calculate the velocity
-  Eigen::Vector3d average_velocity = Eigen::Vector3d::Zero();
-  average_velocity =
-      (average_vector_first - former_average_vector) / motion_sample_time;
-  return average_velocity;  // in the global coordinate
-}
-
-// moving average lowpass to remove noise
-double COutput::movingaverage_yaw_first(double _dtheta) {
-  // pop_front
-  VectorAYaw t_average_yaw = VectorAYaw::Zero();
-  int index = num_average_point_yaw - 1;
-  t_average_yaw.head(index) = average_yaw_first.tail(index);
-  // push back
-  t_average_yaw(index) = _dtheta;
-  average_yaw_first = t_average_yaw;
-  // calculate the mean value
-  return average_yaw_first.mean();
-}
-// moving average lowpass to remove noise
-double COutput::movingaverage_surge_first(double _dx) {
-  // pop_front
-  VectorASurge t_average_surge = VectorASurge::Zero();
-  int index = num_average_point_surge - 1;
-  t_average_surge.head(index) = average_surge_first.tail(index);
-  // push back
-  t_average_surge(index) = _dx;
-  average_surge_first = t_average_surge;
-  // calculate the mean value
-  return average_surge_first.mean();
-}
-// moving average lowpass to remove noise
-double COutput::movingaverage_sway_first(double _dy) {
-  // pop_front
-  VectorASway t_average_sway = VectorASway::Zero();
-  int index = num_average_point_sway - 1;
-  t_average_sway.head(index) = average_sway_first.tail(index);
-  // push back
-  t_average_sway(index) = _dy;
-  average_sway_first = t_average_sway;
-  // calculate the mean value
-  return average_sway_first.mean();
-}
-
-Eigen::Vector3d COutput::movingaverage_velocity_second(double _dx, double _dy,
-                                                       double _dtheta) {
-  // copy the former average vector
-  Eigen::Vector3d former_average_vector = average_vector_second;
-  // pop_front
-  Matrix3100d t_Matrix_average = Matrix3100d::Zero();
-  int index = num_average_point_velocity - 1;
-  t_Matrix_average.leftCols(index) = Matrix_average_second.rightCols(index);
-  // push_back
-  t_Matrix_average(0, index) = _dx;
-  t_Matrix_average(1, index) = _dy;
-  t_Matrix_average(2, index) = _dtheta;
-  Matrix_average_second = t_Matrix_average;
-  // calculate the mean value
-  for (int i = 0; i != 3; ++i)
-    average_vector_second(i) = Matrix_average_second.row(i).mean();
-  // calculate the velocity
-  Eigen::Vector3d average_velocity = Eigen::Vector3d::Zero();
-  average_velocity =
-      (average_vector_second - former_average_vector) / motion_sample_time;
-  return average_velocity;  // in the global coordinate
-}
-
-// moving average lowpass to remove noise
-double COutput::movingaverage_yaw_second(double _dtheta) {
-  // pop_front
-  VectorAYaw t_average_yaw = VectorAYaw::Zero();
-  int index = num_average_point_yaw - 1;
-  t_average_yaw.head(index) = average_yaw_second.tail(index);
-  // push back
-  t_average_yaw(index) = _dtheta;
-  average_yaw_second = t_average_yaw;
-  // calculate the mean value
-  return average_yaw_second.mean();
-}
-// moving average lowpass to remove noise
-double COutput::movingaverage_surge_second(double _dx) {
-  // pop_front
-  VectorASurge t_average_surge = VectorASurge::Zero();
-  int index = num_average_point_surge - 1;
-  t_average_surge.head(index) = average_surge_second.tail(index);
-  // push back
-  t_average_surge(index) = _dx;
-  average_surge_second = t_average_surge;
-  // calculate the mean value
-  return average_surge_second.mean();
-}
-// moving average lowpass to remove noise
-double COutput::movingaverage_sway_second(double _dy) {
-  // pop_front
-  VectorASway t_average_sway = VectorASway::Zero();
-  int index = num_average_point_sway - 1;
-  t_average_sway.head(index) = average_sway_second.tail(index);
-  // push back
-  t_average_sway(index) = _dy;
-  average_sway_second = t_average_sway;
-  // calculate the mean value
-  return average_sway_second.mean();
-}
-
-Eigen::Vector3d COutput::movingaverage_velocity_third(double _dx, double _dy,
-                                                      double _dtheta) {
-  // copy the former average vector
-  Eigen::Vector3d former_average_vector = average_vector_third;
-  // pop_front
-  Matrix3100d t_Matrix_average = Matrix3100d::Zero();
-  int index = num_average_point_velocity - 1;
-  t_Matrix_average.leftCols(index) = Matrix_average_third.rightCols(index);
-  // push_back
-  t_Matrix_average(0, index) = _dx;
-  t_Matrix_average(1, index) = _dy;
-  t_Matrix_average(2, index) = _dtheta;
-  Matrix_average_third = t_Matrix_average;
-  // calculate the mean value
-  for (int i = 0; i != 3; ++i)
-    average_vector_third(i) = Matrix_average_third.row(i).mean();
-  // calculate the velocity
-  Eigen::Vector3d average_velocity = Eigen::Vector3d::Zero();
-  average_velocity =
-      (average_vector_third - former_average_vector) / motion_sample_time;
-  return average_velocity;  // in the global coordinate
-}
-
-// moving average lowpass to remove noise
-double COutput::movingaverage_yaw_third(double _dtheta) {
-  // pop_front
-  VectorAYaw t_average_yaw = VectorAYaw::Zero();
-  int index = num_average_point_yaw - 1;
-  t_average_yaw.head(index) = average_yaw_third.tail(index);
-  // push back
-  t_average_yaw(index) = _dtheta;
-  average_yaw_third = t_average_yaw;
-  // calculate the mean value
-  return average_yaw_third.mean();
-}
-// moving average lowpass to remove noise
-double COutput::movingaverage_surge_third(double _dx) {
-  // pop_front
-  VectorASurge t_average_surge = VectorASurge::Zero();
-  int index = num_average_point_surge - 1;
-  t_average_surge.head(index) = average_surge_third.tail(index);
-  // push back
-  t_average_surge(index) = _dx;
-  average_surge_third = t_average_surge;
-  // calculate the mean value
-  return average_surge_third.mean();
-}
-// moving average lowpass to remove noise
-double COutput::movingaverage_sway_third(double _dy) {
-  // pop_front
-  VectorASway t_average_sway = VectorASway::Zero();
-  int index = num_average_point_sway - 1;
-  t_average_sway.head(index) = average_sway_third.tail(index);
-  // push back
-  t_average_sway(index) = _dy;
-  average_sway_third = t_average_sway;
-  // calculate the mean value
-  return average_sway_third.mean();
 }
 
 // calculate the real time coordinate transform matrix

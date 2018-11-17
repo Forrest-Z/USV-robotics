@@ -208,7 +208,7 @@ class threadloop {
   void closelooop() {
     for (int i = 0; i != MAXCONNECTION; ++i) stopmosekthread(i);
     resetallvessels();  // set zero of each vessel
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(3));
     pthread_cancel(_threadid_pnsend);
 
     closemotioncapture();  // close qtm clients
@@ -519,8 +519,8 @@ class threadloop {
       20,                                      // P_x
       10,                                      // P_y
       50.0,                                    // P_theta
-      0.0,                                     // I_x
-      0.0,                                     // I_y
+      0.02,                                    // I_x
+      0.01,                                    // I_y
       0.0,                                     // I_theta
       200.0,                                   // D_x
       150.0,                                   // D_y
@@ -548,11 +548,11 @@ class threadloop {
       2e-5,                                    // K_right
       20,                                      // max_delta_rotation_azimuth
       1000,                                    // max_rotation_azimuth
-      20,                                      // min_rotation_azimuth
+      50,                                      // min_rotation_azimuth
       20,                                      // max_thrust_azimuth_left
       20,                                      // max_thrust_azimuth_right
-      0.008,                                   // min_thrust_azimuth_left
-      0.008,                                   // min_thrust_azimuth_right
+      0.05,                                    // min_thrust_azimuth_left
+      0.05,                                    // min_thrust_azimuth_right
       0.1277,                                  // max_delta_alpha_azimuth
       M_PI * 175 / 180,                        // max_alpha_azimuth_left
       M_PI / 18,                               // min_alpha_azimuth_left
@@ -572,8 +572,8 @@ class threadloop {
       20,                                      // P_x
       10,                                      // P_y
       50.0,                                    // P_theta
-      0.0,                                     // I_x
-      0.0,                                     // I_y
+      0.02,                                    // I_x
+      0.01,                                    // I_y
       0.0,                                     // I_theta
       200.0,                                   // D_x
       150.0,                                   // D_y
@@ -808,7 +808,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      // realtimeprint_first();
+      realtimeprint_first();
     }
   }
 
@@ -853,7 +853,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      realtimeprint_second();
+      // realtimeprint_second();
     }
   }
 

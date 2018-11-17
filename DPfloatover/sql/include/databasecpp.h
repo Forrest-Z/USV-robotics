@@ -73,7 +73,8 @@ class databasecpp {
                       " rpm_left    INT, "
                       " rpm_right   INT, " /* the speed of each propeller*/
                       " xb          DOUBLE, "
-                      " yb          DOUBLE );";
+                      " yb          DOUBLE, "
+                      " ctheta      DOUBLE);"; /* state for control*/
 
     db << str;
   }
@@ -91,7 +92,7 @@ class databasecpp {
           "(STATUS, DATETIME, SURGE, SWAY, HEAVE, ROLL, PITCH, "
           "YAW, x, y, theta, u, v, r, tauX, tauY, tauMz, estX, estY, "
           "estMz, alpha_bow, alpha_left, alpha_right, rpm_bow, rpm_left, "
-          "rpm_right, xb, yb) VALUES( 0 , julianday('now')";
+          "rpm_right, xb, yb, ctheta) VALUES( 0 , julianday('now')";
       convert_Eigendouble2string(_realtimevessel_first, str_end);
       str_end += ");";
     }
@@ -111,7 +112,7 @@ class databasecpp {
           "(STATUS, DATETIME, SURGE, SWAY, HEAVE, ROLL, PITCH, "
           "YAW, x, y, theta, u, v, r, tauX, tauY, tauMz, estX, estY, "
           "estMz, alpha_bow, alpha_left, alpha_right, rpm_bow, rpm_left, "
-          "rpm_right, xb, yb) VALUES( 0 , julianday('now')";
+          "rpm_right, xb, yb, ctheta) VALUES( 0 , julianday('now')";
       convert_Eigendouble2string(_realtimevessel_second, str_end);
       str_end += ");";
     }
@@ -161,7 +162,7 @@ class databasecpp {
       _str += std::to_string(_realtimevessel.rotation(i));
     }
     // body fixed x and y
-    for (int i = 0; i != 2; ++i) {
+    for (int i = 0; i != 3; ++i) {
       _str += ", ";
       _str += std::to_string(_realtimevessel.State4control(i));
     }
@@ -201,7 +202,7 @@ class databasecpp {
       _str += std::to_string(_realtimevessel.rotation(i));
     }
     // body fixed x and y
-    for (int i = 0; i != 2; ++i) {
+    for (int i = 0; i != 3; ++i) {
       _str += ", ";
       _str += std::to_string(_realtimevessel.State4control(i));
     }

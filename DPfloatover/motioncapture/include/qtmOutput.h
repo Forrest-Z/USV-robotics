@@ -19,19 +19,52 @@
 
 const double max_velocity_u = 1;              // m/s
 const double max_velocity_v = 0.5;            // m/s
-const double max_velocity_orientation = 0.5;  // rad/s
+const double max_velocity_orientation = 0.1;  // rad/s
 const double qtm_max_position = 30000;        // mm
-const int num_average_point_velocity = 200;   // delay 2 s when frequenc=50Hz
 const int num_average_point_yaw = 50;         // delay 2 s when frequenc=50Hz
-const int num_average_point_surge = 20;       // delay 2 s when frequenc=50Hz
-const int num_average_point_sway = 20;        // delay 2 s when frequenc=50Hz
+const int num_average_point_surge = 50;       // delay 2 s when frequenc=50Hz
+const int num_average_point_sway = 50;        // delay 2 s when frequenc=50
+const int num_average_yaw_velocity = 20;      // delay 2 s when frequenc=50Hz
+const int num_average_surge_velocity = 20;    // delay 2 s when frequenc=50Hz
+const int num_average_sway_velocity = 20;     // delay 2 s when frequenc=50Hz
 // average moving low pass to eliminate noise
 using T_BOOST_CLOCK =
     boost::date_time::microsec_clock<boost::posix_time::ptime>;
-typedef Eigen::Matrix<double, 3, num_average_point_velocity> Matrix3100d;
 typedef Eigen::Matrix<double, num_average_point_yaw, 1> VectorAYaw;
 typedef Eigen::Matrix<double, num_average_point_surge, 1> VectorASurge;
 typedef Eigen::Matrix<double, num_average_point_sway, 1> VectorASway;
+typedef Eigen::Matrix<double, num_average_yaw_velocity, 1> VectorAYawV;
+typedef Eigen::Matrix<double, num_average_surge_velocity, 1> VectorASurgeV;
+typedef Eigen::Matrix<double, num_average_sway_velocity, 1> VectorASwayV;
+
+class motiondataprocess {
+ public:
+  motiondataprocess();
+  ~motiondataprocess();
+  Eigen::Vector3d movingaverageposition(double _m_fx, double _m_fy,
+                                        double _rad_orientation);
+  Eigen::Vector3d movingaveragevelocity(
+      const Eigen::Vector3d& _average_position_vector);
+
+ private:
+  int index_step;
+  Eigen::Vector3d formeraverageposition;
+  VectorAYaw average_yaw;
+  VectorASurge average_surge;
+  VectorASway average_sway;
+  VectorAYawV average_yaw_velocity;
+  VectorASurgeV average_surge_velocity;
+  VectorASwayV average_sway_velocity;
+
+  void initializedata();
+  double movingaverage_yaw(double _dtheta);
+  double movingaverage_surge(double _dx);
+  double movingaverage_sway(double _dy);
+  double movingaverage_yaw_velocity(double _vtheta);
+  double movingaverage_surge_velocity(double _vx);
+  double movingaverage_sway_velocity(double _vy);
+  Eigen::Vector3d cal_velocity(const Eigen::Vector3d& _average_position_vector);
+};
 
 class CDataPacket;
 
@@ -85,24 +118,6 @@ class COutput {
 
   void resetmeasurement(Vector6d& _measurement, Vector6d& _position);
 
-  void initializemovingaverage();
-  Eigen::Vector3d movingaverage_velocity_first(double _dx, double _dy,
-                                               double _dtheta);
-  double movingaverage_yaw_first(double _dtheta);
-  double movingaverage_surge_first(double _dx);
-  double movingaverage_sway_first(double _dy);
-
-  Eigen::Vector3d movingaverage_velocity_second(double _dx, double _dy,
-                                                double _dtheta);
-  double movingaverage_yaw_second(double _dtheta);
-  double movingaverage_surge_second(double _dx);
-  double movingaverage_sway_second(double _dy);
-
-  Eigen::Vector3d movingaverage_velocity_third(double _dx, double _dy,
-                                               double _dtheta);
-  double movingaverage_yaw_third(double _dtheta);
-  double movingaverage_surge_third(double _dx);
-  double movingaverage_sway_third(double _dy);
   // calculate the real time coordinate transform matrix
   void calculateCoordinateTransform(Eigen::Matrix3d& _CTG2B,
                                     Eigen::Matrix3d& _CTB2G,
@@ -143,26 +158,9 @@ class COutput {
   int mnFrameNumberDiff;
   unsigned int mnMaxFrameNumberDiff;
 
-  // moving average for velocity calculation of I vessel
-  Matrix3100d Matrix_average_first;
-  Eigen::Vector3d average_vector_first;
-  VectorAYaw average_yaw_first;
-  VectorASurge average_surge_first;
-  VectorASway average_sway_first;
-
-  // moving average for velocity calculation of II vessel
-  Matrix3100d Matrix_average_second;
-  Eigen::Vector3d average_vector_second;
-  VectorAYaw average_yaw_second;
-  VectorASurge average_surge_second;
-  VectorASway average_sway_second;
-
-  // moving average for velocity calculation of III vessel
-  Matrix3100d Matrix_average_third;
-  Eigen::Vector3d average_vector_third;
-  VectorAYaw average_yaw_third;
-  VectorASurge average_surge_third;
-  VectorASway average_sway_third;
+  motiondataprocess motiondataprocess_first;
+  motiondataprocess motiondataprocess_second;
+  motiondataprocess motiondataprocess_third;
 };
 
 #endif  // OUTPUT_H

@@ -79,7 +79,7 @@
       <item>
        <widget class="QRadioButton" name="RB_manualI">
         <property name="text">
-         <string>Manual</string>
+         <string>Joystick</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -135,7 +135,7 @@
       <item>
        <widget class="QRadioButton" name="RB_manualII">
         <property name="text">
-         <string>Manual</string>
+         <string>Joystick</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -251,7 +251,7 @@
       <item>
        <widget class="QRadioButton" name="RB_manualIII">
         <property name="text">
-         <string>Manual</string>
+         <string>Joystick</string>
         </property>
         <property name="checked">
          <bool>true</bool>
