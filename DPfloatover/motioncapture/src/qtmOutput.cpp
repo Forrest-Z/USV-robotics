@@ -2,7 +2,7 @@
 
 #define WRITE_ANALOG_HEADERS_TO_FILE
 
-motiondataprocess::motiondataprocess() : index_step(0) { initializedata(); }
+motiondataprocess::motiondataprocess() { initializedata(); }
 motiondataprocess::~motiondataprocess() {}
 void motiondataprocess::initializedata() {
   formeraverageposition.setZero();
@@ -30,6 +30,12 @@ Eigen::Vector3d motiondataprocess::movingaveragevelocity(
       movingaverage_sway_velocity(velocity_global(1)),
       movingaverage_yaw_velocity(velocity_global(2));
   return average_velocity_global;
+}
+
+void motiondataprocess::updaterealtimeorientation(double& _rad_orientation,
+                                                  int _index_step) {
+  if (_index_step == 1)
+    if (_rad_orientation < 0) _rad_orientation += 2 * M_PI;
 }
 
 // moving average lowpass to remove noise in yaw
@@ -338,10 +344,18 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket, CRTProtocol* poRTProtocol,
     unsigned int nCount = poRTPacket->Get6DOFEulerBodyCount();
 
     if (nCount > 0) {
-      float fX_first, fY_first, fZ_first, fAng1_first, fAng2_first,
-          fAng3_first;  // mm, mm, mm, deg, deg, deg (QTM)
-      float fX_second, fY_second, fZ_second, fAng1_second, fAng2_second,
-          fAng3_second;  // mm, mm, mm, deg, deg, deg (QTM)
+      float fX_first = 0.0;
+      float fY_first = 0.0;
+      float fZ_first = 0.0;
+      float fAng1_first = 0.0;
+      float fAng2_first = 0.0;
+      float fAng3_first = 0.0;  // mm, mm, mm, deg, deg, deg (QTM)
+      float fX_second = 0.0;
+      float fY_second = 0.0;
+      float fZ_second = 0.0;
+      float fAng1_second = 0.0;
+      float fAng2_second = 0.0;
+      float fAng3_second = 0.0;  // mm, mm, mm, deg, deg, deg (QTM)
       // the first vessel
       poRTPacket->Get6DOFEulerBody(0, fX_first, fY_first, fZ_first, fAng1_first,
                                    fAng2_first, fAng3_first);
@@ -375,29 +389,52 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket, CRTProtocol* poRTProtocol,
                                realtimevessel_first& _realtimevessel_first,
                                realtimevessel_second& _realtimevessel_second,
                                realtimevessel_third& _realtimevessel_third) {
-  float fX, fY, fZ, fAng1, fAng2, fAng3;  // mm, mm, mm, deg, deg, deg (QTM)
-  double m_fx, m_fy, rad_orientation, raw_u, raw_v, raw_r;
   if (poRTPacket->GetComponentSize(CRTPacket::Component6dEuler)) {
     unsigned int nCount = poRTPacket->Get6DOFEulerBodyCount();
 
     if (nCount > 0) {
+      float fX_first = 0.0;
+      float fY_first = 0.0;
+      float fZ_first = 0.0;
+      float fAng1_first = 0.0;
+      float fAng2_first = 0.0;
+      float fAng3_first = 0.0;  // mm, mm, mm, deg, deg, deg (QTM)
+      float fX_second = 0.0;
+      float fY_second = 0.0;
+      float fZ_second = 0.0;
+      float fAng1_second = 0.0;
+      float fAng2_second = 0.0;
+      float fAng3_second = 0.0;  // mm, mm, mm, deg, deg, deg (QTM)
+      float fX_third = 0.0;
+      float fY_third = 0.0;
+      float fZ_third = 0.0;
+      float fAng1_third = 0.0;
+      float fAng2_third = 0.0;
+      float fAng3_third = 0.0;  // mm, mm, mm, deg, deg, deg (QTM)
+
       // the first vessel
-      poRTPacket->Get6DOFEulerBody(0, fX, fY, fZ, fAng1, fAng2, fAng3);
+      poRTPacket->Get6DOFEulerBody(0, fX_first, fY_first, fZ_first, fAng1_first,
+                                   fAng2_first, fAng3_first);
       // determine if the measured data is out of range or NaN
-      updaterealtimevesseldata_first(_realtimevessel_first, fX, fY, fZ, fAng1,
-                                     fAng2, fAng3);
+      updaterealtimevesseldata_first(_realtimevessel_first, fX_first, fY_first,
+                                     fZ_first, fAng1_first, fAng2_first,
+                                     fAng3_first);
 
       // the second vessel
-      poRTPacket->Get6DOFEulerBody(1, fX, fY, fZ, fAng1, fAng2, fAng3);
+      poRTPacket->Get6DOFEulerBody(1, fX_second, fY_second, fZ_second,
+                                   fAng1_second, fAng2_second, fAng3_second);
       // determine if the measured data is out of range or NaN
-      updaterealtimevesseldata_second(_realtimevessel_second, fX, fY, fZ, fAng1,
-                                      fAng2, fAng3);
+      updaterealtimevesseldata_second(_realtimevessel_second, fX_second,
+                                      fY_second, fZ_second, fAng1_second,
+                                      fAng2_second, fAng3_second);
 
       // the third vessel
-      poRTPacket->Get6DOFEulerBody(2, fX, fY, fZ, fAng1, fAng2, fAng3);
+      poRTPacket->Get6DOFEulerBody(2, fX_third, fY_third, fZ_third, fAng1_third,
+                                   fAng2_third, fAng3_third);
       // determine if the measured data is out of range or NaN
-      updaterealtimevesseldata_third(_realtimevessel_third, fX, fY, fZ, fAng1,
-                                     fAng2, fAng3);
+      updaterealtimevesseldata_third(_realtimevessel_third, fX_third, fY_third,
+                                     fZ_third, fAng1_third, fAng2_third,
+                                     fAng3_third);
     } else {
       resetmeasurement(_realtimevessel_first.Measurement,
                        _realtimevessel_first.Position);
@@ -476,6 +513,7 @@ void COutput::updaterealtimevesseldata_first(
     double m_fx = _fX / 1000;
     double m_fy = _fY / 1000;
     double rad_orientation = _fAng3 * M_PI / 180;
+    // raw data from QTM
     _realtimevessel.Position(0) = m_fx;
     _realtimevessel.Position(1) = m_fy;
     _realtimevessel.Position(2) = _fZ / 1000;
@@ -483,16 +521,23 @@ void COutput::updaterealtimevesseldata_first(
     _realtimevessel.Position(4) = _fAng2;
     _realtimevessel.Position(5) = _fAng3;
 
+    // raw data away from the step point
+    motiondataprocess_first.updaterealtimeorientation(
+        rad_orientation, _realtimevessel.index_step);
+
+    // position data using low pass
     Eigen::Vector3d average_position_vector =
         motiondataprocess_first.movingaverageposition(m_fx, m_fy,
                                                       rad_orientation);
 
     _realtimevessel.Measurement.head(3) = average_position_vector;
 
+    // coordinate transform matrix from global to body/ from body to global
     calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
                                  average_position_vector(2),
                                  _realtimevessel.setPoints(2));
 
+    // velocity data using low pass
     _realtimevessel.Measurement.tail(3) =
         _realtimevessel.CTG2B *
         motiondataprocess_first.movingaveragevelocity(average_position_vector);
@@ -513,6 +558,9 @@ void COutput::updaterealtimevesseldata_second(
     _realtimevessel.Position(3) = _fAng1;
     _realtimevessel.Position(4) = _fAng2;
     _realtimevessel.Position(5) = _fAng3;
+
+    motiondataprocess_second.updaterealtimeorientation(
+        rad_orientation, _realtimevessel.index_step);
 
     Eigen::Vector3d average_position_vector =
         motiondataprocess_second.movingaverageposition(m_fx, m_fy,
@@ -544,6 +592,9 @@ void COutput::updaterealtimevesseldata_third(
     _realtimevessel.Position(3) = _fAng1;
     _realtimevessel.Position(4) = _fAng2;
     _realtimevessel.Position(5) = _fAng3;
+
+    motiondataprocess_third.updaterealtimeorientation(
+        rad_orientation, _realtimevessel.index_step);
 
     Eigen::Vector3d average_position_vector =
         motiondataprocess_third.movingaverageposition(m_fx, m_fy,

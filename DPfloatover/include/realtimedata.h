@@ -44,6 +44,7 @@ struct realtimevessel_first {
   // x(surge: m), y(sway: m), orientation(theta: rad)
   // in the global coordinate
   Eigen::Vector3d setPoints;  // setPoints
+  int index_step;             // index for step point
 
   /********************* coordinate transform matrix  **********************/
   Eigen::Matrix3d CTG2B;  // global --> body
@@ -88,6 +89,7 @@ struct realtimevessel_second {
   // x(surge: m), y(sway: m), orientation(theta: rad)
   // in the global coordinate
   Eigen::Vector3d setPoints;  // setPoints
+  int index_step;             // index for step point
 
   /********************* coordinate transform matrix  **********************/
   Eigen::Matrix3d CTG2B;  // global --> body
@@ -132,6 +134,7 @@ struct realtimevessel_third {
   // x(surge: m), y(sway: m), orientation(theta: rad)
   // in the global coordinate
   Eigen::Vector3d setPoints;  // setPoints
+  int index_step;             // index for step point
 
   /********************* coordinate transform matrix  **********************/
   Eigen::Matrix3d CTG2B;  // global --> body

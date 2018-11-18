@@ -46,8 +46,11 @@ class motiondataprocess {
   Eigen::Vector3d movingaveragevelocity(
       const Eigen::Vector3d& _average_position_vector);
 
+  // update real time orientation based on the index_step
+  void updaterealtimeorientation(double& _rad_orientation, int _index_step);
+
  private:
-  int index_step;
+  // low-pass position at former time step
   Eigen::Vector3d formeraverageposition;
   VectorAYaw average_yaw;
   VectorASurge average_surge;

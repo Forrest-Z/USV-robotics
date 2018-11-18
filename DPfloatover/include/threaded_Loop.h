@@ -676,6 +676,7 @@ class threadloop {
       Vector6d::Zero(),             // state
       Vector6d::Zero(),             // state4control
       Eigen::Vector3d::Zero(),      // setPoints
+      0,                            // index for step point
       Eigen::Matrix3d::Identity(),  // CTG2B
       Eigen::Matrix3d::Identity(),  // CTB2G
       Eigen::Vector3d::Zero(),      // tau
@@ -693,6 +694,7 @@ class threadloop {
       Vector6d::Zero(),             // state
       Vector6d::Zero(),             // state4control
       Eigen::Vector3d::Zero(),      // setPoints
+      0,                            // index for step point
       Eigen::Matrix3d::Identity(),  // CTG2B
       Eigen::Matrix3d::Identity(),  // CTB2G
       Eigen::Vector3d::Zero(),      // tau
@@ -710,6 +712,7 @@ class threadloop {
       Vector6d::Zero(),             // state
       Vector6d::Zero(),             // state4control
       Eigen::Vector3d::Zero(),      // setPoints
+      0,                            // index for step point
       Eigen::Matrix3d::Identity(),  // CTG2B
       Eigen::Matrix3d::Identity(),  // CTB2G
       Eigen::Vector3d::Zero(),      // tau
