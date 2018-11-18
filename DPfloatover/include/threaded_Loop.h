@@ -499,6 +499,7 @@ class threadloop {
   databasecpp mydb;
   gamepadmonitor_first mygamepad_first;
   gamepadmonitor_second mygamepad_second;
+  gamepadmonitor_third mygamepad_third;
   motioncapture mymotioncapture;
   FILE *myfile;
   FILE *myfile_first;
@@ -742,8 +743,15 @@ class threadloop {
   // get the real time gamepad response
   void updategamepad() {
     while (1) {
-      mygamepad_first.updategamepad();
-      mygamepad_second.updategamepad();
+      if (MAXCONNECTION > 0) {
+        mygamepad_first.updategamepad();
+      }
+      if (MAXCONNECTION > 1) {
+        mygamepad_second.updategamepad();
+      }
+      if (MAXCONNECTION > 2) {
+        mygamepad_third.updategamepad();
+      }
     }
   }
   // get the real time motion response
@@ -765,6 +773,7 @@ class threadloop {
         mydb.update_client_table(false, _realtimevessel_second);
       }
       if (MAXCONNECTION > 2) {
+        mydb.update_client_table(false, _realtimevessel_third);
       }
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
@@ -868,9 +877,9 @@ class threadloop {
           boost::posix_time::second_clock::local_time();
 
       _controller_third.fullymanualcontroller(
-          mygamepad_second.getGamepadXforce(),
-          mygamepad_second.getGamepadYforce(),
-          mygamepad_second.getGamepadZmoment(), _realtimevessel_third);
+          mygamepad_third.getGamepadXforce(),
+          mygamepad_third.getGamepadYforce(),
+          mygamepad_third.getGamepadZmoment(), _realtimevessel_third);
 
       boost::posix_time::ptime t_end =
           boost::posix_time::second_clock::local_time();

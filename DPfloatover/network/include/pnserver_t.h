@@ -57,6 +57,10 @@ void send2firstvessel(const realtimevessel_first *_realtimevessel_first,
 void send2bothvessel(const realtimevessel_first *_realtimevessel_first,
                      const realtimevessel_second *_realtimevessel_second,
                      FILE *_file);
+void send2triplevessel(const realtimevessel_first *_realtimevessel_first,
+                       const realtimevessel_second *_realtimevessel_second,
+                       const realtimevessel_third *_realtimevessel_third,
+                       FILE *_file);
 #ifdef __cplusplus
 }
 #endif

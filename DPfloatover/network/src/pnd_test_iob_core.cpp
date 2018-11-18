@@ -1535,6 +1535,101 @@ void send2bothvessel(const realtimevessel_first *_realtimevessel_first,
     usleep(sample_utime);
   }
 }
+
+void send2triplevessel(const realtimevessel_first *_realtimevessel_first,
+                       const realtimevessel_second *_realtimevessel_second,
+                       const realtimevessel_third *_realtimevessel_third,
+                       FILE *_file) {
+  // setup for the first vessel
+  PNIO_ADDR Addr_first;
+  PNIO_IOXS remState_first;
+  float write_data_first[TEST_IODU_MAX_DATA_LEN];
+
+  Addr_first.AddrType = PNIO_ADDR_LOG;
+  Addr_first.IODataType = PNIO_IO_OUT;
+  Addr_first.u.Addr = 0;
+  // setup for the second vessel
+  PNIO_ADDR Addr_second;
+  PNIO_IOXS remState_second;
+  float write_data_second[TEST_IODU_MAX_DATA_LEN];
+
+  Addr_second.AddrType = PNIO_ADDR_LOG;
+  Addr_second.IODataType = PNIO_IO_OUT;
+  Addr_second.u.Addr = 24;
+  // setup for the third vessel
+  PNIO_ADDR Addr_third;
+  PNIO_IOXS remState_third;
+  float write_data_third[TEST_IODU_MAX_DATA_LEN];
+
+  Addr_third.AddrType = PNIO_ADDR_LOG;
+  Addr_third.IODataType = PNIO_IO_OUT;
+  Addr_third.u.Addr = 50;
+  while (1) {
+    // update data for the first vessel
+    write_data_first[0] = (float)_realtimevessel_first->rotation(0);
+    write_data_first[1] = write_data_first[0];
+    write_data_first[2] = (float)_realtimevessel_first->rotation(1);
+    write_data_first[3] = (float)_realtimevessel_first->rotation(2);
+    write_data_first[4] = (float)_realtimevessel_first->alpha_deg(1);
+    write_data_first[5] = (float)_realtimevessel_first->alpha_deg(2);
+    PNIO_data_write(g_ApplHandle, &Addr_first, 24 /*BufLen*/,
+                    (PNIO_UINT8 *)write_data_first, PNIO_S_GOOD,
+                    &remState_first);
+    if (remState_first != 0x00) {
+      // print error information
+      if (FILEORNOT) {
+        _file = fopen(logsavepath.c_str(), "a+");
+        fprintf(_file, "First: error in send!\n");
+        fclose(_file);
+      } else
+        perror("First: send");
+    }
+    // update data for the second vessel
+    write_data_second[0] = (float)_realtimevessel_second->rotation(0);
+    write_data_second[1] = write_data_second[0];
+    write_data_second[2] = (float)_realtimevessel_second->rotation(1);
+    write_data_second[3] = (float)_realtimevessel_second->rotation(2);
+    write_data_second[4] = (float)_realtimevessel_second->alpha_deg(1);
+    write_data_second[5] = (float)_realtimevessel_second->alpha_deg(2);
+    // send data through PN driver
+    PNIO_data_write(g_ApplHandle, &Addr_second, 24 /*BufLen*/,
+                    (PNIO_UINT8 *)write_data_second, PNIO_S_GOOD,
+                    &remState_second);
+
+    if (remState_second != 0x00) {
+      // print error information
+      if (FILEORNOT) {
+        _file = fopen(logsavepath.c_str(), "a+");
+        fprintf(_file, "Second: error in send!\n");
+        fclose(_file);
+      } else
+        perror("Second: send");
+    }
+    // update data for the third vessel
+    write_data_third[0] = (float)_realtimevessel_third->rotation(0);
+    write_data_third[1] = write_data_third[0];
+    write_data_third[2] = (float)_realtimevessel_third->rotation(1);
+    write_data_third[3] = (float)_realtimevessel_third->rotation(2);
+    write_data_third[4] = (float)_realtimevessel_third->alpha_deg(1);
+    write_data_third[5] = (float)_realtimevessel_third->alpha_deg(2);
+    // send data through PN driver
+    PNIO_data_write(g_ApplHandle, &Addr_third, 24 /*BufLen*/,
+                    (PNIO_UINT8 *)write_data_third, PNIO_S_GOOD,
+                    &remState_third);
+
+    if (remState_third != 0x00) {
+      // print error information
+      if (FILEORNOT) {
+        _file = fopen(logsavepath.c_str(), "a+");
+        fprintf(_file, "Third: error in send!\n");
+        fclose(_file);
+      } else
+        perror("Third: send");
+    }
+    usleep(sample_utime);
+  }
+}
+
 /*****************************************************************************/
 /*  Copyright (C) 2015 Siemens Aktiengesellschaft. All rights reserved.      */
 /*****************************************************************************/

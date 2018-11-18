@@ -81,7 +81,7 @@ class databasecpp {
 
   // insert a row into some client table
   void update_client_table(bool t_status,
-                           const realtimevessel_first &_realtimevessel_first) {
+                           const realtimevessel_first &_realtimevessel) {
     std::string str = "INSERT INTO " + clientset[0];
     // t_status=0 means corrected data
     std::string str_end("");
@@ -93,15 +93,15 @@ class databasecpp {
           "YAW, x, y, theta, u, v, r, tauX, tauY, tauMz, estX, estY, "
           "estMz, alpha_bow, alpha_left, alpha_right, rpm_bow, rpm_left, "
           "rpm_right, xb, yb, ctheta) VALUES( 0 , julianday('now')";
-      convert_Eigendouble2string(_realtimevessel_first, str_end);
+      convert_Eigendouble2string(_realtimevessel, str_end);
       str_end += ");";
     }
     str += str_end;
     db << str;
   }
   // insert a row into some client table
-  void update_client_table(
-      bool t_status, const realtimevessel_second &_realtimevessel_second) {
+  void update_client_table(bool t_status,
+                           const realtimevessel_second &_realtimevessel) {
     std::string str = "INSERT INTO " + clientset[1];
     // t_status=0 means corrected data
     std::string str_end("");
@@ -113,7 +113,27 @@ class databasecpp {
           "YAW, x, y, theta, u, v, r, tauX, tauY, tauMz, estX, estY, "
           "estMz, alpha_bow, alpha_left, alpha_right, rpm_bow, rpm_left, "
           "rpm_right, xb, yb, ctheta) VALUES( 0 , julianday('now')";
-      convert_Eigendouble2string(_realtimevessel_second, str_end);
+      convert_Eigendouble2string(_realtimevessel, str_end);
+      str_end += ");";
+    }
+    str += str_end;
+    db << str;
+  }
+  // insert a row into some client table
+  void update_client_table(bool t_status,
+                           const realtimevessel_third &_realtimevessel) {
+    std::string str = "INSERT INTO " + clientset[1];
+    // t_status=0 means corrected data
+    std::string str_end("");
+    if (t_status) {
+      str_end = "(STATUS, DATETIME) VALUES( 1 , julianday('now'));";
+    } else {
+      str_end =
+          "(STATUS, DATETIME, SURGE, SWAY, HEAVE, ROLL, PITCH, "
+          "YAW, x, y, theta, u, v, r, tauX, tauY, tauMz, estX, estY, "
+          "estMz, alpha_bow, alpha_left, alpha_right, rpm_bow, rpm_left, "
+          "rpm_right, xb, yb, ctheta) VALUES( 0 , julianday('now')";
+      convert_Eigendouble2string(_realtimevessel, str_end);
       str_end += ");";
     }
     str += str_end;
@@ -128,7 +148,7 @@ class databasecpp {
   // 2 --> the third vessel
   std::vector<std::string> clientset;
 
-  // convert real time data to sql string (the first vessel)
+  // convert real time data to sql string (the I vessel)
   void convert_Eigendouble2string(const realtimevessel_first &_realtimevessel,
                                   std::string &_str) {
     // measured 6 DoF motion
@@ -168,8 +188,48 @@ class databasecpp {
     }
   }
 
-  // convert real time data to sql string (the second vessel)
+  // convert real time data to sql string (the II vessel)
   void convert_Eigendouble2string(const realtimevessel_second &_realtimevessel,
+                                  std::string &_str) {
+    // measured 6 DoF motion
+    for (int i = 0; i != 6; ++i) {
+      _str += ", ";
+      _str += std::to_string(_realtimevessel.Position(i));
+    }
+    // real time state
+    for (int i = 0; i != 6; ++i) {
+      _str += ", ";
+      _str += std::to_string(_realtimevessel.State(i));
+    }
+    // desired force
+    for (int i = 0; i != 3; ++i) {
+      _str += ", ";
+      _str += std::to_string(_realtimevessel.tau(i));
+    }
+    // estimated force
+    for (int i = 0; i != 3; ++i) {
+      _str += ", ";
+      _str += std::to_string(_realtimevessel.BalphaU(i));
+    }
+    // angle of each propeller
+    for (int i = 0; i != 3; ++i) {
+      _str += ", ";
+      _str += std::to_string(_realtimevessel.alpha_deg(i));
+    }
+    // speed of each propeller
+    for (int i = 0; i != 3; ++i) {
+      _str += ", ";
+      _str += std::to_string(_realtimevessel.rotation(i));
+    }
+    // body fixed x and y
+    for (int i = 0; i != 3; ++i) {
+      _str += ", ";
+      _str += std::to_string(_realtimevessel.State4control(i));
+    }
+  }
+
+  // convert real time data to sql string (the III vessel)
+  void convert_Eigendouble2string(const realtimevessel_third &_realtimevessel,
                                   std::string &_str) {
     // measured 6 DoF motion
     for (int i = 0; i != 6; ++i) {
