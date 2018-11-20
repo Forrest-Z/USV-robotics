@@ -194,7 +194,8 @@ SOURCES += \
     ../motioncapture/src/qtmOutput.cpp \
     ../motioncapture/src/RTPacket.cpp \
     ../motioncapture/src/RTProtocol.cpp \
-    dialogabout.cpp
+    dialogabout.cpp \
+    dialogthrusterdiagi.cpp
 
 
 
@@ -581,7 +582,8 @@ HEADERS += \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcp_timr.h \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcp_var.h \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcpip.h \
-    dialogabout.h
+    dialogabout.h \
+    dialogthrusterdiagi.h
 
 
 
@@ -596,4 +598,5 @@ FORMS += \
         dialogrotation.ui \
         dialogbox.ui \
         dialogcooperation.ui \
-    dialogabout.ui
+    dialogabout.ui \
+    dialogthrusterdiagi.ui

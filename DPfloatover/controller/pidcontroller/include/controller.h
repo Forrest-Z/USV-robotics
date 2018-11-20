@@ -237,29 +237,30 @@ class controller_third {
   }
   controller_third() = delete;
   ~controller_third() {}
+
   // automatic control using kalman, pid controller, and QP thruster allocation
-  void pidcontrolleronestep(realtimevessel_third &_realtimedata) {
+  void pidcontrolleronestep(realtimevessel_third &_realtimedata, FILE *t_file) {
     mykalmanfilter.kalmanonestep(_realtimedata);
     mypidcontroller.calculategeneralizeforce(_realtimedata);
-    mythrusterallocation.onestepthrusterallocation(_realtimedata);
+    mythrusterallocation.onestepthrusterallocation(_realtimedata, t_file);
   }
 
   // automatic heading control, and manual control in x, y direction
   void headingcontrolleronestep(realtimevessel_third &_realtimedata, int xforce,
-                                int yforce) {
+                                int yforce, FILE *t_file) {
     mykalmanfilter.kalmanonestep(_realtimedata);
     mypidcontroller.calculategeneralizeforce(_realtimedata);
     setGeneralizeForce(_realtimedata, xforce, yforce);
-    mythrusterallocation.onestepthrusterallocation(_realtimedata);
+    mythrusterallocation.onestepthrusterallocation(_realtimedata, t_file);
   }
 
   // manual control in x,y and Mz direction
   void fullymanualcontroller(int xforce, int yforce, int zmoment,
-                             realtimevessel_third &_realtimedata) {
+                             realtimevessel_third &_realtimedata,
+                             FILE *t_file) {
     setGeneralizeForce(_realtimedata, xforce, yforce, zmoment);
-    mythrusterallocation.onestepthrusterallocation(_realtimedata);
+    mythrusterallocation.onestepthrusterallocation(_realtimedata, t_file);
   }
-
   void setPID(double _P_x, double _P_y, double _P_theta, double _I_x,
               double _I_y, double _I_theta, double _D_x, double _D_y,
               double _D_theta) {
@@ -280,6 +281,7 @@ class controller_third {
   double maxpositive_Mz_thruster;
   double maxnegative_Mz_thruster;
 
+  // initialize the controller
   void initializeController(const vessel_third &_vessel) {
     maxpositive_x_thruster = _vessel.maxpositive_x_thruster;
     maxnegative_x_thruster = _vessel.maxnegative_x_thruster;

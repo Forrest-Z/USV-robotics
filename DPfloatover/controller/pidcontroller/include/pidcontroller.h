@@ -15,8 +15,8 @@
 #include <iostream>
 #include "constants.h"
 #include "realtimedata.h"
-
-const int IntegralLength = 300;
+const int IntegralLength = 50;  // 5 second for 10 Hz
+typedef Eigen::Matrix<double, 3, IntegralLength> Matrix3100d;
 // class of pid controller for the first vessel
 class pidcontroller_first {
  public:
@@ -38,8 +38,7 @@ class pidcontroller_first {
     } else {  // proportional term
       Eigen::Vector3d Pout = matrix_P * position_error;
       // integral term
-      // updateIntegralMatrix(position_error);
-      position_error_integral += sample_time * position_error;
+      updateIntegralMatrix(position_error);
       Eigen::Vector3d Iout = matrix_I * position_error_integral;
       // derivative term
       Eigen::Vector3d Dout = -matrix_D * _realtimedata.State4control.tail(3);
@@ -80,7 +79,7 @@ class pidcontroller_first {
   Eigen::Vector3d position_error;
   Eigen::Vector3d position_error_integral;
   Eigen::Vector3d setpoints_body;
-  Eigen::MatrixXd _IntegralMatrix;
+  Matrix3100d IntegralMatrix;
 
   // max value of desired force
   double maxpositive_x_thruster;
@@ -121,7 +120,7 @@ class pidcontroller_first {
     position_error.setZero();
     position_error_integral.setZero();
     setpoints_body.setZero();
-    _IntegralMatrix.setZero(IntegralLength, 3);
+    IntegralMatrix.setZero();
   }
   // specify the real time setpoints
   void setsetpoints(const realtimevessel_first &_realtimedata) {
@@ -150,13 +149,16 @@ class pidcontroller_first {
   }
   // calculate the Integral error with moving window
   void updateIntegralMatrix(const Eigen::Vector3d &_position_error) {
-    Eigen::MatrixXd t_IntegralMatrix;
-    t_IntegralMatrix.setZero(IntegralLength, 3);
-    int index = IntegralLength - 1;
-    t_IntegralMatrix.leftCols(index) = _IntegralMatrix.rightCols(index);
-    t_IntegralMatrix.col(index) = sample_time * _position_error;
-    _IntegralMatrix = t_IntegralMatrix;
-    position_error_integral = _IntegralMatrix.rowwise().sum();
+    if (IntegralLength == 1) {
+      position_error_integral += sample_time * _position_error;
+    } else {
+      Matrix3100d t_IntegralMatrix = Matrix3100d::Zero();
+      int index = IntegralLength - 1;
+      t_IntegralMatrix.leftCols(index) = IntegralMatrix.rightCols(index);
+      t_IntegralMatrix.col(index) = sample_time * _position_error;
+      IntegralMatrix = t_IntegralMatrix;
+      position_error_integral = IntegralMatrix.rowwise().sum();
+    }
   }
 };
 
@@ -181,7 +183,7 @@ class pidcontroller_second {
     } else {  // proportional term
       Eigen::Vector3d Pout = matrix_P * position_error;
       // integral term
-      position_error_integral += sample_time * position_error;
+      updateIntegralMatrix(position_error);
       Eigen::Vector3d Iout = matrix_I * position_error_integral;
       // derivative term
       Eigen::Vector3d Dout = -matrix_D * _realtimedata.State4control.tail(3);
@@ -221,6 +223,7 @@ class pidcontroller_second {
   Eigen::Vector3d position_error;
   Eigen::Vector3d position_error_integral;
   Eigen::Vector3d setpoints_body;
+  Matrix3100d IntegralMatrix;
   // max value of desired force
   double maxpositive_x_thruster;
   double maxnegative_x_thruster;
@@ -259,6 +262,7 @@ class pidcontroller_second {
     position_error.setZero();
     position_error_integral.setZero();
     setpoints_body.setZero();
+    IntegralMatrix.setZero();
   }
   // specify the real time setpoints
   void setsetpoints(const realtimevessel_second &_realtimedata) {
@@ -285,6 +289,19 @@ class pidcontroller_second {
     if (_desiredforce(2) < -maxnegative_Mz_thruster)
       _desiredforce(2) = -maxnegative_Mz_thruster;
   }
+  // calculate the Integral error with moving window
+  void updateIntegralMatrix(const Eigen::Vector3d &_position_error) {
+    if (IntegralLength == 1) {
+      position_error_integral += sample_time * _position_error;
+    } else {
+      Matrix3100d t_IntegralMatrix = Matrix3100d::Zero();
+      int index = IntegralLength - 1;
+      t_IntegralMatrix.leftCols(index) = IntegralMatrix.rightCols(index);
+      t_IntegralMatrix.col(index) = sample_time * _position_error;
+      IntegralMatrix = t_IntegralMatrix;
+      position_error_integral = IntegralMatrix.rowwise().sum();
+    }
+  }
 };
 
 // class of pid controller for the third vessel
@@ -308,7 +325,7 @@ class pidcontroller_third {
     } else {  // proportional term
       Eigen::Vector3d Pout = matrix_P * position_error;
       // integral term
-      position_error_integral += sample_time * position_error;
+      updateIntegralMatrix(position_error);
       Eigen::Vector3d Iout = matrix_I * position_error_integral;
       // derivative term
       Eigen::Vector3d Dout = -matrix_D * _realtimedata.State4control.tail(3);
@@ -348,7 +365,7 @@ class pidcontroller_third {
   Eigen::Vector3d position_error;
   Eigen::Vector3d position_error_integral;
   Eigen::Vector3d setpoints_body;
-
+  Matrix3100d IntegralMatrix;
   // max value of desired force
   double maxpositive_x_thruster;
   double maxnegative_x_thruster;
@@ -388,6 +405,7 @@ class pidcontroller_third {
     position_error.setZero();
     position_error_integral.setZero();
     setpoints_body.setZero();
+    IntegralMatrix.setZero();
   }
   // specify the real time setpoints
   void setsetpoints(const realtimevessel_third &_realtimedata) {
@@ -413,6 +431,19 @@ class pidcontroller_third {
       _desiredforce(2) = maxpositive_Mz_thruster;
     if (_desiredforce(2) < -maxnegative_Mz_thruster)
       _desiredforce(2) = -maxnegative_Mz_thruster;
+  }
+  // calculate the Integral error with moving window
+  void updateIntegralMatrix(const Eigen::Vector3d &_position_error) {
+    if (IntegralLength == 1) {
+      position_error_integral += sample_time * _position_error;
+    } else {
+      Matrix3100d t_IntegralMatrix = Matrix3100d::Zero();
+      int index = IntegralLength - 1;
+      t_IntegralMatrix.leftCols(index) = IntegralMatrix.rightCols(index);
+      t_IntegralMatrix.col(index) = sample_time * _position_error;
+      IntegralMatrix = t_IntegralMatrix;
+      position_error_integral = IntegralMatrix.rowwise().sum();
+    }
   }
 };
 #endif /* _PIDCONTROLLER_H_ */

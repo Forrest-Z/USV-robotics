@@ -1575,15 +1575,7 @@ void send2triplevessel(const realtimevessel_first *_realtimevessel_first,
     PNIO_data_write(g_ApplHandle, &Addr_first, 24 /*BufLen*/,
                     (PNIO_UINT8 *)write_data_first, PNIO_S_GOOD,
                     &remState_first);
-    if (remState_first != 0x00) {
-      // print error information
-      if (FILEORNOT) {
-        _file = fopen(logsavepath.c_str(), "a+");
-        fprintf(_file, "First: error in send!\n");
-        fclose(_file);
-      } else
-        perror("First: send");
-    }
+
     // update data for the second vessel
     write_data_second[0] = (float)_realtimevessel_second->rotation(0);
     write_data_second[1] = write_data_second[0];
@@ -1596,15 +1588,6 @@ void send2triplevessel(const realtimevessel_first *_realtimevessel_first,
                     (PNIO_UINT8 *)write_data_second, PNIO_S_GOOD,
                     &remState_second);
 
-    if (remState_second != 0x00) {
-      // print error information
-      if (FILEORNOT) {
-        _file = fopen(logsavepath.c_str(), "a+");
-        fprintf(_file, "Second: error in send!\n");
-        fclose(_file);
-      } else
-        perror("Second: send");
-    }
     // update data for the third vessel
     write_data_third[0] = (float)_realtimevessel_third->rotation(0);
     write_data_third[1] = write_data_third[0];
@@ -1617,6 +1600,24 @@ void send2triplevessel(const realtimevessel_first *_realtimevessel_first,
                     (PNIO_UINT8 *)write_data_third, PNIO_S_GOOD,
                     &remState_third);
 
+    if (remState_first != 0x00) {
+      // print error information
+      if (FILEORNOT) {
+        _file = fopen(logsavepath.c_str(), "a+");
+        fprintf(_file, "First: error in send!\n");
+        fclose(_file);
+      } else
+        perror("First: send");
+    }
+    if (remState_second != 0x00) {
+      // print error information
+      if (FILEORNOT) {
+        _file = fopen(logsavepath.c_str(), "a+");
+        fprintf(_file, "Second: error in send!\n");
+        fclose(_file);
+      } else
+        perror("Second: send");
+    }
     if (remState_third != 0x00) {
       // print error information
       if (FILEORNOT) {

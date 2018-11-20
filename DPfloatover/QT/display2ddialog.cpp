@@ -116,6 +116,7 @@ void Display2DDialog::vesselshapeDataSlot() {
                            trajectory_x[0]);
     updatesetpointvector(_setpoint_first(0), _setpoint_first(1), setpoints_y[0],
                          setpoints_x[0]);
+    updatesetpointcircle(_setpoint_first(1), _setpoint_first(0), 0);
     ui->customPlot_2Dmotion->graph(0)->setData(planarmotion_x[0],
                                                planarmotion_y[0]);
     ui->customPlot_2Dmotion->graph(MAXCONNECTION)
@@ -134,6 +135,7 @@ void Display2DDialog::vesselshapeDataSlot() {
                            trajectory_x[1]);
     updatesetpointvector(_setpoint_second(0), _setpoint_second(1),
                          setpoints_y[1], setpoints_x[1]);
+    updatesetpointcircle(_setpoint_second(1), _setpoint_second(0), 1);
     ui->customPlot_2Dmotion->graph(1)->setData(planarmotion_x[1],
                                                planarmotion_y[1]);
     ui->customPlot_2Dmotion->graph(MAXCONNECTION + 1)
@@ -150,6 +152,7 @@ void Display2DDialog::vesselshapeDataSlot() {
                            trajectory_x[2]);
     updatesetpointvector(_setpoint_third(0), _setpoint_third(1), setpoints_y[2],
                          setpoints_x[2]);
+    updatesetpointcircle(_setpoint_third(1), _setpoint_third(0), 2);
     ui->customPlot_2Dmotion->graph(2)->setData(planarmotion_x[2],
                                                planarmotion_y[2]);
     ui->customPlot_2Dmotion->graph(2 + MAXCONNECTION)
@@ -342,13 +345,39 @@ void Display2DDialog::initializePlanarMotion(QCustomPlot *customPlot) {
 
     customPlot->graph(c_index + 2 * MAXCONNECTION)
         ->setLineStyle(QCPGraph::lsLine);
-    QCPScatterStyle myQCPScatterStyle(QCPScatterStyle::ssPlusCircle,
+    // QCPScatterStyle myQCPScatterStyle(QCPScatterStyle::ssPlusCircle,
+    //                                   V_Qcolor[c_index], 10);
+    QCPScatterStyle myQCPScatterStyle(QCPScatterStyle::ssPlus,
                                       V_Qcolor[c_index], 10);
     customPlot->graph(c_index + 2 * MAXCONNECTION)
         ->setScatterStyle(myQCPScatterStyle);
     customPlot->graph(c_index + 2 * MAXCONNECTION)
         ->setData(setpoints_x[c_index], setpoints_y[c_index]);
     customPlot->graph(c_index + 2 * MAXCONNECTION)->rescaleAxes(true);
+  }
+  // setpoint circle display
+  for (int c_index = 0; c_index != MAXCONNECTION; ++c_index) {
+    // generate data for circle
+    for (unsigned i = 0; i != arraylength_setpoint_circle; ++i) {
+      double theta = i / (double)(arraylength_setpoint_circle - 1) * 2 * M_PI;
+      setpoints_circle_larger[c_index][i] =
+          QCPCurveData(i, radius_setpoint_larger * std::cos(theta),
+                       radius_setpoint_larger * std::sin(theta));
+      setpoints_circle_smaller[c_index][i] =
+          QCPCurveData(i, radius_setpoint_smaller * std::cos(theta),
+                       radius_setpoint_smaller * std::sin(theta));
+    }
+
+    setpoint_circle_curves_larger.push_back(
+        new QCPCurve(customPlot->xAxis, customPlot->yAxis));
+    setpoint_circle_curves_larger[c_index]->data()->set(
+        setpoints_circle_larger[c_index], true);
+    setpoint_circle_curves_larger[c_index]->setPen(QPen(V_Qcolor[c_index], 1));
+    setpoint_circle_curves_smaller.push_back(
+        new QCPCurve(customPlot->xAxis, customPlot->yAxis));
+    setpoint_circle_curves_smaller[c_index]->data()->set(
+        setpoints_circle_smaller[c_index], true);
+    setpoint_circle_curves_smaller[c_index]->setPen(QPen(V_Qcolor[c_index], 1));
   }
   // setup x,y axis
   customPlot->xAxis->setRangeReversed(true);
@@ -388,6 +417,10 @@ void Display2DDialog::initializePlanarMotionData() {
     setpoints_x[i] = QVector<double>(1, 0);
     setpoints_y[i] = QVector<double>(1, 0);
     CoG4viewer[i] = {2, 0};
+    setpoints_circle_larger[i] =
+        QVector<QCPCurveData>(arraylength_setpoint_circle);
+    setpoints_circle_smaller[i] =
+        QVector<QCPCurveData>(arraylength_setpoint_circle);
   }
 }
 
@@ -405,7 +438,7 @@ void Display2DDialog::initializeCircle(QCustomPlot *customPlot) {
   QCPCurve *fermatSpiral_outer =
       new QCPCurve(customPlot->xAxis, customPlot->yAxis);
   fermatSpiral_outer->data()->set(dataSpiral_outer, true);
-  fermatSpiral_outer->setPen(QPen(QColor(68, 68, 68, 255), 2));
+  fermatSpiral_outer->setPen(QPen(QColor(68, 68, 68, 255), 1));
 
   // generate data for text around circle
   const int step_angle_text = 10;  // step of angle and text
@@ -460,4 +493,25 @@ void Display2DDialog::updateheadingarrow(QCPItemCurve *_arrow,
   _arrow->end->setCoords(radius_heading * cvalue, radius_heading * svalue);
   _arrow->startDir->setCoords(0.98 * cvalue, 0.98 * svalue);
   _arrow->endDir->setCoords(cvalue, svalue);
+}
+
+void Display2DDialog::updatesetpointcircle(double _setpointx, double _setpointy,
+                                           int c_index) {
+  // generate data for circle
+  for (unsigned i = 0; i != arraylength_setpoint_circle; ++i) {
+    double theta = i / (double)(arraylength_setpoint_circle - 1) * 2 * M_PI;
+    double cvalue = std::cos(theta);
+    double svalue = std::sin(theta);
+    setpoints_circle_larger[c_index][i] =
+        QCPCurveData(i, _setpointx + radius_setpoint_larger * cvalue,
+                     _setpointy + radius_setpoint_larger * svalue);
+    setpoints_circle_smaller[c_index][i] =
+        QCPCurveData(i, _setpointx + radius_setpoint_smaller * cvalue,
+                     _setpointy + radius_setpoint_smaller * svalue);
+  }
+
+  setpoint_circle_curves_larger[c_index]->data()->set(
+      setpoints_circle_larger[c_index], true);
+  setpoint_circle_curves_smaller[c_index]->data()->set(
+      setpoints_circle_smaller[c_index], true);
 }

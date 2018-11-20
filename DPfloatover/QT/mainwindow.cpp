@@ -219,7 +219,9 @@ void MainWindow::initializestatus() {
   // II joystick
   ui->LB_joystick2L->setPixmap(onPixRed);
   ui->LB_joystick2T->setText(QString("Offline"));
-
+  // III joystick
+  ui->LB_joystick3L->setPixmap(onPixRed);
+  ui->LB_joystick3T->setText(QString("Offline"));
   // PN server
   ui->LB_PNL->setPixmap(onPixRed);
   ui->LB_PNT->setText(QString("Offline"));
@@ -250,6 +252,14 @@ void MainWindow::updatestatus() {
     ui->LB_joystick2L->setPixmap(onPixGreen);
     ui->LB_joystick2T->setText(QString("Online"));
   }
+  // III joystick
+  if (globalvar::_threadloop.getgamepadstatus_third()) {
+    ui->LB_joystick3L->setPixmap(onPixRed);
+    ui->LB_joystick3T->setText(QString("Offline"));
+  } else {
+    ui->LB_joystick3L->setPixmap(onPixGreen);
+    ui->LB_joystick3T->setText(QString("Online"));
+  }
   // PN server
   if (globalvar::_threadloop.getpnserver_status()) {
     ui->LB_PNL->setPixmap(onPixRed);
@@ -259,7 +269,9 @@ void MainWindow::updatestatus() {
     ui->LB_PNT->setText(QString("Online"));
   }
 }
-void MainWindow::on_actionCoG_triggered()
-{
+void MainWindow::on_actionCoG_triggered() {}
 
+void MainWindow::on_actionThruster_I_vessel_triggered() {
+  myDialogThrusterDiagI = new DialogThrusterDiagI(this);
+  myDialogThrusterDiagI->show();
 }

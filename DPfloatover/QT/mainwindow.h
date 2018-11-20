@@ -20,6 +20,7 @@
 #include "dialogrotation.h"
 #include "dialogsetparameter.h"
 #include "dialogstraightline.h"
+#include "dialogthrusterdiagi.h"
 #include "display2ddialog.h"
 #include "globalvar.h"
 #include "thrusterdiag.h"
@@ -47,6 +48,7 @@ class MainWindow : public QMainWindow {
   void on_PB_suspend_clicked();
 
   void readfilebyline();
+
   void updatestatus();
 
   void on_PB_enablePLC_clicked();
@@ -91,7 +93,9 @@ class MainWindow : public QMainWindow {
 
   void on_actionCoG_triggered();
 
-private:
+  void on_actionThruster_I_vessel_triggered();
+
+ private:
   Ui::MainWindow *ui;
   Display2DDialog *myDisplay2DDialog;
   ThrusterDiag *myThrusterDiag;
@@ -103,6 +107,7 @@ private:
   DialogCooperation *myDialogCooperation;
   Dialogabout *myDialogabout;
   QStringListModel *_model;
+  DialogThrusterDiagI *myDialogThrusterDiagI;
   Qt::WindowFlags flags = nullptr;
 
   QString logfilepath;

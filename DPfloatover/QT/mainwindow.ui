@@ -336,7 +336,7 @@
      <property name="geometry">
       <rect>
        <x>90</x>
-       <y>150</y>
+       <y>180</y>
        <width>13</width>
        <height>13</height>
       </rect>
@@ -349,7 +349,7 @@
      <property name="geometry">
       <rect>
        <x>11</x>
-       <y>150</y>
+       <y>180</y>
        <width>60</width>
        <height>16</height>
       </rect>
@@ -401,7 +401,7 @@
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>150</y>
+       <y>180</y>
        <width>59</width>
        <height>16</height>
       </rect>
@@ -449,6 +449,45 @@
       <string>TextLabel</string>
      </property>
     </widget>
+    <widget class="QLabel" name="LB_joystick3L">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>150</y>
+       <width>13</width>
+       <height>13</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>status</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>150</y>
+       <width>60</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Joystick3</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="LB_joystick3T">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>150</y>
+       <width>59</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -466,6 +505,7 @@
     </property>
     <addaction name="action2D"/>
     <addaction name="actionThruster_P"/>
+    <addaction name="actionThruster_I_vessel"/>
    </widget>
    <widget class="QMenu" name="menuAbout_O">
     <property name="title">
@@ -554,6 +594,11 @@
   <action name="actionCoG">
    <property name="text">
     <string>CoG (&amp;C)</string>
+   </property>
+  </action>
+  <action name="actionThruster_I_vessel">
+   <property name="text">
+    <string>Thruster -- I vessel</string>
    </property>
   </action>
  </widget>

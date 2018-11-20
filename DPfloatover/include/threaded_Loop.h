@@ -280,6 +280,9 @@ class threadloop {
   int getgamepadstatus_second() const {
     return mygamepad_second.getGamepadStatus();
   }
+  int getgamepadstatus_third() const {
+    return mygamepad_third.getGamepadStatus();
+  }
   int getqtmstatus() const { return mymotioncapture.getmcapstatus(); }
   Vector6d getrealtimestate_first() const {
     return _realtimevessel_first.State;
@@ -619,49 +622,53 @@ class threadloop {
       -1.893,                                  // right_x
       0.216                                    // right_y
   };
+
   // constant parameters of the third vessel
   vessel_third _vessel_third{
       {623, 0, 0, 0, 706, 444, 0, 444, 1298},  // mass
       {17, 0, 0, 0, 20, 0, 0, 0, 100},         // damping
-      4,                                       // P_x
-      1,                                       // P_y
-      5,                                       // P_theta
-      0.2,                                     // I_x
-      0.1,                                     // I_y
-      1,                                       // I_theta
-      0.1,                                     // D_x
-      0.1,                                     // D_y
-      0.2,                                     // D_theta
+      20,                                      // P_x
+      10,                                      // P_y
+      50.0,                                    // P_theta
+      0.02,                                    // I_x
+      0.01,                                    // I_y
+      0.0,                                     // I_theta
+      200.0,                                   // D_x
+      150.0,                                   // D_y
+      300.0,                                   // D_theta
       0.01,                                    // allowed_error_x
       0.01,                                    // allowed_error_y;
-      0.01,                                    // allowed_error_orientation;
-      26.0,                                    // maxpositive_x_thrust(N)
-      25.0,                                    // maxnegative_x_thrust(N)
-      6,                                       // maxpositive_y_thrust(N)
-      4,                                       // maxnegative_y_thrust(N)
-      11,                                      // maxpositive_Mz_thrust(N*m)
-      7.6,                                     // maxnegative_Mz_thrust(N*m)
+      0.02,                                    // allowed_error_orientation;
+      6.0,                                     // maxpositive_x_thrust(N)
+      5.0,                                     // maxnegative_x_thrust(N)
+      3,                                       // maxpositive_y_thrust(N)
+      2,                                       // maxnegative_y_thrust(N)
+      5,                                       // maxpositive_Mz_thrust(N*m)
+      3,                                       // maxnegative_Mz_thrust(N*m)
       3,                                       // m
       3,                                       // n
       9,                                       // numvar
       3,                                       // num_constraints
-      5.6e-7,                                  // Kbar_positive
-      2.2e-7,                                  // Kbar_negative
+      3.7e-7,                                  // Kbar_positive
+      1.7e-7,                                  // Kbar_negative
       100,                                     // max_delta_rotation_bow
-      4000,                                    // max_rotation_bow
-      8.96,                                    // max_thrust_bow_positive
-      3.52,                                    // max_thrust_bow_negative
+      3000,                                    // max_rotation_bow
+      3.33,                                    // max_thrust_bow_positive
+      1.53,                                    // max_thrust_bow_negative
       2e-5,                                    // K_left
       2e-5,                                    // K_right
-      20,                                      // max_delta_rotation_bow
+      20,                                      // max_delta_rotation_azimuth
       1000,                                    // max_rotation_azimuth
+      50,                                      // min_rotation_azimuth
       20,                                      // max_thrust_azimuth_left
       20,                                      // max_thrust_azimuth_right
+      0.05,                                    // min_thrust_azimuth_left
+      0.05,                                    // min_thrust_azimuth_right
       0.1277,                                  // max_delta_alpha_azimuth
-      M_PI,                                    // max_alpha_azimuth_left
-      0,                                       // min_alpha_azimuth_left
-      0,                                       // max_alpha_azimuth_right
-      -M_PI,                                   // min_alpha_azimuth_right
+      M_PI * 175 / 180,                        // max_alpha_azimuth_left
+      M_PI / 18,                               // min_alpha_azimuth_left
+      -M_PI / 18,                              // max_alpha_azimuth_right
+      -M_PI * 175 / 180,                       // min_alpha_azimuth_right
       1.9,                                     // bow_x
       0,                                       // bow_y
       -1.893,                                  // left_x
@@ -718,11 +725,11 @@ class threadloop {
       Eigen::Matrix3d::Identity(),  // CTB2G
       Eigen::Vector3d::Zero(),      // tau
       Eigen::Vector3d::Zero(),      // BalphaU
-      (Eigen::Vector3d() << -M_PI / 2, M_PI / 180, -M_PI / 30)
-          .finished(),                                    // alpha
-      Eigen::Vector3i::Zero(),                            // alpha_deg
-      (Eigen::Vector3d() << 0.001, 0.0, 0.0).finished(),  // u
-      Eigen::Vector3i::Zero()                             // rotation
+      (Eigen::Vector3d() << -M_PI / 2, M_PI / 10, -M_PI / 4)
+          .finished(),                                     // alpha
+      Eigen::Vector3i::Zero(),                             // alpha_deg
+      (Eigen::Vector3d() << 0.01, 0.02, 0.02).finished(),  // u
+      Eigen::Vector3i::Zero()                              // rotation
   };
   // setpoints for control
   setpoints mysetpoints;
@@ -869,22 +876,35 @@ class threadloop {
     }
   }
 
-  // send and receive data from the third client (X class)
+  // send and receive data from the third client (X class-I)
   void controller_third_pn() {
+    boost::posix_time::ptime t_start =
+        boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime t_end =
+        boost::posix_time::second_clock::local_time();
+    boost::posix_time::time_duration t_elapsed = t_end - t_start;
+    long int mt_elapsed = 0;
     while (1) {
       // real-time control and optimization for each client
-      boost::posix_time::ptime t_start =
-          boost::posix_time::second_clock::local_time();
+      t_start = boost::posix_time::second_clock::local_time();
 
-      _controller_third.fullymanualcontroller(
-          mygamepad_third.getGamepadXforce(),
-          mygamepad_third.getGamepadYforce(),
-          mygamepad_third.getGamepadZmoment(), _realtimevessel_third);
-
-      boost::posix_time::ptime t_end =
-          boost::posix_time::second_clock::local_time();
-      boost::posix_time::time_duration t_elapsed = t_end - t_start;
-      long int mt_elapsed = t_elapsed.total_milliseconds();
+      if (index_controlmode_third == 1) {
+        _controller_third.headingcontrolleronestep(
+            _realtimevessel_third, mygamepad_third.getGamepadXforce(),
+            mygamepad_third.getGamepadYforce(), myfile_third);
+      } else if (index_controlmode_third == 2) {
+        _controller_third.pidcontrolleronestep(_realtimevessel_third,
+                                               myfile_third);
+      } else {
+        _controller_third.fullymanualcontroller(
+            mygamepad_third.getGamepadXforce(),
+            mygamepad_third.getGamepadYforce(),
+            mygamepad_third.getGamepadZmoment(), _realtimevessel_third,
+            myfile_third);
+      }
+      t_end = boost::posix_time::second_clock::local_time();
+      t_elapsed = t_end - t_start;
+      mt_elapsed = t_elapsed.total_milliseconds();
       if (mt_elapsed > sample_mtime) {
         if (FILEORNOT) {
           myfile_third = fopen(logsavepath_third.c_str(), "a+");
@@ -892,14 +912,15 @@ class threadloop {
           fclose(myfile_third);
         } else
           perror("Third: Take too long for QP");
+        // continue;
       } else {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-
-      realtimeprint_third();
+      // realtimeprint_second();
     }
   }
+
   // function for send data to all clients using PN
   void send2allclients_pn() {
     if (MAXCONNECTION == 1) {
@@ -907,7 +928,8 @@ class threadloop {
     } else if (MAXCONNECTION == 2) {
       send2bothvessel(&_realtimevessel_first, &_realtimevessel_second, myfile);
     } else if (MAXCONNECTION == 3) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(sample_mtime));
+      send2triplevessel(&_realtimevessel_first, &_realtimevessel_second,
+                        &_realtimevessel_third, myfile);
     }
   }
   // create sqlite database
