@@ -19,6 +19,8 @@ const int arraylength_setpoint_circle = 20;
 const double radius_setpoint_larger = 0.1;
 const double radius_setpoint_smaller = 0.05;
 
+// ui size
+const int size_2ddisplay = 990;
 namespace Ui {
 class Display2DDialog;
 }

@@ -38,12 +38,12 @@ void Display2DDialog::initializeAllUI() {
   // setGeometry(500, 250, 1500, 950);
 
   // set position and size
-  ui->customPlot_2Dmotion->setGeometry(10, 10, 950, 950);
-  ui->status_text->setGeometry(20, 965, 300, 25);
-  ui->label_mousepos->setGeometry(500, 965, 200, 25);
+  ui->customPlot_2Dmotion->setGeometry(10, 10, size_2ddisplay, size_2ddisplay);
+  ui->status_text->setGeometry(20, size_2ddisplay + 15, 300, 25);
+  ui->label_mousepos->setGeometry(500, size_2ddisplay + 15, 200, 25);
 
   // load image as pixmap
-  ui->label_north->setGeometry(QRect(850, 20, 10, 10));
+  ui->label_north->setGeometry(QRect(size_2ddisplay - 80, 20, 10, 10));
   QString imagepath =
       "/home/skloe/Coding/CPP1X/USV/DPfloatover/QT/build/images/north.png";
   QImage image(imagepath);
@@ -270,7 +270,8 @@ void Display2DDialog::updatesetpointvector(double set_x, double set_y,
 
 // initialize UI for real-time 6DoF motion
 void Display2DDialog::initialize6DOFmotion(QCustomPlot *customPlot) {
-  customPlot->setGeometry(980, 10, MAXCONNECTION * 450, 950);
+  customPlot->setGeometry(size_2ddisplay + 15, 10, MAXCONNECTION * 450,
+                          size_2ddisplay);
   customPlot->plotLayout()->clear();
 
   QVector<QString> str_6DOFmotion;
