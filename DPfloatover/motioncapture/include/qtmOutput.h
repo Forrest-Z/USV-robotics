@@ -48,9 +48,11 @@ class motiondataprocess {
 
   // update real time orientation based on the index_step
   void updaterealtimeorientation(double& _rad_orientation, int _index_step);
+  void setsampletime(double _sampletime);
 
  private:
   // low-pass position at former time step
+  double frames_sample_time;
   Eigen::Vector3d formeraverageposition;
   VectorAYaw average_yaw;
   VectorASurge average_surge;
@@ -82,7 +84,7 @@ class COutput {
                        realtimevessel_third& _realtimevessel_third);
   void PrintTimingData();
   void ResetCounters();
-  void Print6DOFSettings(CRTProtocol* poRTProtocol);
+  void setframes_elapsed_time(double _qtm_frames_elapsed_time);
 
  private:
   struct Marker {
@@ -161,6 +163,7 @@ class COutput {
   int mnFrameNumberDiff;
   unsigned int mnMaxFrameNumberDiff;
 
+  double qtm_frames_elapsed_time;
   motiondataprocess motiondataprocess_first;
   motiondataprocess motiondataprocess_second;
   motiondataprocess motiondataprocess_third;

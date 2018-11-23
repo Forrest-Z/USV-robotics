@@ -2,7 +2,10 @@
 
 #define WRITE_ANALOG_HEADERS_TO_FILE
 
-motiondataprocess::motiondataprocess() { initializedata(); }
+motiondataprocess::motiondataprocess()
+    : frames_sample_time(motion_sample_time) {
+  initializedata();
+}
 motiondataprocess::~motiondataprocess() {}
 void motiondataprocess::initializedata() {
   formeraverageposition.setZero();
@@ -38,6 +41,9 @@ void motiondataprocess::updaterealtimeorientation(double& _rad_orientation,
     if (_rad_orientation < 0) _rad_orientation += 2 * M_PI;
 }
 
+void motiondataprocess::setsampletime(double _sampletime) {
+  frames_sample_time = _sampletime;
+}
 // moving average lowpass to remove noise in yaw
 double motiondataprocess::movingaverage_yaw(double _dtheta) {
   // pop_front
@@ -116,7 +122,7 @@ double motiondataprocess::movingaverage_sway_velocity(double _vy) {
 Eigen::Vector3d motiondataprocess::cal_velocity(
     const Eigen::Vector3d& _average_position_vector) {
   Eigen::Vector3d velocity =
-      (_average_position_vector - formeraverageposition) / motion_sample_time;
+      (_average_position_vector - formeraverageposition) / frames_sample_time;
   formeraverageposition = _average_position_vector;
   return velocity;
 }
@@ -125,7 +131,12 @@ COutput::COutput()
     : mfDist(NULL),
       mbWriteLogFileHeader(true),
       time_start(T_BOOST_CLOCK::local_time()),
-      mbOutputModeScrolling(false) {}
+      mbOutputModeScrolling(false),
+      qtm_frames_elapsed_time(motion_sample_time) {}
+
+void COutput::setframes_elapsed_time(double _qtm_frames_elapsed_time) {
+  qtm_frames_elapsed_time = _qtm_frames_elapsed_time;
+}
 
 void COutput::HandleDataFrame(FILE* logfile, bool bLogMinimum,
                               CRTProtocol* poRTProtocol) {
@@ -538,6 +549,7 @@ void COutput::updaterealtimevesseldata_first(
                                  _realtimevessel.setPoints(2));
 
     // velocity data using low pass
+    motiondataprocess_first.setsampletime(qtm_frames_elapsed_time);
     _realtimevessel.Measurement.tail(3) =
         _realtimevessel.CTG2B *
         motiondataprocess_first.movingaveragevelocity(average_position_vector);
@@ -547,7 +559,8 @@ void COutput::updaterealtimevesseldata_first(
 void COutput::updaterealtimevesseldata_second(
     realtimevessel_second& _realtimevessel, float _fX, float _fY, float _fZ,
     float _fAng1, float _fAng2,
-    float _fAng3) {  // determine if the measured data is out of range or NaN
+    float _fAng3) {  // determine if the measured data is out of
+                     // range or NaN
   if ((abs(_fX) < qtm_max_position) && (abs(_fY) < qtm_max_position)) {
     double m_fx = _fX / 1000;
     double m_fy = _fY / 1000;
@@ -571,7 +584,8 @@ void COutput::updaterealtimevesseldata_second(
     calculateCoordinateTransform(_realtimevessel.CTG2B, _realtimevessel.CTB2G,
                                  average_position_vector(2),
                                  _realtimevessel.setPoints(2));
-
+    // velocity data using low pass
+    motiondataprocess_second.setsampletime(qtm_frames_elapsed_time);
     _realtimevessel.Measurement.tail(3) =
         _realtimevessel.CTG2B *
         motiondataprocess_second.movingaveragevelocity(average_position_vector);
@@ -581,7 +595,8 @@ void COutput::updaterealtimevesseldata_second(
 void COutput::updaterealtimevesseldata_third(
     realtimevessel_third& _realtimevessel, float _fX, float _fY, float _fZ,
     float _fAng1, float _fAng2,
-    float _fAng3) {  // determine if the measured data is out of range or NaN
+    float _fAng3) {  // determine if the measured data is out of
+                     // range or NaN
   if ((abs(_fX) < qtm_max_position) && (abs(_fY) < qtm_max_position)) {
     double m_fx = _fX / 1000;
     double m_fy = _fY / 1000;
@@ -606,6 +621,8 @@ void COutput::updaterealtimevesseldata_third(
                                  average_position_vector(2),
                                  _realtimevessel.setPoints(2));
 
+    // velocity data using low pass
+    motiondataprocess_third.setsampletime(qtm_frames_elapsed_time);
     _realtimevessel.Measurement.tail(3) =
         _realtimevessel.CTG2B *
         motiondataprocess_third.movingaveragevelocity(average_position_vector);

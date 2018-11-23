@@ -14,6 +14,9 @@ const double ball_radius = 0.03;
 const int arraylength_azimuth = 13;
 const double tunnel_angle = M_PI / 6;
 
+const double tunnel_width = 0.2;
+const double tunnel_length = 0.8;
+
 namespace Ui {
 class DialogThrusterDiagI;
 }
@@ -53,17 +56,39 @@ class DialogThrusterDiagI : public QDialog {
   QCPCurve *fermatSpiral_ball_PORT;
   QCPItemText *PORT_RPMText;
   QCPItemText *PORT_angleText;
+
+  // viewer for tunnel thruster 1
+  std::vector<double> tunnel_first_position;
+  QVector<QCPCurveData> dataSpiral_tunnel_first;
+  QCPCurve *fermatSpiral_tunnel_first;
+  QCPItemText *tunnel_first_RPMText;
+
+  // viewer for tunnel thruster 2
+  std::vector<double> tunnel_second_position;
+  QVector<QCPCurveData> dataSpiral_tunnel_second;
+  QCPCurve *fermatSpiral_tunnel_second;
+  QCPItemText *tunnel_second_RPMText;
+
   void setupthrusterRealtimeData();
   void initializeAllUI(QCustomPlot *customPlot);
   void initializevesselshape(QCustomPlot *customPlot, double translationx,
                              double translationy);
-  void initializeSTBDProgressBar(QCustomPlot *customPlot);
 
+  // starboard azimuth thruster
+  void initializeSTBDProgressBar(QCustomPlot *customPlot);
   void updateSTBDProgressBar(double _percent, double _orientation);
   void updateSTBDText(int _rpm, int _orientation);
+  // port azimuth thruster
   void initializePORTProgressBar(QCustomPlot *customPlot);
   void updatePORTProgressBar(double _percent, double _orientation);
   void updatePORTText(int _rpm, int _orientation);
+
+  // tunnel 1
+  void initializeTunnelProgressBar_first(QCustomPlot *customPlot);
+  void updateTunnelProgressBar_first(int _rpm);
+  // tunnel 2
+  void initializeTunnelProgressBar_second(QCustomPlot *customPlot);
+  void updateTunnelProgressBar_second(int _rpm);
 };
 
 #endif  // DIALOGTHRUSTERDIAGI_H

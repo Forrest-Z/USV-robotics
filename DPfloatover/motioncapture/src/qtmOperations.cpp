@@ -1,7 +1,8 @@
 #include "../include/qtmOperations.h"
 
 COperations::COperations(CInput* poInput, COutput* poOutput,
-                         CRTProtocol* poRTProtocol) {
+                         CRTProtocol* poRTProtocol)
+    : qtm_frames_elapsed(motion_sample_time) {
   mpoInput = poInput;
   mpoOutput = poOutput;
   mpoRTProtocol = poRTProtocol;
@@ -33,8 +34,15 @@ void COperations::DataTransfer(realtimevessel_first& _realtimevessel_first,
   }
 
   mpoRTProtocol->StreamFrames(eStreamRate, nRateArgument, nComponentType);
-  // Main data read loop
 
+  // initialize timer to calculate real time frequency
+  boost::posix_time::ptime t_start =
+      boost::posix_time::second_clock::local_time();
+  boost::posix_time::ptime t_end =
+      boost::posix_time::second_clock::local_time();
+  boost::posix_time::time_duration t_elapsed = t_end - t_start;
+  long int mt_elapsed = 0;
+  // Main data read loop
   while (1) {
     if (mpoRTProtocol->ReceiveRTPacket(ePacketType, true) > 0) {
       switch (ePacketType) {
@@ -48,16 +56,28 @@ void COperations::DataTransfer(realtimevessel_first& _realtimevessel_first,
           break;
         }
         case CRTPacket::PacketData:  // Data received
+        {
+          mpoOutput->setframes_elapsed_time(qtm_frames_elapsed);
           mpoOutput->HandleDataFrame(
               _file, mpoRTProtocol, _realtimevessel_first,
               _realtimevessel_second, _realtimevessel_third);
           break;
+        }
         case CRTPacket::PacketNoMoreData:  // No more data
           break;
         default:
           break;
       }
     }
+    t_end = boost::posix_time::second_clock::local_time();
+    t_elapsed = t_end - t_start;
+    mt_elapsed = t_elapsed.total_milliseconds();
+    if (mt_elapsed <= 0)
+      qtm_frames_elapsed = motion_sample_time;
+    else
+      qtm_frames_elapsed = (double)mt_elapsed / 1000;  // seconds
+    t_start = t_end;
+    printf("%f\n", qtm_frames_elapsed);
   }
   mpoRTProtocol->StreamFramesStop();
 

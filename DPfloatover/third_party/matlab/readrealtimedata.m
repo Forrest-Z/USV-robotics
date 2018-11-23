@@ -15,6 +15,7 @@ Tau_first=totaldata_first(:,16:18);
 est_first=totaldata_first(:,19:21);
 alpha_first=totaldata_first(:,22:24);
 rpm_first=totaldata_first(:,25:27);
+State4control_first=totaldata_first(:,28:30);
 
 name_second='Second.csv';
 path_second=strcat(path,name_second);
@@ -28,14 +29,14 @@ Tau_second=totaldata_second(:,16:18);
 est_second=totaldata_second(:,19:21);
 alpha_second=totaldata_second(:,22:24);
 rpm_second=totaldata_second(:,25:27);
-State4control_second=totaldata_second(:,28:29);
+State4control_second=totaldata_second(:,28:30);
 
 %% figure 1 of II vessel
-s_xmin=600;
-s_xmax=6780;
+s_xmin=150;
+s_xmax=170;
 index2view=find(timestamp_second>s_xmin & timestamp_second<s_xmax);
 timestamp_second=timestamp_second(index2view);
-desiredposition_second=[0 -2 160];
+desiredposition_second=[0 -3 00];
 figure(1)
 subplot(311)
 plot(timestamp_second,Position_second(index2view,1),'-r','linewidth',2);hold on;

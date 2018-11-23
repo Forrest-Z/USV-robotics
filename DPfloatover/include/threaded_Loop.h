@@ -523,11 +523,11 @@ class threadloop {
       20.0,                                    // P_x
       10.0,                                    // P_y
       50.0,                                    // P_theta
-      4.0,                                     // I_x
-      2.0,                                     // I_y
+      0.0,                                     // I_x
+      0.0,                                     // I_y
       0.0,                                     // I_theta
-      300.0,                                   // D_x
-      200.0,                                   // D_y
+      200.0,                                   // D_x
+      150.0,                                   // D_y
       300.0,                                   // D_theta
       0.01,                                    // allowed_error_x
       0.01,                                    // allowed_error_y;
@@ -576,8 +576,8 @@ class threadloop {
       20,                                      // P_x
       10,                                      // P_y
       50.0,                                    // P_theta
-      4.0,                                     // I_x
-      2.0,                                     // I_y
+      4,                                       // I_x
+      2,                                       // I_y
       0.0,                                     // I_theta
       300.0,                                   // D_x
       200.0,                                   // D_y
