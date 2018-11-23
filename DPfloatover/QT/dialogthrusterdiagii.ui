@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogThrusterDiagI</class>
- <widget class="QDialog" name="DialogThrusterDiagI">
+ <class>DialogthrusterdiagII</class>
+ <widget class="QDialog" name="DialogthrusterdiagII">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>992</width>
-    <height>457</height>
+    <width>1137</width>
+    <height>470</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Thruster --- I vessel</string>
+   <string>Thruster --- II vessel</string>
   </property>
   <widget class="QCustomPlot" name="customPlot_thruster" native="true">
    <property name="geometry">

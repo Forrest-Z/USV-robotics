@@ -138,8 +138,7 @@ void COutput::setframes_elapsed_time(double _qtm_frames_elapsed_time) {
   qtm_frames_elapsed_time = _qtm_frames_elapsed_time;
 }
 
-void COutput::HandleDataFrame(FILE* logfile, bool bLogMinimum,
-                              CRTProtocol* poRTProtocol) {
+void COutput::HandleDataFrame(FILE* logfile, CRTProtocol* poRTProtocol) {
   CRTPacket* poRTPacket;
 
   mnReceivedFrames++;
@@ -230,13 +229,12 @@ void COutput::HandleDataFrame(FILE* logfile, CRTProtocol* poRTProtocol,
   }
 
   if (MAXCONNECTION == 1)
-    PrintData6DEuler(poRTPacket, poRTProtocol, _realtimevessel_first);
+    PrintData6DEuler(poRTPacket, _realtimevessel_first);
   else if (MAXCONNECTION == 2)
-    PrintData6DEuler(poRTPacket, poRTProtocol, _realtimevessel_first,
-                     _realtimevessel_second);
+    PrintData6DEuler(poRTPacket, _realtimevessel_first, _realtimevessel_second);
   else if (MAXCONNECTION == 3)
-    PrintData6DEuler(poRTPacket, poRTProtocol, _realtimevessel_first,
-                     _realtimevessel_second, _realtimevessel_third);
+    PrintData6DEuler(poRTPacket, _realtimevessel_first, _realtimevessel_second,
+                     _realtimevessel_third);
 }  // OutputData
 
 void COutput::PrintData6D(FILE* logfile, CRTPacket* poRTPacket,
@@ -324,7 +322,7 @@ void COutput::PrintData6DEuler(FILE* logfile, CRTPacket* poRTPacket,
   }
 }  // PrintData6DEuler
 
-void COutput::PrintData6DEuler(CRTPacket* poRTPacket, CRTProtocol* poRTProtocol,
+void COutput::PrintData6DEuler(CRTPacket* poRTPacket,
                                realtimevessel_first& _realtimevessel_first) {
   float fX, fY, fZ, fAng1, fAng2, fAng3;  // mm, mm, mm, deg, deg, deg (QTM)
 
@@ -348,7 +346,7 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket, CRTProtocol* poRTProtocol,
   }
 }  // PrintData6DEuler (the first vessel)
 
-void COutput::PrintData6DEuler(CRTPacket* poRTPacket, CRTProtocol* poRTProtocol,
+void COutput::PrintData6DEuler(CRTPacket* poRTPacket,
                                realtimevessel_first& _realtimevessel_first,
                                realtimevessel_second& _realtimevessel_second) {
   if (poRTPacket->GetComponentSize(CRTPacket::Component6dEuler)) {
@@ -396,7 +394,7 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket, CRTProtocol* poRTProtocol,
   }
 }  // PrintData6DEuler (the first and second vessel)
 
-void COutput::PrintData6DEuler(CRTPacket* poRTPacket, CRTProtocol* poRTProtocol,
+void COutput::PrintData6DEuler(CRTPacket* poRTPacket,
                                realtimevessel_first& _realtimevessel_first,
                                realtimevessel_second& _realtimevessel_second,
                                realtimevessel_third& _realtimevessel_third) {

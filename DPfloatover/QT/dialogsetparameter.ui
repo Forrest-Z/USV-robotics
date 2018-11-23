@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>457</width>
+    <width>682</width>
     <height>569</height>
    </rect>
   </property>
@@ -373,6 +373,188 @@
      </item>
      <item>
       <widget class="QLineEdit" name="LE_DTHETAII"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>20</y>
+     <width>201</width>
+     <height>521</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>PID --- III vessel</string>
+   </property>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Px</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Py</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_12">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>140</y>
+      <width>51</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ptheta</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_13">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>180</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ix</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_14">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>230</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Iy</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>280</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Itheta</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>330</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dx</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_17">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>370</y>
+      <width>41</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dy</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_18">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>420</y>
+      <width>51</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dtheta</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="GB_III">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>480</y>
+      <width>181</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Setup</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>20</y>
+      <width>121</width>
+      <height>441</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QLineEdit" name="LE_PXIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_PYIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_PTHETAIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_IXIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_IYIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_ITHETAIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_DXIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_DYIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_DTHETAIII"/>
      </item>
     </layout>
    </widget>

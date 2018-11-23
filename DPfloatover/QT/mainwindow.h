@@ -21,9 +21,10 @@
 #include "dialogsetparameter.h"
 #include "dialogstraightline.h"
 #include "dialogthrusterdiagi.h"
+#include "dialogthrusterdiagii.h"
+#include "dialogthrusterdiagiii.h"
 #include "display2ddialog.h"
 #include "globalvar.h"
-#include "thrusterdiag.h"
 
 namespace Ui {
 class MainWindow;
@@ -95,10 +96,11 @@ class MainWindow : public QMainWindow {
 
   void on_actionThruster_I_vessel_triggered();
 
+  void on_actionThruster_II_vessel_triggered();
+
  private:
   Ui::MainWindow *ui;
   Display2DDialog *myDisplay2DDialog;
-  ThrusterDiag *myThrusterDiag;
   Dialogsetparameter *myDialogsetparameter;
   DialogBox *myDialogBox;
   Dialogfixedsetpoint *myDialogfixedsetpoint;
@@ -108,6 +110,8 @@ class MainWindow : public QMainWindow {
   Dialogabout *myDialogabout;
   QStringListModel *_model;
   DialogThrusterDiagI *myDialogThrusterDiagI;
+  DialogthrusterdiagII *myDialogthrusterdiagII;
+  DialogthrusterdiagIII *myDialogthrusterdiagIII;
   Qt::WindowFlags flags = nullptr;
 
   QString logfilepath;

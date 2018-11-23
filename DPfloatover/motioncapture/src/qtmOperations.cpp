@@ -36,10 +36,8 @@ void COperations::DataTransfer(realtimevessel_first& _realtimevessel_first,
   mpoRTProtocol->StreamFrames(eStreamRate, nRateArgument, nComponentType);
 
   // initialize timer to calculate real time frequency
-  boost::posix_time::ptime t_start =
-      boost::posix_time::second_clock::local_time();
-  boost::posix_time::ptime t_end =
-      boost::posix_time::second_clock::local_time();
+  boost::posix_time::ptime t_start(T_BOOST_CLOCK::local_time());
+  boost::posix_time::ptime t_end(T_BOOST_CLOCK::local_time());
   boost::posix_time::time_duration t_elapsed = t_end - t_start;
   long int mt_elapsed = 0;
   // Main data read loop
@@ -69,7 +67,7 @@ void COperations::DataTransfer(realtimevessel_first& _realtimevessel_first,
           break;
       }
     }
-    t_end = boost::posix_time::second_clock::local_time();
+    t_end = T_BOOST_CLOCK::local_time();
     t_elapsed = t_end - t_start;
     mt_elapsed = t_elapsed.total_milliseconds();
     if (mt_elapsed <= 0)
@@ -77,7 +75,6 @@ void COperations::DataTransfer(realtimevessel_first& _realtimevessel_first,
     else
       qtm_frames_elapsed = (double)mt_elapsed / 1000;  // seconds
     t_start = t_end;
-    printf("%f\n", qtm_frames_elapsed);
   }
   mpoRTProtocol->StreamFramesStop();
 

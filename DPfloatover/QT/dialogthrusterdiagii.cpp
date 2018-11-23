@@ -1,17 +1,17 @@
-#include "dialogthrusterdiagi.h"
-#include "ui_dialogthrusterdiagi.h"
+#include "dialogthrusterdiagii.h"
+#include "ui_dialogthrusterdiagii.h"
 
-DialogThrusterDiagI::DialogThrusterDiagI(QWidget *parent)
+DialogthrusterdiagII::DialogthrusterdiagII(QWidget *parent)
     : QDialog(parent),
-      ui(new Ui::DialogThrusterDiagI),
+      ui(new Ui::DialogthrusterdiagII),
       STBD_position({3.5, 3.7}),
-      dataSpiral_tunnelcolor_STBD(arraylength_azimuth_first),
-      dataSpiral_tunnelnocolor_STBD(arraylength_azimuth_first),
-      dataSpiral_ball_STBD(arraylength_azimuth_first),
+      dataSpiral_tunnelcolor_STBD(arraylength_azimuth_second),
+      dataSpiral_tunnelnocolor_STBD(arraylength_azimuth_second),
+      dataSpiral_ball_STBD(arraylength_azimuth_second),
       PORT_position({3.5, 2.3}),
-      dataSpiral_tunnelcolor_PORT(arraylength_azimuth_first),
-      dataSpiral_tunnelnocolor_PORT(arraylength_azimuth_first),
-      dataSpiral_ball_PORT(arraylength_azimuth_first),
+      dataSpiral_tunnelcolor_PORT(arraylength_azimuth_second),
+      dataSpiral_tunnelnocolor_PORT(arraylength_azimuth_second),
+      dataSpiral_ball_PORT(arraylength_azimuth_second),
       tunnel_first_position({-3, 3}),
       dataSpiral_tunnel_first(5),
       tunnel_second_position({-2, 3}),
@@ -21,9 +21,9 @@ DialogThrusterDiagI::DialogThrusterDiagI(QWidget *parent)
   setupthrusterRealtimeData();
 }
 
-DialogThrusterDiagI::~DialogThrusterDiagI() { delete ui; }
+DialogthrusterdiagII::~DialogthrusterdiagII() { delete ui; }
 
-void DialogThrusterDiagI::initializeAllUI(QCustomPlot *customPlot) {
+void DialogthrusterdiagII::initializeAllUI(QCustomPlot *customPlot) {
   // setup all colors used
   QPalette pal_background = palette();
   pal_background.setColor(QPalette::Background, QColor(68, 68, 68, 255));
@@ -55,7 +55,7 @@ void DialogThrusterDiagI::initializeAllUI(QCustomPlot *customPlot) {
   customPlot->yAxis->setScaleRatio(customPlot->xAxis, 1.0);  // axis equal
 }
 
-void DialogThrusterDiagI::initializevesselshape(
+void DialogthrusterdiagII::initializevesselshape(
     QCustomPlot *customPlot, double translationx /*= 0*/,
     double translationy /*= -4.7*/) {
   /* initialize the 2D vessel shape, whose graph index will be 0 */
@@ -85,7 +85,7 @@ void DialogThrusterDiagI::initializevesselshape(
 }
 
 //
-void DialogThrusterDiagI::initializeSTBDProgressBar(QCustomPlot *customPlot) {
+void DialogthrusterdiagII::initializeSTBDProgressBar(QCustomPlot *customPlot) {
   // generate data for outer circle
   const int arraylength_outercircle = 50;
   QVector<QCPCurveData> dataSpiral_outercircle(arraylength_outercircle);
@@ -93,8 +93,8 @@ void DialogThrusterDiagI::initializeSTBDProgressBar(QCustomPlot *customPlot) {
   for (unsigned i = 0; i != arraylength_outercircle; ++i) {
     double theta = 2 * i * M_PI / (arraylength_outercircle - 1);
     dataSpiral_outercircle[i] = QCPCurveData(
-        i, STBD_position[0] + azimuth_radius_first * std::cos(theta),
-        STBD_position[1] + azimuth_radius_first * std::sin(theta));
+        i, STBD_position[0] + azimuth_radius_second * std::cos(theta),
+        STBD_position[1] + azimuth_radius_second * std::sin(theta));
   }
 
   // create curve objects for outer circle
@@ -105,12 +105,12 @@ void DialogThrusterDiagI::initializeSTBDProgressBar(QCustomPlot *customPlot) {
   fermatSpiral_outercircle->setBrush(QBrush(QColor(170, 170, 170)));
 
   // generate data for progress bar on the right
-  int num_circle = arraylength_azimuth_first - 3;
+  int num_circle = arraylength_azimuth_second - 3;
   for (unsigned i = 0; i != num_circle; ++i) {
     double theta =
-        i * tunnel_angle_first / (num_circle - 1) - tunnel_angle_first / 2;
-    double cvalue = azimuth_radius_first * std::cos(theta);
-    double svalue = azimuth_radius_first * std::sin(theta);
+        i * tunnel_angle_second / (num_circle - 1) - tunnel_angle_second / 2;
+    double cvalue = azimuth_radius_second * std::cos(theta);
+    double svalue = azimuth_radius_second * std::sin(theta);
     dataSpiral_tunnelcolor_STBD[i] =
         QCPCurveData(i, STBD_position[0] + cvalue, STBD_position[1] + svalue);
     dataSpiral_tunnelnocolor_STBD[i] =
@@ -118,34 +118,34 @@ void DialogThrusterDiagI::initializeSTBDProgressBar(QCustomPlot *customPlot) {
   }
 
   double xvalue = -0.1;
-  dataSpiral_tunnelcolor_STBD[num_circle] =
-      QCPCurveData(num_circle, STBD_position[0] + xvalue,
-                   STBD_position[1] +
-                       azimuth_radius_first * std::sin(tunnel_angle_first / 2));
+  dataSpiral_tunnelcolor_STBD[num_circle] = QCPCurveData(
+      num_circle, STBD_position[0] + xvalue,
+      STBD_position[1] +
+          azimuth_radius_second * std::sin(tunnel_angle_second / 2));
   dataSpiral_tunnelcolor_STBD[num_circle + 1] = QCPCurveData(
       num_circle + 1, STBD_position[0] + xvalue,
       STBD_position[1] +
-          azimuth_radius_first * std::sin(-tunnel_angle_first / 2));
+          azimuth_radius_second * std::sin(-tunnel_angle_second / 2));
   dataSpiral_tunnelcolor_STBD[num_circle + 2] = QCPCurveData(
       num_circle + 2,
       STBD_position[0] +
-          azimuth_radius_first * std::cos(-tunnel_angle_first / 2),
+          azimuth_radius_second * std::cos(-tunnel_angle_second / 2),
       STBD_position[1] +
-          azimuth_radius_first * std::sin(-tunnel_angle_first / 2));
-  dataSpiral_tunnelnocolor_STBD[num_circle] =
-      QCPCurveData(num_circle, STBD_position[0] + xvalue,
-                   STBD_position[1] -
-                       azimuth_radius_first * std::sin(tunnel_angle_first / 2));
+          azimuth_radius_second * std::sin(-tunnel_angle_second / 2));
+  dataSpiral_tunnelnocolor_STBD[num_circle] = QCPCurveData(
+      num_circle, STBD_position[0] + xvalue,
+      STBD_position[1] -
+          azimuth_radius_second * std::sin(tunnel_angle_second / 2));
   dataSpiral_tunnelnocolor_STBD[num_circle + 1] = QCPCurveData(
       num_circle + 1, STBD_position[0] + xvalue,
       STBD_position[1] -
-          azimuth_radius_first * std::sin(-tunnel_angle_first / 2));
+          azimuth_radius_second * std::sin(-tunnel_angle_second / 2));
   dataSpiral_tunnelnocolor_STBD[num_circle + 2] = QCPCurveData(
       num_circle + 2,
       STBD_position[0] -
-          azimuth_radius_first * std::cos(-tunnel_angle_first / 2),
+          azimuth_radius_second * std::cos(-tunnel_angle_second / 2),
       STBD_position[1] -
-          azimuth_radius_first * std::sin(-tunnel_angle_first / 2));
+          azimuth_radius_second * std::sin(-tunnel_angle_second / 2));
   // create curve objects
   fermatSpiral_tunnelcolor_STBD =
       new QCPCurve(customPlot->xAxis, customPlot->yAxis);
@@ -160,12 +160,12 @@ void DialogThrusterDiagI::initializeSTBDProgressBar(QCustomPlot *customPlot) {
   fermatSpiral_tunnelnocolor_STBD->setBrush(QBrush(QColor(255, 255, 255)));
 
   // generate data for ball
-  for (unsigned i = 0; i != arraylength_azimuth_first; ++i) {
-    double theta = 2 * i * M_PI / (arraylength_azimuth_first - 1);
+  for (unsigned i = 0; i != arraylength_azimuth_second; ++i) {
+    double theta = 2 * i * M_PI / (arraylength_azimuth_second - 1);
     dataSpiral_ball_STBD[i] =
-        QCPCurveData(i, STBD_position[0] + azimuth_radius_first +
-                            ball_radius_first * std::cos(theta),
-                     STBD_position[1] + ball_radius_first * std::sin(theta));
+        QCPCurveData(i, STBD_position[0] + azimuth_radius_second +
+                            ball_radius_second * std::cos(theta),
+                     STBD_position[1] + ball_radius_second * std::sin(theta));
   }
 
   // create curve objects for Ball
@@ -176,8 +176,9 @@ void DialogThrusterDiagI::initializeSTBDProgressBar(QCustomPlot *customPlot) {
 
   // create static text for angle
   QCPItemText *angleText = new QCPItemText(customPlot);
-  angleText->position->setCoords(STBD_position[0] - 4.5 * azimuth_radius_first,
-                                 STBD_position[1] + 0.7 * azimuth_radius_first);
+  angleText->position->setCoords(
+      STBD_position[0] - 4.5 * azimuth_radius_second,
+      STBD_position[1] + 0.7 * azimuth_radius_second);
   angleText->setText("STBDAzi (°)");
   angleText->setFont(QFont("SansSerif", 10));
   angleText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
@@ -185,8 +186,8 @@ void DialogThrusterDiagI::initializeSTBDProgressBar(QCustomPlot *customPlot) {
   // create realtime text for angle
   STBD_angleText = new QCPItemText(customPlot);
   STBD_angleText->position->setCoords(
-      STBD_position[0] - 2 * azimuth_radius_first,
-      STBD_position[1] + 0.7 * azimuth_radius_first);
+      STBD_position[0] - 2 * azimuth_radius_second,
+      STBD_position[1] + 0.7 * azimuth_radius_second);
   STBD_angleText->setText("0");
   STBD_angleText->setFont(QFont("SansSerif", 10));
   STBD_angleText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
@@ -194,8 +195,8 @@ void DialogThrusterDiagI::initializeSTBDProgressBar(QCustomPlot *customPlot) {
 
   // create static text for RPM
   QCPItemText *RPMText = new QCPItemText(customPlot);
-  RPMText->position->setCoords(STBD_position[0] - 4.5 * azimuth_radius_first,
-                               STBD_position[1] - 0.5 * azimuth_radius_first);
+  RPMText->position->setCoords(STBD_position[0] - 4.5 * azimuth_radius_second,
+                               STBD_position[1] - 0.5 * azimuth_radius_second);
   RPMText->setText("RPM");
   RPMText->setFont(QFont("SansSerif", 10));
   RPMText->setPositionAlignment(Qt::AlignBottom | Qt::AlignLeft);
@@ -203,15 +204,15 @@ void DialogThrusterDiagI::initializeSTBDProgressBar(QCustomPlot *customPlot) {
   // create realtime text for RPM
   STBD_RPMText = new QCPItemText(customPlot);
   STBD_RPMText->position->setCoords(
-      STBD_position[0] - 2 * azimuth_radius_first,
-      STBD_position[1] - 0.5 * azimuth_radius_first);
+      STBD_position[0] - 2 * azimuth_radius_second,
+      STBD_position[1] - 0.5 * azimuth_radius_second);
   STBD_RPMText->setText("0");
   STBD_RPMText->setFont(QFont("SansSerif", 10));
   STBD_RPMText->setPositionAlignment(Qt::AlignBottom | Qt::AlignLeft);
   STBD_RPMText->setColor(Qt::black);
 }
 //
-void DialogThrusterDiagI::initializePORTProgressBar(QCustomPlot *customPlot) {
+void DialogthrusterdiagII::initializePORTProgressBar(QCustomPlot *customPlot) {
   // generate data for outer circle
   const int arraylength_outercircle = 50;
   QVector<QCPCurveData> dataSpiral_outercircle(arraylength_outercircle);
@@ -219,8 +220,8 @@ void DialogThrusterDiagI::initializePORTProgressBar(QCustomPlot *customPlot) {
   for (unsigned i = 0; i != arraylength_outercircle; ++i) {
     double theta = 2 * i * M_PI / (arraylength_outercircle - 1);
     dataSpiral_outercircle[i] = QCPCurveData(
-        i, PORT_position[0] + azimuth_radius_first * std::cos(theta),
-        PORT_position[1] + azimuth_radius_first * std::sin(theta));
+        i, PORT_position[0] + azimuth_radius_second * std::cos(theta),
+        PORT_position[1] + azimuth_radius_second * std::sin(theta));
   }
 
   // create curve objects for outer circle
@@ -231,12 +232,12 @@ void DialogThrusterDiagI::initializePORTProgressBar(QCustomPlot *customPlot) {
   fermatSpiral_outercircle->setBrush(QBrush(QColor(170, 170, 170)));
 
   // generate data for progress bar on the right
-  int num_circle = arraylength_azimuth_first - 3;
+  int num_circle = arraylength_azimuth_second - 3;
   for (unsigned i = 0; i != num_circle; ++i) {
     double theta =
-        i * tunnel_angle_first / (num_circle - 1) - tunnel_angle_first / 2;
-    double cvalue = azimuth_radius_first * std::cos(theta);
-    double svalue = azimuth_radius_first * std::sin(theta);
+        i * tunnel_angle_second / (num_circle - 1) - tunnel_angle_second / 2;
+    double cvalue = azimuth_radius_second * std::cos(theta);
+    double svalue = azimuth_radius_second * std::sin(theta);
     dataSpiral_tunnelcolor_PORT[i] =
         QCPCurveData(i, PORT_position[0] + cvalue, PORT_position[1] + svalue);
     dataSpiral_tunnelnocolor_PORT[i] =
@@ -244,34 +245,34 @@ void DialogThrusterDiagI::initializePORTProgressBar(QCustomPlot *customPlot) {
   }
 
   double xvalue = -0.1;
-  dataSpiral_tunnelcolor_PORT[num_circle] =
-      QCPCurveData(num_circle, PORT_position[0] + xvalue,
-                   PORT_position[1] +
-                       azimuth_radius_first * std::sin(tunnel_angle_first / 2));
+  dataSpiral_tunnelcolor_PORT[num_circle] = QCPCurveData(
+      num_circle, PORT_position[0] + xvalue,
+      PORT_position[1] +
+          azimuth_radius_second * std::sin(tunnel_angle_second / 2));
   dataSpiral_tunnelcolor_PORT[num_circle + 1] = QCPCurveData(
       num_circle + 1, PORT_position[0] + xvalue,
       PORT_position[1] +
-          azimuth_radius_first * std::sin(-tunnel_angle_first / 2));
+          azimuth_radius_second * std::sin(-tunnel_angle_second / 2));
   dataSpiral_tunnelcolor_PORT[num_circle + 2] = QCPCurveData(
       num_circle + 2,
       PORT_position[0] +
-          azimuth_radius_first * std::cos(-tunnel_angle_first / 2),
+          azimuth_radius_second * std::cos(-tunnel_angle_second / 2),
       PORT_position[1] +
-          azimuth_radius_first * std::sin(-tunnel_angle_first / 2));
-  dataSpiral_tunnelnocolor_PORT[num_circle] =
-      QCPCurveData(num_circle, PORT_position[0] + xvalue,
-                   PORT_position[1] -
-                       azimuth_radius_first * std::sin(tunnel_angle_first / 2));
+          azimuth_radius_second * std::sin(-tunnel_angle_second / 2));
+  dataSpiral_tunnelnocolor_PORT[num_circle] = QCPCurveData(
+      num_circle, PORT_position[0] + xvalue,
+      PORT_position[1] -
+          azimuth_radius_second * std::sin(tunnel_angle_second / 2));
   dataSpiral_tunnelnocolor_PORT[num_circle + 1] = QCPCurveData(
       num_circle + 1, PORT_position[0] + xvalue,
       PORT_position[1] -
-          azimuth_radius_first * std::sin(-tunnel_angle_first / 2));
+          azimuth_radius_second * std::sin(-tunnel_angle_second / 2));
   dataSpiral_tunnelnocolor_PORT[num_circle + 2] = QCPCurveData(
       num_circle + 2,
       PORT_position[0] -
-          azimuth_radius_first * std::cos(-tunnel_angle_first / 2),
+          azimuth_radius_second * std::cos(-tunnel_angle_second / 2),
       PORT_position[1] -
-          azimuth_radius_first * std::sin(-tunnel_angle_first / 2));
+          azimuth_radius_second * std::sin(-tunnel_angle_second / 2));
   // create curve objects
   fermatSpiral_tunnelcolor_PORT =
       new QCPCurve(customPlot->xAxis, customPlot->yAxis);
@@ -286,12 +287,12 @@ void DialogThrusterDiagI::initializePORTProgressBar(QCustomPlot *customPlot) {
   fermatSpiral_tunnelnocolor_PORT->setBrush(QBrush(QColor(255, 255, 255)));
 
   // generate data for ball
-  for (unsigned i = 0; i != arraylength_azimuth_first; ++i) {
-    double theta = 2 * i * M_PI / (arraylength_azimuth_first - 1);
+  for (unsigned i = 0; i != arraylength_azimuth_second; ++i) {
+    double theta = 2 * i * M_PI / (arraylength_azimuth_second - 1);
     dataSpiral_ball_PORT[i] =
-        QCPCurveData(i, PORT_position[0] + azimuth_radius_first +
-                            ball_radius_first * std::cos(theta),
-                     PORT_position[1] + ball_radius_first * std::sin(theta));
+        QCPCurveData(i, PORT_position[0] + azimuth_radius_second +
+                            ball_radius_second * std::cos(theta),
+                     PORT_position[1] + ball_radius_second * std::sin(theta));
   }
 
   // create curve objects for Ball
@@ -302,8 +303,9 @@ void DialogThrusterDiagI::initializePORTProgressBar(QCustomPlot *customPlot) {
 
   // create static text for angle
   QCPItemText *angleText = new QCPItemText(customPlot);
-  angleText->position->setCoords(PORT_position[0] - 4.5 * azimuth_radius_first,
-                                 PORT_position[1] + 0.7 * azimuth_radius_first);
+  angleText->position->setCoords(
+      PORT_position[0] - 4.5 * azimuth_radius_second,
+      PORT_position[1] + 0.7 * azimuth_radius_second);
   angleText->setText("PORTAzi (°)");
   angleText->setFont(QFont("SansSerif", 10));
   angleText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
@@ -311,8 +313,8 @@ void DialogThrusterDiagI::initializePORTProgressBar(QCustomPlot *customPlot) {
   // create realtime text for angle
   PORT_angleText = new QCPItemText(customPlot);
   PORT_angleText->position->setCoords(
-      PORT_position[0] - 2 * azimuth_radius_first,
-      PORT_position[1] + 0.7 * azimuth_radius_first);
+      PORT_position[0] - 2 * azimuth_radius_second,
+      PORT_position[1] + 0.7 * azimuth_radius_second);
   PORT_angleText->setText("0");
   PORT_angleText->setFont(QFont("SansSerif", 10));
   PORT_angleText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
@@ -320,8 +322,8 @@ void DialogThrusterDiagI::initializePORTProgressBar(QCustomPlot *customPlot) {
 
   // create static text for RPM
   QCPItemText *RPMText = new QCPItemText(customPlot);
-  RPMText->position->setCoords(PORT_position[0] - 4.5 * azimuth_radius_first,
-                               PORT_position[1] - 0.5 * azimuth_radius_first);
+  RPMText->position->setCoords(PORT_position[0] - 4.5 * azimuth_radius_second,
+                               PORT_position[1] - 0.5 * azimuth_radius_second);
   RPMText->setText("RPM");
   RPMText->setFont(QFont("SansSerif", 10));
   RPMText->setPositionAlignment(Qt::AlignBottom | Qt::AlignLeft);
@@ -329,35 +331,37 @@ void DialogThrusterDiagI::initializePORTProgressBar(QCustomPlot *customPlot) {
   // create realtime text for RPM
   PORT_RPMText = new QCPItemText(customPlot);
   PORT_RPMText->position->setCoords(
-      PORT_position[0] - 2 * azimuth_radius_first,
-      PORT_position[1] - 0.5 * azimuth_radius_first);
+      PORT_position[0] - 2 * azimuth_radius_second,
+      PORT_position[1] - 0.5 * azimuth_radius_second);
   PORT_RPMText->setText("0");
   PORT_RPMText->setFont(QFont("SansSerif", 10));
   PORT_RPMText->setPositionAlignment(Qt::AlignBottom | Qt::AlignLeft);
   PORT_RPMText->setColor(Qt::black);
 }
 
-void DialogThrusterDiagI::initializeTunnelProgressBar_first(
+void DialogthrusterdiagII::initializeTunnelProgressBar_first(
     QCustomPlot *customPlot) {
   // generate data for outer square
   const int arraylength_outersquare = 5;
   QVector<QCPCurveData> dataSpiral_outersquare(arraylength_outersquare);
 
+  double half_length = tunnel_length_second / 2;
+  double half_width = tunnel_width_second / 2;
   dataSpiral_outersquare[0] =
-      QCPCurveData(0, tunnel_first_position[0] + tunnel_width_first / 2,
-                   tunnel_first_position[1] + tunnel_length_first / 2);
+      QCPCurveData(0, tunnel_first_position[0] + half_width,
+                   tunnel_first_position[1] + half_length);
   dataSpiral_outersquare[1] =
-      QCPCurveData(1, tunnel_first_position[0] - tunnel_width_first / 2,
-                   tunnel_first_position[1] + tunnel_length_first / 2);
+      QCPCurveData(1, tunnel_first_position[0] - half_width,
+                   tunnel_first_position[1] + half_length);
   dataSpiral_outersquare[2] =
-      QCPCurveData(2, tunnel_first_position[0] - tunnel_width_first / 2,
-                   tunnel_first_position[1] - tunnel_length_first / 2);
+      QCPCurveData(2, tunnel_first_position[0] - half_width,
+                   tunnel_first_position[1] - half_length);
   dataSpiral_outersquare[3] =
-      QCPCurveData(3, tunnel_first_position[0] + tunnel_width_first / 2,
-                   tunnel_first_position[1] - tunnel_length_first / 2);
+      QCPCurveData(3, tunnel_first_position[0] + half_width,
+                   tunnel_first_position[1] - half_length);
   dataSpiral_outersquare[4] =
-      QCPCurveData(4, tunnel_first_position[0] + tunnel_width_first / 2,
-                   tunnel_first_position[1] + tunnel_length_first / 2);
+      QCPCurveData(4, tunnel_first_position[0] + half_width,
+                   tunnel_first_position[1] + half_length);
   // create curve objects for outer circle
   QCPCurve *fermatSpiral_outersquare =
       new QCPCurve(customPlot->xAxis, customPlot->yAxis);
@@ -367,19 +371,19 @@ void DialogThrusterDiagI::initializeTunnelProgressBar_first(
 
   // generate data for progress data
   dataSpiral_tunnel_first[0] =
-      QCPCurveData(0, tunnel_first_position[0] + tunnel_width_first / 2,
+      QCPCurveData(0, tunnel_first_position[0] + tunnel_width_second / 2,
                    tunnel_first_position[1]);
   dataSpiral_tunnel_first[1] =
-      QCPCurveData(1, tunnel_first_position[0] + tunnel_width_first / 2,
-                   tunnel_first_position[1] + tunnel_length_first / 3);
+      QCPCurveData(1, tunnel_first_position[0] + tunnel_width_second / 2,
+                   tunnel_first_position[1] + half_length);
   dataSpiral_tunnel_first[2] =
-      QCPCurveData(2, tunnel_first_position[0] - tunnel_width_first / 2,
-                   tunnel_first_position[1] + tunnel_length_first / 3);
+      QCPCurveData(2, tunnel_first_position[0] - tunnel_width_second / 2,
+                   tunnel_first_position[1] + half_length);
   dataSpiral_tunnel_first[3] =
-      QCPCurveData(3, tunnel_first_position[0] - tunnel_width_first / 2,
+      QCPCurveData(3, tunnel_first_position[0] - tunnel_width_second / 2,
                    tunnel_first_position[1]);
   dataSpiral_tunnel_first[4] =
-      QCPCurveData(4, tunnel_first_position[0] + tunnel_width_first / 2,
+      QCPCurveData(4, tunnel_first_position[0] + tunnel_width_second / 2,
                    tunnel_first_position[1]);
 
   fermatSpiral_tunnel_first =
@@ -391,82 +395,80 @@ void DialogThrusterDiagI::initializeTunnelProgressBar_first(
   tunnel_first_RPMText = new QCPItemText(customPlot);
   tunnel_first_RPMText->position->setCoords(
       tunnel_first_position[0],
-      tunnel_first_position[1] + 0.8 * tunnel_length_first);
+      tunnel_first_position[1] + 0.8 * tunnel_length_second);
   tunnel_first_RPMText->setText("0");
   tunnel_first_RPMText->setFont(QFont("SansSerif", 10));
   tunnel_first_RPMText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
   tunnel_first_RPMText->setColor(Qt::black);
 }
 
-void DialogThrusterDiagI::updateTunnelProgressBar_first(int _rpm) {
+void DialogthrusterdiagII::updateTunnelProgressBar_first(int _rpm) {
   // generate data for progress data
   double progress_y =
-      tunnel_length_first * _rpm / max_tunnel_rotation_first / 2;
-  dataSpiral_tunnel_first[0] =
-      QCPCurveData(0, tunnel_first_position[0] + tunnel_width_first / 2,
-                   tunnel_first_position[1]);
+      tunnel_length_second * _rpm / max_tunnel_rotation_second / 2;
+  double half_width = tunnel_width_second / 2;
+  dataSpiral_tunnel_first[0] = QCPCurveData(
+      0, tunnel_first_position[0] + half_width, tunnel_first_position[1]);
   dataSpiral_tunnel_first[1] =
-      QCPCurveData(1, tunnel_first_position[0] + tunnel_width_first / 2,
+      QCPCurveData(1, tunnel_first_position[0] + half_width,
                    tunnel_first_position[1] + progress_y);
   dataSpiral_tunnel_first[2] =
-      QCPCurveData(2, tunnel_first_position[0] - tunnel_width_first / 2,
+      QCPCurveData(2, tunnel_first_position[0] - half_width,
                    tunnel_first_position[1] + progress_y);
-  dataSpiral_tunnel_first[3] =
-      QCPCurveData(3, tunnel_first_position[0] - tunnel_width_first / 2,
-                   tunnel_first_position[1]);
-  dataSpiral_tunnel_first[4] =
-      QCPCurveData(4, tunnel_first_position[0] + tunnel_width_first / 2,
-                   tunnel_first_position[1]);
+  dataSpiral_tunnel_first[3] = QCPCurveData(
+      3, tunnel_first_position[0] - half_width, tunnel_first_position[1]);
+  dataSpiral_tunnel_first[4] = QCPCurveData(
+      4, tunnel_first_position[0] + half_width, tunnel_first_position[1]);
   fermatSpiral_tunnel_first->data()->set(dataSpiral_tunnel_first, true);
   // create realtime text for angle
   tunnel_first_RPMText->setText(QString::number(_rpm));
 }
 
-void DialogThrusterDiagI::updateTunnelProgressBar_second(int _rpm) {
+void DialogthrusterdiagII::updateTunnelProgressBar_second(int _rpm) {
   // generate data for progress data
   double progress_y =
-      tunnel_length_first * _rpm / max_tunnel_rotation_first / 2;
-  dataSpiral_tunnel_second[0] =
-      QCPCurveData(0, tunnel_second_position[0] + tunnel_width_first / 2,
-                   tunnel_second_position[1]);
+      tunnel_length_second * _rpm / max_tunnel_rotation_second / 2;
+  double half_width = tunnel_width_second / 2;
+  dataSpiral_tunnel_second[0] = QCPCurveData(
+      0, tunnel_second_position[0] + half_width, tunnel_second_position[1]);
   dataSpiral_tunnel_second[1] =
-      QCPCurveData(1, tunnel_second_position[0] + tunnel_width_first / 2,
+      QCPCurveData(1, tunnel_second_position[0] + half_width,
                    tunnel_second_position[1] + progress_y);
   dataSpiral_tunnel_second[2] =
-      QCPCurveData(2, tunnel_second_position[0] - tunnel_width_first / 2,
+      QCPCurveData(2, tunnel_second_position[0] - half_width,
                    tunnel_second_position[1] + progress_y);
-  dataSpiral_tunnel_second[3] =
-      QCPCurveData(3, tunnel_second_position[0] - tunnel_width_first / 2,
-                   tunnel_second_position[1]);
-  dataSpiral_tunnel_second[4] =
-      QCPCurveData(4, tunnel_second_position[0] + tunnel_width_first / 2,
-                   tunnel_second_position[1]);
+  dataSpiral_tunnel_second[3] = QCPCurveData(
+      3, tunnel_second_position[0] - half_width, tunnel_second_position[1]);
+  dataSpiral_tunnel_second[4] = QCPCurveData(
+      4, tunnel_second_position[0] + half_width, tunnel_second_position[1]);
   fermatSpiral_tunnel_second->data()->set(dataSpiral_tunnel_second, true);
   // create realtime text for angle
   tunnel_second_RPMText->setText(QString::number(_rpm));
 }
 
-void DialogThrusterDiagI::initializeTunnelProgressBar_second(
+void DialogthrusterdiagII::initializeTunnelProgressBar_second(
     QCustomPlot *customPlot) {
   // generate data for outer square
   const int arraylength_outersquare = 5;
   QVector<QCPCurveData> dataSpiral_outersquare(arraylength_outersquare);
 
+  double half_length = tunnel_length_second / 2;
+  double half_width = tunnel_width_second / 2;
   dataSpiral_outersquare[0] =
-      QCPCurveData(0, tunnel_second_position[0] + tunnel_width_first / 2,
-                   tunnel_second_position[1] + tunnel_length_first / 2);
+      QCPCurveData(0, tunnel_second_position[0] + half_width,
+                   tunnel_second_position[1] + half_length);
   dataSpiral_outersquare[1] =
-      QCPCurveData(1, tunnel_second_position[0] - tunnel_width_first / 2,
-                   tunnel_second_position[1] + tunnel_length_first / 2);
+      QCPCurveData(1, tunnel_second_position[0] - half_width,
+                   tunnel_second_position[1] + half_length);
   dataSpiral_outersquare[2] =
-      QCPCurveData(2, tunnel_second_position[0] - tunnel_width_first / 2,
-                   tunnel_second_position[1] - tunnel_length_first / 2);
+      QCPCurveData(2, tunnel_second_position[0] - half_width,
+                   tunnel_second_position[1] - half_length);
   dataSpiral_outersquare[3] =
-      QCPCurveData(3, tunnel_second_position[0] + tunnel_width_first / 2,
-                   tunnel_second_position[1] - tunnel_length_first / 2);
+      QCPCurveData(3, tunnel_second_position[0] + half_width,
+                   tunnel_second_position[1] - half_length);
   dataSpiral_outersquare[4] =
-      QCPCurveData(4, tunnel_second_position[0] + tunnel_width_first / 2,
-                   tunnel_second_position[1] + tunnel_length_first / 2);
+      QCPCurveData(4, tunnel_second_position[0] + half_width,
+                   tunnel_second_position[1] + half_length);
   // create curve objects for outer circle
   QCPCurve *fermatSpiral_outersquare =
       new QCPCurve(customPlot->xAxis, customPlot->yAxis);
@@ -475,21 +477,18 @@ void DialogThrusterDiagI::initializeTunnelProgressBar_second(
   fermatSpiral_outersquare->setBrush(QBrush(QColor(255, 255, 255)));
 
   // generate data for progress data
-  dataSpiral_tunnel_second[0] =
-      QCPCurveData(0, tunnel_second_position[0] + tunnel_width_first / 2,
-                   tunnel_second_position[1]);
+  dataSpiral_tunnel_second[0] = QCPCurveData(
+      0, tunnel_second_position[0] + half_width, tunnel_second_position[1]);
   dataSpiral_tunnel_second[1] =
-      QCPCurveData(1, tunnel_second_position[0] + tunnel_width_first / 2,
-                   tunnel_second_position[1] + tunnel_length_first / 3);
+      QCPCurveData(1, tunnel_second_position[0] + half_width,
+                   tunnel_second_position[1] + half_length);
   dataSpiral_tunnel_second[2] =
-      QCPCurveData(2, tunnel_second_position[0] - tunnel_width_first / 2,
-                   tunnel_second_position[1] + tunnel_length_first / 3);
-  dataSpiral_tunnel_second[3] =
-      QCPCurveData(3, tunnel_second_position[0] - tunnel_width_first / 2,
-                   tunnel_second_position[1]);
-  dataSpiral_tunnel_second[4] =
-      QCPCurveData(4, tunnel_second_position[0] + tunnel_width_first / 2,
-                   tunnel_second_position[1]);
+      QCPCurveData(2, tunnel_second_position[0] - half_width,
+                   tunnel_second_position[1] + half_length);
+  dataSpiral_tunnel_second[3] = QCPCurveData(
+      3, tunnel_second_position[0] - half_width, tunnel_second_position[1]);
+  dataSpiral_tunnel_second[4] = QCPCurveData(
+      4, tunnel_second_position[0] + half_width, tunnel_second_position[1]);
 
   fermatSpiral_tunnel_second =
       new QCPCurve(customPlot->xAxis, customPlot->yAxis);
@@ -501,35 +500,35 @@ void DialogThrusterDiagI::initializeTunnelProgressBar_second(
   tunnel_second_RPMText = new QCPItemText(customPlot);
   tunnel_second_RPMText->position->setCoords(
       tunnel_second_position[0],
-      tunnel_second_position[1] + 0.8 * tunnel_length_first);
+      tunnel_second_position[1] + 0.8 * tunnel_length_second);
   tunnel_second_RPMText->setText("0");
   tunnel_second_RPMText->setFont(QFont("SansSerif", 10));
   tunnel_second_RPMText->setPositionAlignment(Qt::AlignTop | Qt::AlignLeft);
   tunnel_second_RPMText->setColor(Qt::black);
 }
 
-void DialogThrusterDiagI::updateSTBDProgressBar(double _percent,
-                                                double _orientation) {
+void DialogthrusterdiagII::updateSTBDProgressBar(double _percent,
+                                                 double _orientation) {
   // generate data for circle
-  double half_angle = tunnel_angle_first / 2;
-  int num_circle = arraylength_azimuth_first - 3;
+  double half_angle = tunnel_angle_second / 2;
+  int num_circle = arraylength_azimuth_second - 3;
   for (unsigned i = 0; i != num_circle; ++i) {
     double theta =
-        _orientation + i * tunnel_angle_first / (num_circle - 1) - half_angle;
-    double cvalue = azimuth_radius_first * std::cos(theta);
-    double svalue = azimuth_radius_first * std::sin(theta);
+        _orientation + i * tunnel_angle_second / (num_circle - 1) - half_angle;
+    double cvalue = azimuth_radius_second * std::cos(theta);
+    double svalue = azimuth_radius_second * std::sin(theta);
     dataSpiral_tunnelcolor_STBD[i] =
         QCPCurveData(i, STBD_position[0] + cvalue, STBD_position[1] + svalue);
     dataSpiral_tunnelnocolor_STBD[i] =
         QCPCurveData(i, STBD_position[0] - cvalue, STBD_position[1] - svalue);
   }
 
-  double length = _percent * 2 * azimuth_radius_first * std::cos(half_angle);
-  double Xb = azimuth_radius_first * std::cos(_orientation - half_angle);
-  double Yb = azimuth_radius_first * std::sin(_orientation - half_angle);
-  double X_pa = azimuth_radius_first * std::cos(_orientation + half_angle) -
+  double length = _percent * 2 * azimuth_radius_second * std::cos(half_angle);
+  double Xb = azimuth_radius_second * std::cos(_orientation - half_angle);
+  double Yb = azimuth_radius_second * std::sin(_orientation - half_angle);
+  double X_pa = azimuth_radius_second * std::cos(_orientation + half_angle) -
                 length * std::cos(_orientation);
-  double Y_pa = azimuth_radius_first * std::sin(_orientation + half_angle) -
+  double Y_pa = azimuth_radius_second * std::sin(_orientation + half_angle) -
                 length * std::sin(_orientation);
   double X_pb = Xb - length * std::cos(_orientation);
   double Y_pb = Yb - length * std::sin(_orientation);
@@ -553,42 +552,42 @@ void DialogThrusterDiagI::updateSTBDProgressBar(double _percent,
 
   // generate data for ball
   double ball_cvalue =
-      STBD_position[0] + azimuth_radius_first * std::cos(_orientation);
+      STBD_position[0] + azimuth_radius_second * std::cos(_orientation);
   double ball_svalue =
-      STBD_position[1] + azimuth_radius_first * std::sin(_orientation);
-  for (unsigned i = 0; i != arraylength_azimuth_first; ++i) {
-    double theta = 2 * i * M_PI / (arraylength_azimuth_first - 1);
+      STBD_position[1] + azimuth_radius_second * std::sin(_orientation);
+  for (unsigned i = 0; i != arraylength_azimuth_second; ++i) {
+    double theta = 2 * i * M_PI / (arraylength_azimuth_second - 1);
     dataSpiral_ball_STBD[i] =
-        QCPCurveData(i, ball_cvalue + ball_radius_first * std::cos(theta),
-                     ball_svalue + ball_radius_first * std::sin(theta));
+        QCPCurveData(i, ball_cvalue + ball_radius_second * std::cos(theta),
+                     ball_svalue + ball_radius_second * std::sin(theta));
   }
 
   // create curve objects for Ball
   fermatSpiral_ball_STBD->data()->set(dataSpiral_ball_STBD, true);
 }
 
-void DialogThrusterDiagI::updatePORTProgressBar(double _percent,
-                                                double _orientation) {
+void DialogthrusterdiagII::updatePORTProgressBar(double _percent,
+                                                 double _orientation) {
   // generate data for circle
-  double half_angle = tunnel_angle_first / 2;
-  int num_circle = arraylength_azimuth_first - 3;
+  double half_angle = tunnel_angle_second / 2;
+  int num_circle = arraylength_azimuth_second - 3;
   for (unsigned i = 0; i != num_circle; ++i) {
     double theta =
-        _orientation + i * tunnel_angle_first / (num_circle - 1) - half_angle;
-    double cvalue = azimuth_radius_first * std::cos(theta);
-    double svalue = azimuth_radius_first * std::sin(theta);
+        _orientation + i * tunnel_angle_second / (num_circle - 1) - half_angle;
+    double cvalue = azimuth_radius_second * std::cos(theta);
+    double svalue = azimuth_radius_second * std::sin(theta);
     dataSpiral_tunnelcolor_PORT[i] =
         QCPCurveData(i, PORT_position[0] + cvalue, PORT_position[1] + svalue);
     dataSpiral_tunnelnocolor_PORT[i] =
         QCPCurveData(i, PORT_position[0] - cvalue, PORT_position[1] - svalue);
   }
 
-  double length = _percent * 2 * azimuth_radius_first * std::cos(half_angle);
-  double Xb = azimuth_radius_first * std::cos(_orientation - half_angle);
-  double Yb = azimuth_radius_first * std::sin(_orientation - half_angle);
-  double X_pa = azimuth_radius_first * std::cos(_orientation + half_angle) -
+  double length = _percent * 2 * azimuth_radius_second * std::cos(half_angle);
+  double Xb = azimuth_radius_second * std::cos(_orientation - half_angle);
+  double Yb = azimuth_radius_second * std::sin(_orientation - half_angle);
+  double X_pa = azimuth_radius_second * std::cos(_orientation + half_angle) -
                 length * std::cos(_orientation);
-  double Y_pa = azimuth_radius_first * std::sin(_orientation + half_angle) -
+  double Y_pa = azimuth_radius_second * std::sin(_orientation + half_angle) -
                 length * std::sin(_orientation);
   double X_pb = Xb - length * std::cos(_orientation);
   double Y_pb = Yb - length * std::sin(_orientation);
@@ -612,53 +611,53 @@ void DialogThrusterDiagI::updatePORTProgressBar(double _percent,
 
   // generate data for ball
   double ball_cvalue =
-      PORT_position[0] + azimuth_radius_first * std::cos(_orientation);
+      PORT_position[0] + azimuth_radius_second * std::cos(_orientation);
   double ball_svalue =
-      PORT_position[1] + azimuth_radius_first * std::sin(_orientation);
-  for (unsigned i = 0; i != arraylength_azimuth_first; ++i) {
-    double theta = 2 * i * M_PI / (arraylength_azimuth_first - 1);
+      PORT_position[1] + azimuth_radius_second * std::sin(_orientation);
+  for (unsigned i = 0; i != arraylength_azimuth_second; ++i) {
+    double theta = 2 * i * M_PI / (arraylength_azimuth_second - 1);
     dataSpiral_ball_PORT[i] =
-        QCPCurveData(i, ball_cvalue + ball_radius_first * std::cos(theta),
-                     ball_svalue + ball_radius_first * std::sin(theta));
+        QCPCurveData(i, ball_cvalue + ball_radius_second * std::cos(theta),
+                     ball_svalue + ball_radius_second * std::sin(theta));
   }
 
   // create curve objects for Ball
   fermatSpiral_ball_PORT->data()->set(dataSpiral_ball_PORT, true);
 }
 
-void DialogThrusterDiagI::updateSTBDText(int _rpm, int _orientation) {
+void DialogthrusterdiagII::updateSTBDText(int _rpm, int _orientation) {
   STBD_angleText->setText(QString::number(_orientation));
   STBD_RPMText->setText(QString::number(_rpm));
 }
 
-void DialogThrusterDiagI::updatePORTText(int _rpm, int _orientation) {
+void DialogthrusterdiagII::updatePORTText(int _rpm, int _orientation) {
   PORT_angleText->setText(QString::number(_orientation));
   PORT_RPMText->setText(QString::number(_rpm));
 }
 
-void DialogThrusterDiagI::setupthrusterRealtimeData() {
+void DialogthrusterdiagII::setupthrusterRealtimeData() {
   connect(&dataTimer, SIGNAL(timeout()), this, SLOT(AzimuthDataSlot()));
   // connect(&dataTimer, SIGNAL(timeout()), this, SLOT(motion6DOFdataSlot()));
   dataTimer.start(VIEWERREFRESH);
 }
 
-void DialogThrusterDiagI::AzimuthDataSlot() {
-  Eigen::Vector3i _alpha_deg_first =
-      globalvar::_threadloop.getrealtimealphadeg_first();
-  Eigen::Vector3i _rotation_first =
-      globalvar::_threadloop.getrealtimerotation_first();
+void DialogthrusterdiagII::AzimuthDataSlot() {
+  Eigen::Vector3i _alpha_deg =
+      globalvar::_threadloop.getrealtimealphadeg_second();
+  Eigen::Vector3i _rotation =
+      globalvar::_threadloop.getrealtimerotation_second();
 
-  int rpm_port = _rotation_first(1);
-  int angle_port = _alpha_deg_first(1);
-  int rpm_star = _rotation_first(2);
-  int angle_star = _alpha_deg_first(2);
+  int rpm_port = _rotation(1);
+  int angle_port = _alpha_deg(1);
+  int rpm_star = _rotation(2);
+  int angle_star = _alpha_deg(2);
   updateSTBDText(rpm_star, angle_star);
   updatePORTText(rpm_port, angle_port);
-  updateSTBDProgressBar((double)rpm_star / max_azimuth_rotation_first,
+  updateSTBDProgressBar((double)rpm_star / max_azimuth_rotation_second,
                         -angle_star * M_PI / 180);
-  updatePORTProgressBar((double)rpm_port / max_azimuth_rotation_first,
+  updatePORTProgressBar((double)rpm_port / max_azimuth_rotation_second,
                         -angle_port * M_PI / 180);
-  updateTunnelProgressBar_first(_rotation_first(0));
-  updateTunnelProgressBar_second(_rotation_first(0));
+  updateTunnelProgressBar_first(_rotation(0));
+  updateTunnelProgressBar_second(_rotation(0));
   ui->customPlot_thruster->replot();
 }

@@ -168,7 +168,6 @@ SOURCES += \
     display2ddialog.cpp \
     mainwindow.cpp \
     qcustomplot.cpp \
-    thrusterdiag.cpp \
     dialogsetparameter.cpp \
     dialogfixedsetpoint.cpp \
     dialogstraightline.cpp \
@@ -195,7 +194,9 @@ SOURCES += \
     ../motioncapture/src/RTPacket.cpp \
     ../motioncapture/src/RTProtocol.cpp \
     dialogabout.cpp \
-    dialogthrusterdiagi.cpp
+    dialogthrusterdiagi.cpp \
+    dialogthrusterdiagii.cpp \
+    dialogthrusterdiagiii.cpp
 
 
 
@@ -204,7 +205,6 @@ HEADERS += \
     globalvar.h \
     mainwindow.h \
     qcustomplot.h \
-    thrusterdiag.h \
     display2ddialog.h \
     dialogsetparameter.h \
     dialogfixedsetpoint.h \
@@ -583,7 +583,9 @@ HEADERS += \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcp_var.h \
     ../third_party/Profinet/src/source/tcip/src_iniche_core/tcp/tcpip.h \
     dialogabout.h \
-    dialogthrusterdiagi.h
+    dialogthrusterdiagi.h \
+    dialogthrusterdiagii.h \
+    dialogthrusterdiagiii.h
 
 
 
@@ -591,7 +593,6 @@ HEADERS += \
 FORMS += \
         mainwindow.ui \
         display2ddialog.ui \
-        thrusterdiag.ui \
         dialogsetparameter.ui \
         dialogfixedsetpoint.ui \
         dialogstraightline.ui \
@@ -599,4 +600,6 @@ FORMS += \
         dialogbox.ui \
         dialogcooperation.ui \
     dialogabout.ui \
-    dialogthrusterdiagi.ui
+    dialogthrusterdiagi.ui \
+    dialogthrusterdiagii.ui \
+    dialogthrusterdiagiii.ui

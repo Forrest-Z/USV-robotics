@@ -788,15 +788,13 @@ class threadloop {
 
   // send and receive data from the first client (K class-I)
   void controller_first_pn() {
-    boost::posix_time::ptime t_start =
-        boost::posix_time::second_clock::local_time();
-    boost::posix_time::ptime t_end =
-        boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime t_start(T_BOOST_CLOCK::local_time());
+    boost::posix_time::ptime t_end(T_BOOST_CLOCK::local_time());
     boost::posix_time::time_duration t_elapsed = t_end - t_start;
     long int mt_elapsed = 0;
     while (1) {
       // real-time control and optimization for each client
-      t_start = boost::posix_time::second_clock::local_time();
+      t_start = T_BOOST_CLOCK::local_time();
 
       if (index_controlmode_first == 1) {
         _controller_first.headingcontrolleronestep(
@@ -812,7 +810,7 @@ class threadloop {
             mygamepad_first.getGamepadZmoment(), _realtimevessel_first,
             myfile_first);
       }
-      t_end = boost::posix_time::second_clock::local_time();
+      t_end = T_BOOST_CLOCK::local_time();
       t_elapsed = t_end - t_start;
       mt_elapsed = t_elapsed.total_milliseconds();
       if (mt_elapsed > sample_mtime) {
@@ -827,21 +825,19 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      realtimeprint_first();
+      // realtimeprint_first();
     }
   }
 
   // send and receive data from the second client (K class-II)
   void controller_second_pn() {
-    boost::posix_time::ptime t_start =
-        boost::posix_time::second_clock::local_time();
-    boost::posix_time::ptime t_end =
-        boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime t_start(T_BOOST_CLOCK::local_time());
+    boost::posix_time::ptime t_end(T_BOOST_CLOCK::local_time());
     boost::posix_time::time_duration t_elapsed = t_end - t_start;
     long int mt_elapsed = 0;
     while (1) {
       // real-time control and optimization for each client
-      t_start = boost::posix_time::second_clock::local_time();
+      t_start = T_BOOST_CLOCK::local_time();
 
       if (index_controlmode_second == 1) {
         _controller_second.headingcontrolleronestep(
@@ -857,7 +853,7 @@ class threadloop {
             mygamepad_second.getGamepadZmoment(), _realtimevessel_second,
             myfile_second);
       }
-      t_end = boost::posix_time::second_clock::local_time();
+      t_end = T_BOOST_CLOCK::local_time();
       t_elapsed = t_end - t_start;
       mt_elapsed = t_elapsed.total_milliseconds();
       if (mt_elapsed > sample_mtime) {
@@ -878,15 +874,13 @@ class threadloop {
 
   // send and receive data from the third client (X class-I)
   void controller_third_pn() {
-    boost::posix_time::ptime t_start =
-        boost::posix_time::second_clock::local_time();
-    boost::posix_time::ptime t_end =
-        boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime t_start(T_BOOST_CLOCK::local_time());
+    boost::posix_time::ptime t_end(T_BOOST_CLOCK::local_time());
     boost::posix_time::time_duration t_elapsed = t_end - t_start;
     long int mt_elapsed = 0;
     while (1) {
       // real-time control and optimization for each client
-      t_start = boost::posix_time::second_clock::local_time();
+      t_start = T_BOOST_CLOCK::local_time();
 
       if (index_controlmode_third == 1) {
         _controller_third.headingcontrolleronestep(
@@ -902,7 +896,7 @@ class threadloop {
             mygamepad_third.getGamepadZmoment(), _realtimevessel_third,
             myfile_third);
       }
-      t_end = boost::posix_time::second_clock::local_time();
+      t_end = T_BOOST_CLOCK::local_time();
       t_elapsed = t_end - t_start;
       mt_elapsed = t_elapsed.total_milliseconds();
       if (mt_elapsed > sample_mtime) {

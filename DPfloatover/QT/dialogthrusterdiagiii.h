@@ -1,5 +1,5 @@
-#ifndef DIALOGTHRUSTERDIAGI_H
-#define DIALOGTHRUSTERDIAGI_H
+#ifndef DIALOGTHRUSTERDIAGIII_H
+#define DIALOGTHRUSTERDIAGIII_H
 
 #include <QDialog>
 #include <QTimer>
@@ -8,35 +8,34 @@
 #include "qcustomplot.h"  // the header file of QCustomPlot.
 #include "realtimedata.h"
 
-// const int arraylength_setpoint_circle = 4;
-const double azimuth_radius_first = 0.4;
-const double ball_radius_first = 0.03;
-const int arraylength_azimuth_first = 13;
-const double tunnel_angle_first = M_PI / 6;
+const double azimuth_radius_third = 0.4;
+const double ball_radius_third = 0.03;
+const int arraylength_azimuth_third = 13;
+const double tunnel_angle_third = M_PI / 6;
 
-const double tunnel_width_first = 0.2;
-const double tunnel_length_first = 0.8;
+const double tunnel_width_third = 0.2;
+const double tunnel_length_third = 0.8;
 
-const int max_tunnel_rotation_first = 3000;
-const int max_azimuth_rotation_first = 1000;
+const int max_tunnel_rotation_third = 3000;
+const int max_azimuth_rotation_third = 1000;
 
 namespace Ui {
-class DialogThrusterDiagI;
+class DialogthrusterdiagIII;
 }
 
-class DialogThrusterDiagI : public QDialog {
+class DialogthrusterdiagIII : public QDialog {
   Q_OBJECT
 
  public:
-  explicit DialogThrusterDiagI(QWidget *parent = 0);
-  ~DialogThrusterDiagI();
+  explicit DialogthrusterdiagIII(QWidget *parent = 0);
+  ~DialogthrusterdiagIII();
 
  private slots:
   void AzimuthDataSlot();
 
  private:
   QTimer dataTimer;
-  Ui::DialogThrusterDiagI *ui;
+  Ui::DialogthrusterdiagIII *ui;
   double qcustomplot_max = 5;
 
   // viewer for starboard azimuth thruster
@@ -94,4 +93,4 @@ class DialogThrusterDiagI : public QDialog {
   void updateTunnelProgressBar_second(int _rpm);
 };
 
-#endif  // DIALOGTHRUSTERDIAGI_H
+#endif  // DIALOGTHRUSTERDIAGIII_H

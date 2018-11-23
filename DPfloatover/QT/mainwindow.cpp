@@ -31,8 +31,8 @@ void MainWindow::on_action2D_triggered() {
 }
 
 void MainWindow::on_actionThruster_P_triggered() {
-  myThrusterDiag = new ThrusterDiag(this);
-  myThrusterDiag->show();
+  myDialogthrusterdiagIII = new DialogthrusterdiagIII(this);
+  myDialogthrusterdiagIII->show();
 }
 
 void MainWindow::on_PB_connection_clicked() {
@@ -274,4 +274,9 @@ void MainWindow::on_actionCoG_triggered() {}
 void MainWindow::on_actionThruster_I_vessel_triggered() {
   myDialogThrusterDiagI = new DialogThrusterDiagI(this);
   myDialogThrusterDiagI->show();
+}
+
+void MainWindow::on_actionThruster_II_vessel_triggered() {
+  myDialogthrusterdiagII = new DialogthrusterdiagII(this);
+  myDialogthrusterdiagII->show();
 }
