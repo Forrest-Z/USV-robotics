@@ -903,7 +903,7 @@ void QCPPaintBufferGlFbo::reallocateBuffer() {
 #endif
 }
 #endif  // QCP_OPENGL_FBO
-/* end of 'src/paintbuffer.cpp' */
+        /* end of 'src/paintbuffer.cpp' */
 
 /* including file 'src/layer.cpp', size 37064                                */
 /* commit 9868e55d3b412f2f89766bb482fcf299e93a0988 2017-09-04 01:56:22 +0200 */
@@ -1549,8 +1549,9 @@ void QCPLayerable::applyAntialiasingHint(
 
   \see initializeParentPlot
 */
-void QCPLayerable::parentPlotInitialized(QCustomPlot *parentPlot){
-    Q_UNUSED(parentPlot)}
+void QCPLayerable::parentPlotInitialized(QCustomPlot *parentPlot) {
+  Q_UNUSED(parentPlot)
+}
 
 /*! \internal
 
@@ -3867,8 +3868,9 @@ QVector<int> QCPLayout::getSectionSizes(QVector<int> maxSizes,
       {
         for (int i = 0; i < unfinishedSections.size(); ++i) {
           sectionSizes[unfinishedSections.at(i)] +=
-              nextMax * stretchFactors.at(unfinishedSections.at(
-                            i));  // increment all sections
+              nextMax *
+              stretchFactors.at(
+                  unfinishedSections.at(i));  // increment all sections
           freeSize -= nextMax * stretchFactors.at(unfinishedSections.at(i));
         }
         unfinishedSections.removeOne(
@@ -3879,8 +3881,9 @@ QVector<int> QCPLayout::getSectionSizes(QVector<int> maxSizes,
       {
         for (int i = 0; i < unfinishedSections.size(); ++i)
           sectionSizes[unfinishedSections.at(i)] +=
-              nextMaxLimit * stretchFactors.at(unfinishedSections.at(
-                                 i));  // increment all sections
+              nextMaxLimit *
+              stretchFactors.at(
+                  unfinishedSections.at(i));  // increment all sections
         unfinishedSections.clear();
       }
     }
@@ -5765,8 +5768,8 @@ double QCPAxisTicker::cleanMantissa(double input) const {
   const double mantissa = getMantissa(input, &magnitude);
   switch (mTickStepStrategy) {
     case tssReadability: {
-      return pickClosest(mantissa, QVector<double>()
-                                       << 1.0 << 2.0 << 2.5 << 5.0 << 10.0) *
+      return pickClosest(mantissa, QVector<double>() << 1.0 << 2.0 << 2.5 << 5.0
+                                                     << 10.0) *
              magnitude;
     }
     case tssMeetTickCount: {
@@ -6425,9 +6428,8 @@ QString QCPAxisTickerTime::getTickLabel(double tick, const QLocale &locale,
   QString result = mTimeFormat;
   for (int i = mSmallestUnit; i <= mBiggestUnit; ++i) {
     TimeUnit iUnit = static_cast<TimeUnit>(i);
-    replaceUnit(
-        result, iUnit,
-        qRound(iUnit == mBiggestUnit ? restValues[iUnit] : values[iUnit]));
+    replaceUnit(result, iUnit, qRound(iUnit == mBiggestUnit ? restValues[iUnit]
+                                                            : values[iUnit]));
   }
   if (negative) result.prepend(QLatin1Char('-'));
   return result;
@@ -8663,13 +8665,13 @@ double QCPAxis::coordToPixel(double value) const {
                                : mAxisRect->top() - 200;
       else {
         if (!mRangeReversed)
-          return mAxisRect->bottom() - qLn(value / mRange.lower) /
-                                           qLn(mRange.upper / mRange.lower) *
-                                           mAxisRect->height();
+          return mAxisRect->bottom() -
+                 qLn(value / mRange.lower) / qLn(mRange.upper / mRange.lower) *
+                     mAxisRect->height();
         else
-          return mAxisRect->bottom() - qLn(mRange.upper / value) /
-                                           qLn(mRange.upper / mRange.lower) *
-                                           mAxisRect->height();
+          return mAxisRect->bottom() -
+                 qLn(mRange.upper / value) / qLn(mRange.upper / mRange.lower) *
+                     mAxisRect->height();
       }
     }
   }
@@ -9355,19 +9357,17 @@ void QCPAxisPainterPrivate::draw(QCPPainter *painter) {
   painter->setBrush(QBrush(basePen.color()));
   QCPVector2D baseLineVector(baseLine.dx(), baseLine.dy());
   if (lowerEnding.style() != QCPLineEnding::esNone)
-    lowerEnding.draw(
-        painter,
-        QCPVector2D(baseLine.p1()) - baseLineVector.normalized() *
-                                         lowerEnding.realLength() *
-                                         (lowerEnding.inverted() ? -1 : 1),
-        -baseLineVector);
+    lowerEnding.draw(painter, QCPVector2D(baseLine.p1()) -
+                                  baseLineVector.normalized() *
+                                      lowerEnding.realLength() *
+                                      (lowerEnding.inverted() ? -1 : 1),
+                     -baseLineVector);
   if (upperEnding.style() != QCPLineEnding::esNone)
-    upperEnding.draw(
-        painter,
-        QCPVector2D(baseLine.p2()) + baseLineVector.normalized() *
-                                         upperEnding.realLength() *
-                                         (upperEnding.inverted() ? -1 : 1),
-        baseLineVector);
+    upperEnding.draw(painter, QCPVector2D(baseLine.p2()) +
+                                  baseLineVector.normalized() *
+                                      upperEnding.realLength() *
+                                      (upperEnding.inverted() ? -1 : 1),
+                     baseLineVector);
   painter->setAntialiasing(antialiasingBackup);
 
   // tick labels:
@@ -13689,8 +13689,8 @@ void QCustomPlot::setBufferDevicePixelRatio(double ratio) {
     mBufferDevicePixelRatio = ratio;
     for (int i = 0; i < mPaintBuffers.size(); ++i)
       mPaintBuffers.at(i)->setDevicePixelRatio(mBufferDevicePixelRatio);
-      // Note: axis label cache has devicePixelRatio as part of cache hash, so
-      // no need to manually clear cache here
+// Note: axis label cache has devicePixelRatio as part of cache hash, so
+// no need to manually clear cache here
 #else
     qDebug() << Q_FUNC_INFO
              << "Device pixel ratios not supported for Qt versions before 5.4";
@@ -15621,8 +15621,9 @@ void QCustomPlot::processRectSelection(QRect rect, QMouseEvent *event) {
         if (!potentialSelections.isEmpty()) {
           QMap<int, QPair<QCPAbstractPlottable *, QCPDataSelection> >::iterator
               it = potentialSelections.begin();
-          while (it != potentialSelections.end() -
-                           1)  // erase all except last element
+          while (it !=
+                 potentialSelections.end() -
+                     1)  // erase all except last element
             it = potentialSelections.erase(it);
         }
       }
@@ -16667,12 +16668,12 @@ void QCPColorGradient::updateColorBuffer() {
             else if (hue >= 1.0)
               hue -= 1.0;
             if (useAlpha) {
-              const QRgb rgb = QColor::fromHsvF(hue,
-                                                (1 - t) * lowHsv.saturationF() +
-                                                    t * highHsv.saturationF(),
-                                                (1 - t) * lowHsv.valueF() +
-                                                    t * highHsv.valueF())
-                                   .rgb();
+              const QRgb rgb =
+                  QColor::fromHsvF(
+                      hue, (1 - t) * lowHsv.saturationF() +
+                               t * highHsv.saturationF(),
+                      (1 - t) * lowHsv.valueF() + t * highHsv.valueF())
+                      .rgb();
               const float alpha =
                   (1 - t) * lowHsv.alphaF() + t * highHsv.alphaF();
               mColorBuffer[i] = qRgba(qRed(rgb) * alpha, qGreen(rgb) * alpha,
@@ -16680,9 +16681,8 @@ void QCPColorGradient::updateColorBuffer() {
             } else {
               mColorBuffer[i] =
                   QColor::fromHsvF(
-                      hue,
-                      (1 - t) * lowHsv.saturationF() +
-                          t * highHsv.saturationF(),
+                      hue, (1 - t) * lowHsv.saturationF() +
+                               t * highHsv.saturationF(),
                       (1 - t) * lowHsv.valueF() + t * highHsv.valueF())
                       .rgb();
             }
@@ -20635,7 +20635,7 @@ void QCPGraph::draw(QCPPainter *painter) {
                            // bounds in first/last segment, getLines takes care)
     getLines(&lines, lineDataRange);
 
-    // check data validity if flag set:
+// check data validity if flag set:
 #ifdef QCUSTOMPLOT_CHECK_DATA
     QCPGraphDataContainer::const_iterator it;
     for (it = mDataContainer->constBegin(); it != mDataContainer->constEnd();
@@ -21488,11 +21488,10 @@ void QCPGraph::getOptimizedScatterData(
             if (!doScatterSkip)
               ++intervalIt;
             else
-              intervalIt +=
-                  scatterModulo;  // since we know indices of
-                                  // "currentIntervalStart", "intervalIt" and
-                                  // "it" are multiples of scatterModulo, we
-                                  // can't accidentally jump over "it" here
+              intervalIt += scatterModulo;  // since we know indices of
+            // "currentIntervalStart", "intervalIt" and
+            // "it" are multiples of scatterModulo, we
+            // can't accidentally jump over "it" here
           }
         } else if (currentIntervalStart->value > valueMinRange &&
                    currentIntervalStart->value < valueMaxRange)
@@ -21531,11 +21530,11 @@ void QCPGraph::getOptimizedScatterData(
       // plot):
       double valuePixelSpan = qAbs(valueAxis->coordToPixel(minValue) -
                                    valueAxis->coordToPixel(maxValue));
-      int dataModulo = qMax(
-          1,
-          qRound(intervalDataCount /
-                 (valuePixelSpan / 4.0)));  // approximately every 4 value
-                                            // pixels one data point on average
+      int dataModulo =
+          qMax(1,
+               qRound(intervalDataCount /
+                      (valuePixelSpan / 4.0)));  // approximately every 4 value
+      // pixels one data point on average
       QCPGraphDataContainer::const_iterator intervalIt = currentIntervalStart;
       int intervalItIndex = intervalIt - mDataContainer->constBegin();
       int c = 0;
@@ -22627,7 +22626,7 @@ void QCPCurve::draw(QCPPainter *painter) {
                        // first/last segment, getCurveLines takes care)
     getCurveLines(&lines, lineDataRange, finalCurvePen.widthF());
 
-    // check data validity if flag set:
+// check data validity if flag set:
 #ifdef QCUSTOMPLOT_CHECK_DATA
     for (QCPCurveDataContainer::const_iterator it =
              mDataContainer->constBegin();
@@ -23099,9 +23098,9 @@ QPointF QCPCurve::getOptimizedPoint(int otherRegion, double otherKey,
     case 1:  // top and left edge
     {
       intersectValuePx = valueMaxPx;
-      intersectKeyPx = otherKeyPx + (keyPx - otherKeyPx) /
-                                        (valuePx - otherValuePx) *
-                                        (intersectValuePx - otherValuePx);
+      intersectKeyPx = otherKeyPx +
+                       (keyPx - otherKeyPx) / (valuePx - otherValuePx) *
+                           (intersectValuePx - otherValuePx);
       if (intersectKeyPx < qMin(keyMinPx, keyMaxPx) ||
           intersectKeyPx >
               qMax(keyMinPx,
@@ -23110,26 +23109,26 @@ QPointF QCPCurve::getOptimizedPoint(int otherRegion, double otherKey,
                                // since axes may be reversed)
       {
         intersectKeyPx = keyMinPx;
-        intersectValuePx = otherValuePx + (valuePx - otherValuePx) /
-                                              (keyPx - otherKeyPx) *
-                                              (intersectKeyPx - otherKeyPx);
+        intersectValuePx = otherValuePx +
+                           (valuePx - otherValuePx) / (keyPx - otherKeyPx) *
+                               (intersectKeyPx - otherKeyPx);
       }
       break;
     }
     case 2:  // left edge
     {
       intersectKeyPx = keyMinPx;
-      intersectValuePx = otherValuePx + (valuePx - otherValuePx) /
-                                            (keyPx - otherKeyPx) *
-                                            (intersectKeyPx - otherKeyPx);
+      intersectValuePx = otherValuePx +
+                         (valuePx - otherValuePx) / (keyPx - otherKeyPx) *
+                             (intersectKeyPx - otherKeyPx);
       break;
     }
     case 3:  // bottom and left edge
     {
       intersectValuePx = valueMinPx;
-      intersectKeyPx = otherKeyPx + (keyPx - otherKeyPx) /
-                                        (valuePx - otherValuePx) *
-                                        (intersectValuePx - otherValuePx);
+      intersectKeyPx = otherKeyPx +
+                       (keyPx - otherKeyPx) / (valuePx - otherValuePx) *
+                           (intersectValuePx - otherValuePx);
       if (intersectKeyPx < qMin(keyMinPx, keyMaxPx) ||
           intersectKeyPx >
               qMax(keyMinPx,
@@ -23138,18 +23137,18 @@ QPointF QCPCurve::getOptimizedPoint(int otherRegion, double otherKey,
                                // since axes may be reversed)
       {
         intersectKeyPx = keyMinPx;
-        intersectValuePx = otherValuePx + (valuePx - otherValuePx) /
-                                              (keyPx - otherKeyPx) *
-                                              (intersectKeyPx - otherKeyPx);
+        intersectValuePx = otherValuePx +
+                           (valuePx - otherValuePx) / (keyPx - otherKeyPx) *
+                               (intersectKeyPx - otherKeyPx);
       }
       break;
     }
     case 4:  // top edge
     {
       intersectValuePx = valueMaxPx;
-      intersectKeyPx = otherKeyPx + (keyPx - otherKeyPx) /
-                                        (valuePx - otherValuePx) *
-                                        (intersectValuePx - otherValuePx);
+      intersectKeyPx = otherKeyPx +
+                       (keyPx - otherKeyPx) / (valuePx - otherValuePx) *
+                           (intersectValuePx - otherValuePx);
       break;
     }
     case 5: {
@@ -23159,17 +23158,17 @@ QPointF QCPCurve::getOptimizedPoint(int otherRegion, double otherKey,
     case 6:  // bottom edge
     {
       intersectValuePx = valueMinPx;
-      intersectKeyPx = otherKeyPx + (keyPx - otherKeyPx) /
-                                        (valuePx - otherValuePx) *
-                                        (intersectValuePx - otherValuePx);
+      intersectKeyPx = otherKeyPx +
+                       (keyPx - otherKeyPx) / (valuePx - otherValuePx) *
+                           (intersectValuePx - otherValuePx);
       break;
     }
     case 7:  // top and right edge
     {
       intersectValuePx = valueMaxPx;
-      intersectKeyPx = otherKeyPx + (keyPx - otherKeyPx) /
-                                        (valuePx - otherValuePx) *
-                                        (intersectValuePx - otherValuePx);
+      intersectKeyPx = otherKeyPx +
+                       (keyPx - otherKeyPx) / (valuePx - otherValuePx) *
+                           (intersectValuePx - otherValuePx);
       if (intersectKeyPx < qMin(keyMinPx, keyMaxPx) ||
           intersectKeyPx >
               qMax(keyMinPx,
@@ -23178,26 +23177,26 @@ QPointF QCPCurve::getOptimizedPoint(int otherRegion, double otherKey,
                                // necessary since axes may be reversed)
       {
         intersectKeyPx = keyMaxPx;
-        intersectValuePx = otherValuePx + (valuePx - otherValuePx) /
-                                              (keyPx - otherKeyPx) *
-                                              (intersectKeyPx - otherKeyPx);
+        intersectValuePx = otherValuePx +
+                           (valuePx - otherValuePx) / (keyPx - otherKeyPx) *
+                               (intersectKeyPx - otherKeyPx);
       }
       break;
     }
     case 8:  // right edge
     {
       intersectKeyPx = keyMaxPx;
-      intersectValuePx = otherValuePx + (valuePx - otherValuePx) /
-                                            (keyPx - otherKeyPx) *
-                                            (intersectKeyPx - otherKeyPx);
+      intersectValuePx = otherValuePx +
+                         (valuePx - otherValuePx) / (keyPx - otherKeyPx) *
+                             (intersectKeyPx - otherKeyPx);
       break;
     }
     case 9:  // bottom and right edge
     {
       intersectValuePx = valueMinPx;
-      intersectKeyPx = otherKeyPx + (keyPx - otherKeyPx) /
-                                        (valuePx - otherValuePx) *
-                                        (intersectValuePx - otherValuePx);
+      intersectKeyPx = otherKeyPx +
+                       (keyPx - otherKeyPx) / (valuePx - otherValuePx) *
+                           (intersectValuePx - otherValuePx);
       if (intersectKeyPx < qMin(keyMinPx, keyMaxPx) ||
           intersectKeyPx >
               qMax(keyMinPx,
@@ -23206,9 +23205,9 @@ QPointF QCPCurve::getOptimizedPoint(int otherRegion, double otherKey,
                                // necessary since axes may be reversed)
       {
         intersectKeyPx = keyMaxPx;
-        intersectValuePx = otherValuePx + (valuePx - otherValuePx) /
-                                              (keyPx - otherKeyPx) *
-                                              (intersectKeyPx - otherKeyPx);
+        intersectValuePx = otherValuePx +
+                           (valuePx - otherValuePx) / (keyPx - otherKeyPx) *
+                               (intersectKeyPx - otherKeyPx);
       }
       break;
     }
@@ -24331,8 +24330,9 @@ double QCPBarsGroup::keyPixelOffset(const QCPBars *bars, double keyCoord) {
   int index = baseBars.indexOf(thisBase);
   if (index >= 0) {
     if (baseBars.size() % 2 == 1 &&
-        index == (baseBars.size() - 1) /
-                     2)  // is center bar (int division on purpose)
+        index ==
+            (baseBars.size() - 1) /
+                2)  // is center bar (int division on purpose)
     {
       return result;
     } else {
@@ -24988,7 +24988,7 @@ void QCPBars::draw(QCPPainter *painter) {
     if (begin == end) continue;
 
     for (QCPBarsDataContainer::const_iterator it = begin; it != end; ++it) {
-      // check data validity if flag set:
+// check data validity if flag set:
 #ifdef QCUSTOMPLOT_CHECK_DATA
       if (QCP::isInvalidData(it->key, it->value))
         qDebug() << Q_FUNC_INFO << "Data point at" << it->key
@@ -25806,7 +25806,7 @@ void QCPStatisticalBox::draw(QCPPainter *painter) {
 
     for (QCPStatisticalBoxDataContainer::const_iterator it = begin; it != end;
          ++it) {
-      // check data validity if flag set:
+// check data validity if flag set:
 #ifdef QCUSTOMPLOT_CHECK_DATA
       if (QCP::isInvalidData(it->key, it->minimum) ||
           QCP::isInvalidData(it->lowerQuartile, it->median) ||
@@ -28743,7 +28743,7 @@ void QCPErrorBars::draw(QCPPainter *painter) {
   bool checkPointVisibility =
       !mDataPlottable->interface1D()->sortKeyIsMainKey();
 
-  // check data validity if flag set:
+// check data validity if flag set:
 #ifdef QCUSTOMPLOT_CHECK_DATA
   QCPErrorBarsDataContainer::const_iterator it;
   for (it = mDataContainer->constBegin(); it != mDataContainer->constEnd();
@@ -29009,7 +29009,7 @@ void QCPErrorBars::getErrorBarLines(
   const double centerErrorAxisCoord = errorAxis->pixelToCoord(
       centerErrorAxisPixel);  // depending on plottable, this might be different
                               // from just
-                              // mDataPlottable->interface1D()->dataMainKey/Value
+  // mDataPlottable->interface1D()->dataMainKey/Value
   const double symbolGap = mSymbolGap * 0.5 * errorAxis->pixelOrientation();
   // plus error:
   double errorStart, errorEnd;
