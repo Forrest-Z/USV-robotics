@@ -10,7 +10,11 @@
 */
 #ifndef _CONSTANTS_H_
 #define _CONSTANTS_H_
+#include <boost/date_time/microsec_time_clock.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
 #include <string>
+using T_BOOST_CLOCK =
+    boost::date_time::microsec_clock<boost::posix_time::ptime>;
 
 #define CLIENT_DATA_SIZE 9  // define length of float array for client data
 // maximum number of clients connected, "0" means unlimited number of clients

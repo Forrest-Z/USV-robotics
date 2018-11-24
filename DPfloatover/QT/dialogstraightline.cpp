@@ -2,168 +2,254 @@
 #include "ui_dialogstraightline.h"
 
 Dialogstraightline::Dialogstraightline(QWidget *parent)
-    : QDialog(parent), ui(new Ui::Dialogstraightline) {
+    : QDialog(parent), ui(new Ui::Dialogstraightline), index_vessel(0) {
   ui->setupUi(this);
   initializeStraightlineDiag();
 }
 
 Dialogstraightline::~Dialogstraightline() { delete ui; }
 
-void Dialogstraightline::on_setupsetpointII_clicked() {
-  double startx = ui->LE_setxII0->text().toDouble();
-  double starty = ui->LE_setyII0->text().toDouble();
-  double desired_velocity = ui->LE_setvelocityII->text().toDouble();
-  double endx = ui->LE_setxII1->text().toDouble();
-  double endy = ui->LE_setyII1->text().toDouble();
-  double endtheta = ui->LE_setthetaII1->text().toDouble();
-  endtheta *= (M_PI / 180);
-
-  //  update setpoints
-  globalvar::_threadloop.updatestraightlinesetpoints_t(
-      startx, starty, desired_velocity, endx, endy, endtheta, 1);
-  // ui operation
-  ui->setupsetpointII->setEnabled(false);
-  ui->resetsetpointII->setEnabled(true);
-
-  ui->LE_setxII0->setEnabled(false);
-  ui->LE_setyII0->setEnabled(false);
-  ui->LE_setvelocityII->setEnabled(false);
-  ui->LE_setxII1->setEnabled(false);
-  ui->LE_setyII1->setEnabled(false);
-  ui->LE_setthetaII1->setEnabled(false);
-
-  ui->setupsetpointI->setEnabled(false);
-  ui->resetsetpointI->setEnabled(false);
-
-  ui->LE_setxI0->setEnabled(false);
-  ui->LE_setyI0->setEnabled(false);
-  ui->LE_setvelocityI->setEnabled(false);
-  ui->LE_setxI1->setEnabled(false);
-  ui->LE_setyI1->setEnabled(false);
-  ui->LE_setthetaI1->setEnabled(false);
-}
-
-void Dialogstraightline::on_resetsetpointII_clicked() {
-  // stop update setpoints
-  globalvar::_threadloop.closeupdatesetpoints();
-  // ui operation
-  ui->setupsetpointII->setEnabled(true);
-  ui->resetsetpointII->setEnabled(false);
-  ui->LE_setxII0->setEnabled(true);
-  ui->LE_setyII0->setEnabled(true);
-  ui->LE_setvelocityII->setEnabled(true);
-  ui->LE_setxII1->setEnabled(true);
-  ui->LE_setyII1->setEnabled(true);
-  ui->LE_setthetaII1->setEnabled(true);
-
-  ui->setupsetpointI->setEnabled(true);
-  ui->resetsetpointI->setEnabled(false);
-
-  ui->LE_setxI0->setEnabled(true);
-  ui->LE_setyI0->setEnabled(true);
-  ui->LE_setvelocityI->setEnabled(true);
-  ui->LE_setxI1->setEnabled(true);
-  ui->LE_setyI1->setEnabled(true);
-  ui->LE_setthetaI1->setEnabled(true);
-}
-
-void Dialogstraightline::on_setupsetpointI_clicked() {
-  double startx = ui->LE_setxI0->text().toDouble();
-  double starty = ui->LE_setyI0->text().toDouble();
-  double desired_velocity = ui->LE_setvelocityI->text().toDouble();
-  double endx = ui->LE_setxI1->text().toDouble();
-  double endy = ui->LE_setyI1->text().toDouble();
-  double endtheta = ui->LE_setthetaI1->text().toDouble();
-  endtheta *= (M_PI / 180);
-  //  update setpoints
-  globalvar::_threadloop.updatestraightlinesetpoints_t(
-      startx, starty, desired_velocity, endx, endy, endtheta, 0);
-  // ui operation
-  ui->setupsetpointII->setEnabled(false);
-  ui->resetsetpointII->setEnabled(false);
-
-  ui->LE_setxII0->setEnabled(false);
-  ui->LE_setyII0->setEnabled(false);
-  ui->LE_setvelocityII->setEnabled(false);
-  ui->LE_setxII1->setEnabled(false);
-  ui->LE_setyII1->setEnabled(false);
-  ui->LE_setthetaII1->setEnabled(false);
-
-  ui->setupsetpointI->setEnabled(false);
-  ui->resetsetpointI->setEnabled(true);
-
-  ui->LE_setxI0->setEnabled(false);
-  ui->LE_setyI0->setEnabled(false);
-  ui->LE_setvelocityI->setEnabled(false);
-  ui->LE_setxI1->setEnabled(false);
-  ui->LE_setyI1->setEnabled(false);
-  ui->LE_setthetaI1->setEnabled(false);
-}
-
-void Dialogstraightline::on_resetsetpointI_clicked() {
-  // stop update setpoints
-  globalvar::_threadloop.closeupdatesetpoints();
-  // ui operation
-  ui->setupsetpointII->setEnabled(true);
-  ui->resetsetpointII->setEnabled(false);
-  ui->LE_setxII0->setEnabled(true);
-  ui->LE_setyII0->setEnabled(true);
-  ui->LE_setvelocityII->setEnabled(true);
-  ui->LE_setxII1->setEnabled(true);
-  ui->LE_setyII1->setEnabled(true);
-  ui->LE_setthetaII1->setEnabled(true);
-
-  ui->setupsetpointI->setEnabled(true);
-  ui->resetsetpointI->setEnabled(false);
-
-  ui->LE_setxI0->setEnabled(true);
-  ui->LE_setyI0->setEnabled(true);
-  ui->LE_setvelocityI->setEnabled(true);
-  ui->LE_setxI1->setEnabled(true);
-  ui->LE_setyI1->setEnabled(true);
-  ui->LE_setthetaI1->setEnabled(true);
-}
-
 void Dialogstraightline::initializeStraightlineDiag() {
   // the first straight line data
-  double startx = 0;
-  double starty = 0;
+  double desired_initialx = 0;
+  double desired_initialy = 0;
+  double desired_initialtheta = 0;
+  double delta_value = 0;
   double desired_velocity = 0;
-  double endx = 0;
-  double endy = 0;
-  double endtheta = 0;
+  int indicator = 0;
 
   globalvar::_threadloop.getstraightlinedata_first(
-      startx, starty, desired_velocity, endx, endy, endtheta);
+      desired_initialx, desired_initialy, desired_initialtheta, delta_value,
+      desired_velocity, indicator);
 
-  QString valestring = QString::number(startx);
+  QString valestring = QString::number(desired_initialx);
   ui->LE_setxI0->setText(valestring);
-  valestring = QString::number(starty);
+  valestring = QString::number(desired_initialy);
   ui->LE_setyI0->setText(valestring);
   valestring = QString::number(desired_velocity);
   ui->LE_setvelocityI->setText(valestring);
 
-  valestring = QString::number(endx);
-  ui->LE_setxI1->setText(valestring);
-  valestring = QString::number(endy);
-  ui->LE_setyI1->setText(valestring);
-  valestring = QString::number(endtheta);
-  ui->LE_setthetaI1->setText(valestring);
+  valestring = QString::number(delta_value);
+  ui->LE_deltaI->setText(valestring);
+  valestring = QString::number(indicator);
+  ui->LE_indicatorI->setText(valestring);
+  valestring = QString::number(desired_initialtheta);
+  ui->LE_setthetaI->setText(valestring);
   // the second straight line data
   globalvar::_threadloop.getstraightlinedata_second(
-      startx, starty, desired_velocity, endx, endy, endtheta);
+      desired_initialx, desired_initialy, desired_initialtheta, delta_value,
+      desired_velocity, indicator);
 
-  valestring = QString::number(startx);
+  valestring = QString::number(desired_initialx);
   ui->LE_setxII0->setText(valestring);
-  valestring = QString::number(starty);
+  valestring = QString::number(desired_initialy);
   ui->LE_setyII0->setText(valestring);
   valestring = QString::number(desired_velocity);
   ui->LE_setvelocityII->setText(valestring);
 
-  valestring = QString::number(endx);
-  ui->LE_setxII1->setText(valestring);
-  valestring = QString::number(endy);
-  ui->LE_setyII1->setText(valestring);
-  valestring = QString::number(endtheta);
-  ui->LE_setthetaII1->setText(valestring);
+  valestring = QString::number(delta_value);
+  ui->LE_deltaII->setText(valestring);
+  valestring = QString::number(indicator);
+  ui->LE_indicatorII->setText(valestring);
+  valestring = QString::number(desired_initialtheta);
+  ui->LE_setthetaII->setText(valestring);
+
+  // the third straight line data
+  globalvar::_threadloop.getstraightlinedata_third(
+      desired_initialx, desired_initialy, desired_initialtheta, delta_value,
+      desired_velocity, indicator);
+
+  valestring = QString::number(desired_initialx);
+  ui->LE_setxIII0->setText(valestring);
+  valestring = QString::number(desired_initialy);
+  ui->LE_setyIII0->setText(valestring);
+  valestring = QString::number(desired_velocity);
+  ui->LE_setvelocityIII->setText(valestring);
+
+  valestring = QString::number(delta_value);
+  ui->LE_deltaIII->setText(valestring);
+  valestring = QString::number(indicator);
+  ui->LE_indicatorIII->setText(valestring);
+  valestring = QString::number(desired_initialtheta);
+  ui->LE_setthetaIII->setText(valestring);
+}
+
+void Dialogstraightline::on_RB_VI_clicked() {
+  ui->LE_setxI0->setEnabled(true);
+  ui->LE_setyI0->setEnabled(true);
+  ui->LE_setvelocityI->setEnabled(true);
+  ui->LE_deltaI->setEnabled(true);
+  ui->LE_indicatorI->setEnabled(true);
+  ui->LE_setthetaI->setEnabled(true);
+
+  ui->LE_setxII0->setEnabled(false);
+  ui->LE_setyII0->setEnabled(false);
+  ui->LE_setvelocityII->setEnabled(false);
+  ui->LE_deltaII->setEnabled(false);
+  ui->LE_indicatorII->setEnabled(false);
+  ui->LE_setthetaII->setEnabled(false);
+
+  ui->LE_setxIII0->setEnabled(false);
+  ui->LE_setyIII0->setEnabled(false);
+  ui->LE_setvelocityIII->setEnabled(false);
+  ui->LE_deltaIII->setEnabled(false);
+  ui->LE_indicatorIII->setEnabled(false);
+  ui->LE_setthetaIII->setEnabled(false);
+
+  index_vessel = 0;
+}
+
+void Dialogstraightline::on_RB_VII_clicked() {
+  ui->LE_setxI0->setEnabled(false);
+  ui->LE_setyI0->setEnabled(false);
+  ui->LE_setvelocityI->setEnabled(false);
+  ui->LE_deltaI->setEnabled(false);
+  ui->LE_indicatorI->setEnabled(false);
+  ui->LE_setthetaI->setEnabled(false);
+
+  ui->LE_setxII0->setEnabled(true);
+  ui->LE_setyII0->setEnabled(true);
+  ui->LE_setvelocityII->setEnabled(true);
+  ui->LE_deltaII->setEnabled(true);
+  ui->LE_indicatorII->setEnabled(true);
+  ui->LE_setthetaII->setEnabled(true);
+
+  ui->LE_setxIII0->setEnabled(false);
+  ui->LE_setyIII0->setEnabled(false);
+  ui->LE_setvelocityIII->setEnabled(false);
+  ui->LE_deltaIII->setEnabled(false);
+  ui->LE_indicatorIII->setEnabled(false);
+  ui->LE_setthetaIII->setEnabled(false);
+
+  index_vessel = 1;
+}
+
+void Dialogstraightline::on_RB_VIII_clicked() {
+  ui->LE_setxI0->setEnabled(false);
+  ui->LE_setyI0->setEnabled(false);
+  ui->LE_setvelocityI->setEnabled(false);
+  ui->LE_deltaI->setEnabled(false);
+  ui->LE_indicatorI->setEnabled(false);
+  ui->LE_setthetaI->setEnabled(false);
+
+  ui->LE_setxII0->setEnabled(false);
+  ui->LE_setyII0->setEnabled(false);
+  ui->LE_setvelocityII->setEnabled(false);
+  ui->LE_deltaII->setEnabled(false);
+  ui->LE_indicatorII->setEnabled(false);
+  ui->LE_setthetaII->setEnabled(false);
+
+  ui->LE_setxIII0->setEnabled(true);
+  ui->LE_setyIII0->setEnabled(true);
+  ui->LE_setvelocityIII->setEnabled(true);
+  ui->LE_deltaIII->setEnabled(true);
+  ui->LE_indicatorIII->setEnabled(true);
+  ui->LE_setthetaIII->setEnabled(true);
+
+  index_vessel = 2;
+}
+
+void Dialogstraightline::on_setupsetpoint_clicked() {
+  if (index_vessel == 0) {
+    double desired_initialx = ui->LE_setxI0->text().toDouble();
+    double desired_initialy = ui->LE_setyI0->text().toDouble();
+    double desired_velocity = ui->LE_setvelocityI->text().toDouble();
+    double delta_value = ui->LE_deltaI->text().toDouble();
+    int indicator = ui->LE_indicatorI->text().toInt();
+    double desired_initialtheta = ui->LE_setthetaI->text().toDouble();
+    desired_initialtheta *= (M_PI / 180);
+
+    //  update setpoints
+    globalvar::_threadloop.updatestraightlinesetpoints_t(
+        desired_initialx, desired_initialy, desired_initialtheta, delta_value,
+        desired_velocity, indicator, index_vessel);
+    // ui operation
+    ui->setupsetpoint->setEnabled(false);
+    ui->resetsetpoint->setEnabled(true);
+
+    ui->LE_setxI0->setEnabled(false);
+    ui->LE_setyI0->setEnabled(false);
+    ui->LE_setvelocityI->setEnabled(false);
+    ui->LE_deltaI->setEnabled(false);
+    ui->LE_indicatorII->setEnabled(false);
+    ui->LE_setthetaI->setEnabled(false);
+
+  } else if (index_vessel == 1) {
+    double desired_initialx = ui->LE_setxII0->text().toDouble();
+    double desired_initialy = ui->LE_setyII0->text().toDouble();
+    double desired_velocity = ui->LE_setvelocityII->text().toDouble();
+    double delta_value = ui->LE_deltaII->text().toDouble();
+    int indicator = ui->LE_indicatorII->text().toInt();
+    double desired_initialtheta = ui->LE_setthetaII->text().toDouble();
+    desired_initialtheta *= (M_PI / 180);
+
+    //  update setpoints
+    globalvar::_threadloop.updatestraightlinesetpoints_t(
+        desired_initialx, desired_initialy, desired_initialtheta, delta_value,
+        desired_velocity, indicator, index_vessel);
+    // ui operation
+    ui->setupsetpoint->setEnabled(false);
+    ui->resetsetpoint->setEnabled(true);
+
+    ui->LE_setxII0->setEnabled(false);
+    ui->LE_setyII0->setEnabled(false);
+    ui->LE_setvelocityII->setEnabled(false);
+    ui->LE_deltaII->setEnabled(false);
+    ui->LE_indicatorII->setEnabled(false);
+    ui->LE_setthetaII->setEnabled(false);
+
+  } else {
+    double desired_initialx = ui->LE_setxIII0->text().toDouble();
+    double desired_initialy = ui->LE_setyIII0->text().toDouble();
+    double desired_velocity = ui->LE_setvelocityIII->text().toDouble();
+    double delta_value = ui->LE_deltaIII->text().toDouble();
+    int indicator = ui->LE_indicatorIII->text().toInt();
+    double desired_initialtheta = ui->LE_setthetaIII->text().toDouble();
+    desired_initialtheta *= (M_PI / 180);
+
+    //  update setpoints
+    globalvar::_threadloop.updatestraightlinesetpoints_t(
+        desired_initialx, desired_initialy, desired_initialtheta, delta_value,
+        desired_velocity, indicator, index_vessel);
+    // ui operation
+    ui->setupsetpoint->setEnabled(false);
+    ui->resetsetpoint->setEnabled(true);
+
+    ui->LE_setxIII0->setEnabled(false);
+    ui->LE_setyIII0->setEnabled(false);
+    ui->LE_setvelocityIII->setEnabled(false);
+    ui->LE_deltaIII->setEnabled(false);
+    ui->LE_indicatorIII->setEnabled(false);
+    ui->LE_setthetaIII->setEnabled(false);
+  }
+}
+
+void Dialogstraightline::on_resetsetpoint_clicked() {
+  // stop update setpoints
+  globalvar::_threadloop.closeupdatesetpoints();
+  // ui operation
+  ui->setupsetpoint->setEnabled(true);
+  ui->resetsetpoint->setEnabled(false);
+  if (index_vessel == 0) {
+    ui->LE_setxI0->setEnabled(false);
+    ui->LE_setyI0->setEnabled(false);
+    ui->LE_setvelocityI->setEnabled(false);
+    ui->LE_deltaI->setEnabled(false);
+    ui->LE_indicatorI->setEnabled(false);
+    ui->LE_setthetaI->setEnabled(false);
+  } else if (index_vessel == 0) {
+    ui->LE_setxII0->setEnabled(false);
+    ui->LE_setyII0->setEnabled(false);
+    ui->LE_setvelocityII->setEnabled(false);
+    ui->LE_deltaII->setEnabled(false);
+    ui->LE_indicatorII->setEnabled(false);
+    ui->LE_setthetaII->setEnabled(false);
+  } else {
+    ui->LE_setxIII0->setEnabled(false);
+    ui->LE_setyIII0->setEnabled(false);
+    ui->LE_setvelocityIII->setEnabled(false);
+    ui->LE_deltaIII->setEnabled(false);
+    ui->LE_indicatorIII->setEnabled(false);
+    ui->LE_setthetaIII->setEnabled(false);
+  }
 }

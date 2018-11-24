@@ -60,6 +60,31 @@ void Dialogsetparameter::initializePIDData() {
   ui->LE_DYII->setText(valestring);
   valestring = QString::number(Dmatrix_second(2));
   ui->LE_DTHETAII->setText(valestring);
+
+  // P matrix of III vessel
+  Eigen::Vector3d pmatrix_third = globalvar::_threadloop.getpmatrix_third();
+  valestring = QString::number(pmatrix_third(0));
+  ui->LE_PXIII->setText(valestring);
+  valestring = QString::number(pmatrix_third(1));
+  ui->LE_PYIII->setText(valestring);
+  valestring = QString::number(pmatrix_third(2));
+  ui->LE_PTHETAIII->setText(valestring);
+  // I matrix of III vessel
+  Eigen::Vector3d Imatrix_third = globalvar::_threadloop.getImatrix_third();
+  valestring = QString::number(Imatrix_third(0));
+  ui->LE_IXIII->setText(valestring);
+  valestring = QString::number(Imatrix_third(1));
+  ui->LE_IYIII->setText(valestring);
+  valestring = QString::number(Imatrix_third(2));
+  ui->LE_ITHETAIII->setText(valestring);
+  // D matrix of III vessel
+  Eigen::Vector3d Dmatrix_third = globalvar::_threadloop.getDmatrix_third();
+  valestring = QString::number(Dmatrix_third(0));
+  ui->LE_DXIII->setText(valestring);
+  valestring = QString::number(Dmatrix_third(1));
+  ui->LE_DYIII->setText(valestring);
+  valestring = QString::number(Dmatrix_third(2));
+  ui->LE_DTHETAIII->setText(valestring);
 }
 
 void Dialogsetparameter::on_PIDsetupI_clicked() {
@@ -88,4 +113,18 @@ void Dialogsetparameter::on_GB_II_clicked() {
   double DTheta = ui->LE_DTHETAII->text().toDouble();
   globalvar::_threadloop.setPID_second(PX, PY, PTheta, IX, IY, ITheta, DX, DY,
                                        DTheta);
+}
+
+void Dialogsetparameter::on_GB_III_clicked() {
+  double PX = ui->LE_PXIII->text().toDouble();
+  double PY = ui->LE_PYIII->text().toDouble();
+  double PTheta = ui->LE_PTHETAIII->text().toDouble();
+  double IX = ui->LE_IXIII->text().toDouble();
+  double IY = ui->LE_IYIII->text().toDouble();
+  double ITheta = ui->LE_ITHETAIII->text().toDouble();
+  double DX = ui->LE_DXIII->text().toDouble();
+  double DY = ui->LE_DYIII->text().toDouble();
+  double DTheta = ui->LE_DTHETAIII->text().toDouble();
+  globalvar::_threadloop.setPID_third(PX, PY, PTheta, IX, IY, ITheta, DX, DY,
+                                      DTheta);
 }

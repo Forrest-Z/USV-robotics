@@ -18,17 +18,21 @@ class Dialogstraightline : public QDialog {
   ~Dialogstraightline();
 
  private slots:
-  void on_setupsetpointII_clicked();
 
-  void on_resetsetpointII_clicked();
+  void on_RB_VI_clicked();
 
-  void on_setupsetpointI_clicked();
+  void on_RB_VII_clicked();
 
-  void on_resetsetpointI_clicked();
+  void on_RB_VIII_clicked();
+
+  void on_setupsetpoint_clicked();
+
+  void on_resetsetpoint_clicked();
 
  private:
   Ui::Dialogstraightline *ui;
   void initializeStraightlineDiag();
+  int index_vessel;
 };
 
 #endif  // DIALOGSTRAIGHTLINE_H

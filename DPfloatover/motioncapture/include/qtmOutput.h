@@ -4,10 +4,8 @@
 #include <float.h>
 #include <math.h>
 #include <stdio.h>
-#include <Eigen/Core>
+// #include <Eigen/Core>
 #include <algorithm>
-#include <boost/date_time/microsec_time_clock.hpp>
-#include <boost/date_time/posix_time/ptime.hpp>
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -28,8 +26,7 @@ const int num_average_yaw_velocity = 20;      // delay 2 s when frequenc=50Hz
 const int num_average_surge_velocity = 20;    // delay 2 s when frequenc=50Hz
 const int num_average_sway_velocity = 20;     // delay 2 s when frequenc=50Hz
 // average moving low pass to eliminate noise
-using T_BOOST_CLOCK =
-    boost::date_time::microsec_clock<boost::posix_time::ptime>;
+
 typedef Eigen::Matrix<double, num_average_point_yaw, 1> VectorAYaw;
 typedef Eigen::Matrix<double, num_average_point_surge, 1> VectorASurge;
 typedef Eigen::Matrix<double, num_average_point_sway, 1> VectorASway;

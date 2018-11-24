@@ -17,10 +17,12 @@ class Dialogsetparameter : public QDialog {
   explicit Dialogsetparameter(QWidget *parent = 0);
   ~Dialogsetparameter();
 
-private slots:
-    void on_PIDsetupI_clicked();
+ private slots:
+  void on_PIDsetupI_clicked();
 
-    void on_GB_II_clicked();
+  void on_GB_II_clicked();
+
+  void on_GB_III_clicked();
 
 private:
   Ui::Dialogsetparameter *ui;

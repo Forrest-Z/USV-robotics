@@ -125,31 +125,36 @@ class threadloop {
     _thread.detach();
   }
   // update straightline setpoint using a thread
-  void updatestraightlinesetpoints_t(double _initialx, double _initialy,
-                                     double _desired_velocity, double _finalx,
-                                     double _finaly, double _desired_theta,
+  void updatestraightlinesetpoints_t(double _desired_initialx,
+                                     double _desired_initialy,
+                                     double _desired_initialtheta,
+                                     double _delta_value,
+                                     double _desired_velocity, int _indicator,
                                      int index) {
     switch (index) {
       case 0: {
-        std::thread _thread(&threadloop::setStraightline_first, this, _initialx,
-                            _initialy, _desired_velocity, _finalx, _finaly,
-                            _desired_theta);
+        std::thread _thread(&threadloop::setStraightline_first, this,
+                            _desired_initialx, _desired_initialy,
+                            _desired_initialtheta, _delta_value,
+                            _desired_velocity, _indicator);
         _threadid_setpoints = _thread.native_handle();
         _thread.detach();
         break;
       }
       case 1: {
         std::thread _thread(&threadloop::setStraightline_second, this,
-                            _initialx, _initialy, _desired_velocity, _finalx,
-                            _finaly, _desired_theta);
+                            _desired_initialx, _desired_initialy,
+                            _desired_initialtheta, _delta_value,
+                            _desired_velocity, _indicator);
         _threadid_setpoints = _thread.native_handle();
         _thread.detach();
         break;
       }
       case 2: {
-        std::thread _thread(&threadloop::setStraightline_third, this, _initialx,
-                            _initialy, _desired_velocity, _finalx, _finaly,
-                            _desired_theta);
+        std::thread _thread(&threadloop::setStraightline_third, this,
+                            _desired_initialx, _desired_initialy,
+                            _desired_initialtheta, _delta_value,
+                            _desired_velocity, _indicator);
         _threadid_setpoints = _thread.native_handle();
         _thread.detach();
         break;
@@ -409,41 +414,53 @@ class threadloop {
     _desired_theta = _fixedpointdata.desired_theta * 180 / M_PI;
   }
   // get straightline data
-  void getstraightlinedata_first(double &_initialx, double &_initialy,
-                                 double &_desired_velocity, double &_finalx,
-                                 double &_finaly,
-                                 double &_desired_theta) const {
-    strightlinedata _strightlinedata = mysetpoints.getstraightlinedata_first();
-    _initialx = _strightlinedata.desired_initialx;
-    _initialy = _strightlinedata.desired_initialy;
-    _desired_velocity = _strightlinedata.desired_velocity;
-    _finalx = _strightlinedata.desired_finalx;
-    _finaly = _strightlinedata.desired_finaly;
-    _desired_theta = _strightlinedata.desired_theta * 180 / M_PI;
+  void getstraightlinedata_first(double &_desired_initialx,
+                                 double &_desired_initialy,
+                                 double &_desired_initialtheta,
+                                 double &_delta_value,
+                                 double &_desired_velocity,
+                                 int &_indicator) const {
+    SingleDimensionMove _SingleDimensionMove =
+        mysetpoints.getSingleDimensionMove_first();
+    _desired_initialx = _SingleDimensionMove.desired_initialx;
+    _desired_initialy = _SingleDimensionMove.desired_initialy;
+    _desired_initialtheta =
+        _SingleDimensionMove.desired_initialtheta * 180 / M_PI;
+    _delta_value = _SingleDimensionMove.delta_value;
+    _desired_velocity = _SingleDimensionMove.desired_velocity;
+    _indicator = _SingleDimensionMove.indicator;
   }
-  void getstraightlinedata_second(double &_initialx, double &_initialy,
-                                  double &_desired_velocity, double &_finalx,
-                                  double &_finaly,
-                                  double &_desired_theta) const {
-    strightlinedata _strightlinedata = mysetpoints.getstraightlinedata_second();
-    _initialx = _strightlinedata.desired_initialx;
-    _initialy = _strightlinedata.desired_initialy;
-    _desired_velocity = _strightlinedata.desired_velocity;
-    _finalx = _strightlinedata.desired_finalx;
-    _finaly = _strightlinedata.desired_finaly;
-    _desired_theta = _strightlinedata.desired_theta * 180 / M_PI;
+  void getstraightlinedata_second(double &_desired_initialx,
+                                  double &_desired_initialy,
+                                  double &_desired_initialtheta,
+                                  double &_delta_value,
+                                  double &_desired_velocity,
+                                  int &_indicator) const {
+    SingleDimensionMove _SingleDimensionMove =
+        mysetpoints.getSingleDimensionMove_second();
+    _desired_initialx = _SingleDimensionMove.desired_initialx;
+    _desired_initialy = _SingleDimensionMove.desired_initialy;
+    _desired_initialtheta =
+        _SingleDimensionMove.desired_initialtheta * 180 / M_PI;
+    _delta_value = _SingleDimensionMove.delta_value;
+    _desired_velocity = _SingleDimensionMove.desired_velocity;
+    _indicator = _SingleDimensionMove.indicator;
   }
-  void getstraightlinedata_third(double &_initialx, double &_initialy,
-                                 double &_desired_velocity, double &_finalx,
-                                 double &_finaly,
-                                 double &_desired_theta) const {
-    strightlinedata _strightlinedata = mysetpoints.getstraightlinedata_third();
-    _initialx = _strightlinedata.desired_initialx;
-    _initialy = _strightlinedata.desired_initialy;
-    _desired_velocity = _strightlinedata.desired_velocity;
-    _finalx = _strightlinedata.desired_finalx;
-    _finaly = _strightlinedata.desired_finaly;
-    _desired_theta = _strightlinedata.desired_theta * 180 / M_PI;
+  void getstraightlinedata_third(double &_desired_initialx,
+                                 double &_desired_initialy,
+                                 double &_desired_initialtheta,
+                                 double &_delta_value,
+                                 double &_desired_velocity,
+                                 int &_indicator) const {
+    SingleDimensionMove _SingleDimensionMove =
+        mysetpoints.getSingleDimensionMove_third();
+    _desired_initialx = _SingleDimensionMove.desired_initialx;
+    _desired_initialy = _SingleDimensionMove.desired_initialy;
+    _desired_initialtheta =
+        _SingleDimensionMove.desired_initialtheta * 180 / M_PI;
+    _delta_value = _SingleDimensionMove.delta_value;
+    _desired_velocity = _SingleDimensionMove.desired_velocity;
+    _indicator = _SingleDimensionMove.indicator;
   }
 
   void getboxdata_first(double &_desired_velocity, double &_desired_theta,
@@ -935,26 +952,27 @@ class threadloop {
   }
 
   // setup the straightline of each vessel
-  void setStraightline_first(double _initialx, double _initialy,
-                             double _desired_velocity, double _finalx,
-                             double _finaly, double _desired_theta) {
-    mysetpoints.gostraightline_first(_realtimevessel_first, _initialx,
-                                     _initialy, _desired_velocity, _finalx,
-                                     _finaly, _desired_theta);
+  void setStraightline_first(double _desired_initialx, double _desired_initialy,
+                             double _desired_initialtheta, double _delta_value,
+                             double _desired_velocity, int _indicator) {
+    mysetpoints.gosingledimension_first(
+        _realtimevessel_first, _desired_initialx, _desired_initialy,
+        _desired_initialtheta, _delta_value, _desired_velocity, _indicator);
   }
-  void setStraightline_second(double _initialx, double _initialy,
-                              double _desired_velocity, double _finalx,
-                              double _finaly, double _desired_theta) {
-    mysetpoints.gostraightline_second(_realtimevessel_second, _initialx,
-                                      _initialy, _desired_velocity, _finalx,
-                                      _finaly, _desired_theta);
+  void setStraightline_second(double _desired_initialx,
+                              double _desired_initialy,
+                              double _desired_initialtheta, double _delta_value,
+                              double _desired_velocity, int _indicator) {
+    mysetpoints.gosingledimension_second(
+        _realtimevessel_second, _desired_initialx, _desired_initialy,
+        _desired_initialtheta, _delta_value, _desired_velocity, _indicator);
   }
-  void setStraightline_third(double _initialx, double _initialy,
-                             double _desired_velocity, double _finalx,
-                             double _finaly, double _desired_theta) {
-    mysetpoints.gostraightline_third(_realtimevessel_third, _initialx,
-                                     _initialy, _desired_velocity, _finalx,
-                                     _finaly, _desired_theta);
+  void setStraightline_third(double _desired_initialx, double _desired_initialy,
+                             double _desired_initialtheta, double _delta_value,
+                             double _desired_velocity, int _indicator) {
+    mysetpoints.gosingledimension_third(
+        _realtimevessel_third, _desired_initialx, _desired_initialy,
+        _desired_initialtheta, _delta_value, _desired_velocity, _indicator);
   }
   // setup the box of each vessel
   void setBox_first(double _desired_velocity, double _desired_theta,
