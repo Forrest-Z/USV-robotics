@@ -161,46 +161,25 @@ class threadloop {
       }
     }
   }
-  // update box setpoint using a thread
-  void updatebox_t(double _desired_velocity, double _desired_theta,
-                   double _desired_initialx, double _desired_initialy,
-                   double _deltax, double _deltay, int index) {
-    switch (index) {
-      case 0: {
-        std::thread _thread(&threadloop::setBox_first, this, _desired_velocity,
-                            _desired_theta, _desired_initialx,
-                            _desired_initialy, _deltax, _deltay);
-        _threadid_setpoints = _thread.native_handle();
-        _thread.detach();
-        break;
-      }
-      case 1: {
-        std::thread _thread(&threadloop::setBox_second, this, _desired_velocity,
-                            _desired_theta, _desired_initialx,
-                            _desired_initialy, _deltax, _deltay);
-        _threadid_setpoints = _thread.native_handle();
-        _thread.detach();
-        break;
-      }
-      case 2: {
-        break;
-      }
-    }
-  }
 
   // update straightline setpoint using a thread
   void updatecooperationset_t(
-      double _desired_velocity, double _desired_theta,
-      double _desired_initialx_first, double _desired_initialy_first,
-      double _desired_finalx_first, double _desired_finaly_first,
+      int _total_time_spent, double _desired_initialx_first,
+      double _desired_initialy_first, double _desired_initialtheta_first,
+      double _delta_value_first, int _indicator_first,
       double _desired_initialx_second, double _desired_initialy_second,
-      double _desired_finalx_second, double _desired_finaly_second) {
-    std::thread _thread(&threadloop::setStraightline_both, this,
-                        _desired_velocity, _desired_theta,
-                        _desired_initialx_first, _desired_initialy_first,
-                        _desired_finalx_first, _desired_finaly_first,
-                        _desired_initialx_second, _desired_initialy_second,
-                        _desired_finalx_second, _desired_finaly_second);
+      double _desired_initialtheta_second, double _delta_value_second,
+      int _indicator_second, double _desired_initialx_third,
+      double _desired_initialy_third, double _desired_initialtheta_third,
+      double _delta_value_third, int _indicator_third) {
+    std::thread _thread(
+        &threadloop::setStraightline_triple, this, _total_time_spent,
+        _desired_initialx_first, _desired_initialy_first,
+        _desired_initialtheta_first, _delta_value_first, _indicator_first,
+        _desired_initialx_second, _desired_initialy_second,
+        _desired_initialtheta_second, _delta_value_second, _indicator_second,
+        _desired_initialx_third, _desired_initialy_third,
+        _desired_initialtheta_third, _delta_value_third, _indicator_third);
     _threadid_setpoints = _thread.native_handle();
     _thread.detach();
   }
@@ -463,46 +442,45 @@ class threadloop {
     _indicator = _SingleDimensionMove.indicator;
   }
 
-  void getboxdata_first(double &_desired_velocity, double &_desired_theta,
-                        double &_desired_initialx, double &_desired_initialy,
-                        double &_deltax, double &_deltay) const {
-    boxdata _boxdata = mysetpoints.getboxdata_first();
-    _desired_velocity = _boxdata.desired_velocity;
-    _desired_theta = _boxdata.desired_theta * 180 / M_PI;
-    _desired_initialx = _boxdata.desired_initialx;
-    _desired_initialy = _boxdata.desired_initialy;
-    _deltax = _boxdata.deltax;
-    _deltay = _boxdata.deltay;
-  }
-  void getboxdata_second(double &_desired_velocity, double &_desired_theta,
-                         double &_desired_initialx, double &_desired_initialy,
-                         double &_deltax, double &_deltay) const {
-    boxdata _boxdata = mysetpoints.getboxdata_second();
-    _desired_velocity = _boxdata.desired_velocity;
-    _desired_theta = _boxdata.desired_theta * 180 / M_PI;
-    _desired_initialx = _boxdata.desired_initialx;
-    _desired_initialy = _boxdata.desired_initialy;
-    _deltax = _boxdata.deltax;
-    _deltay = _boxdata.deltay;
-  }
-  void getstraightlinedata_both(
-      double &_desired_velocity, double &_desired_theta,
-      double &_desired_initialx_first, double &_desired_initialy_first,
-      double &_desired_finalx_first, double &_desired_finaly_first,
+  void getstraightlinedata_triple(
+      int &_total_time_spent, double &_desired_initialx_first,
+      double &_desired_initialy_first, double &_desired_initialtheta_first,
+      double &_delta_value_first, int &_indicator_first,
       double &_desired_initialx_second, double &_desired_initialy_second,
-      double &_desired_finalx_second, double &_desired_finaly_second) const {
-    strightlinedata_both _strightlinedataboth =
-        mysetpoints.getstraightlinedata_both();
-    _desired_velocity = _strightlinedataboth.desired_velocity;
-    _desired_theta = _strightlinedataboth.desired_theta * 180 / M_PI;
-    _desired_initialx_first = _strightlinedataboth.desired_initialx_first;
-    _desired_initialy_first = _strightlinedataboth.desired_initialy_first;
-    _desired_finalx_first = _strightlinedataboth.desired_finalx_first;
-    _desired_finaly_first = _strightlinedataboth.desired_finaly_first;
-    _desired_initialx_second = _strightlinedataboth.desired_initialx_second;
-    _desired_initialy_second = _strightlinedataboth.desired_initialy_second;
-    _desired_finalx_second = _strightlinedataboth.desired_finalx_second;
-    _desired_finaly_second = _strightlinedataboth.desired_finaly_second;
+      double &_desired_initialtheta_second, double &_delta_value_second,
+      int &_indicator_second, double &_desired_initialx_third,
+      double &_desired_initialy_third, double &_desired_initialtheta_third,
+      double &_delta_value_third, int &_indicator_third) const {
+    SingleDimensionMove_triple _SingleDimensionMove_triple =
+        mysetpoints.getsingledimensionmove_triple();
+    _total_time_spent = _SingleDimensionMove_triple.total_time_spent;
+
+    _desired_initialx_first =
+        _SingleDimensionMove_triple.desired_initialx_first;
+    _desired_initialy_first =
+        _SingleDimensionMove_triple.desired_initialy_first;
+    _desired_initialtheta_first =
+        _SingleDimensionMove_triple.desired_initialtheta_first * 180 / M_PI;
+    _delta_value_first = _SingleDimensionMove_triple.delta_value_first;
+    _indicator_first = _SingleDimensionMove_triple.indicator_first;
+
+    _desired_initialx_second =
+        _SingleDimensionMove_triple.desired_initialx_second;
+    _desired_initialy_second =
+        _SingleDimensionMove_triple.desired_initialy_second;
+    _desired_initialtheta_second =
+        _SingleDimensionMove_triple.desired_initialtheta_second * 180 / M_PI;
+    _delta_value_second = _SingleDimensionMove_triple.delta_value_second;
+    _indicator_second = _SingleDimensionMove_triple.indicator_second;
+
+    _desired_initialx_third =
+        _SingleDimensionMove_triple.desired_initialx_third;
+    _desired_initialy_third =
+        _SingleDimensionMove_triple.desired_initialy_third;
+    _desired_initialtheta_third =
+        _SingleDimensionMove_triple.desired_initialtheta_third * 180 / M_PI;
+    _delta_value_third = _SingleDimensionMove_triple.delta_value_third;
+    _indicator_third = _SingleDimensionMove_triple.indicator_third;
   }
 
  private:
@@ -642,56 +620,56 @@ class threadloop {
 
   // constant parameters of the third vessel
   vessel_third _vessel_third{
-      {623, 0, 0, 0, 706, 444, 0, 444, 1298},  // mass
-      {17, 0, 0, 0, 20, 0, 0, 0, 100},         // damping
-      20,                                      // P_x
-      10,                                      // P_y
-      50.0,                                    // P_theta
-      0.02,                                    // I_x
-      0.01,                                    // I_y
-      0.0,                                     // I_theta
-      200.0,                                   // D_x
-      150.0,                                   // D_y
-      300.0,                                   // D_theta
-      0.01,                                    // allowed_error_x
-      0.01,                                    // allowed_error_y;
-      0.02,                                    // allowed_error_orientation;
-      6.0,                                     // maxpositive_x_thrust(N)
-      5.0,                                     // maxnegative_x_thrust(N)
-      3,                                       // maxpositive_y_thrust(N)
-      2,                                       // maxnegative_y_thrust(N)
-      5,                                       // maxpositive_Mz_thrust(N*m)
-      3,                                       // maxnegative_Mz_thrust(N*m)
-      3,                                       // m
-      3,                                       // n
-      9,                                       // numvar
-      3,                                       // num_constraints
-      3.7e-7,                                  // Kbar_positive
-      1.7e-7,                                  // Kbar_negative
-      100,                                     // max_delta_rotation_bow
-      3000,                                    // max_rotation_bow
-      3.33,                                    // max_thrust_bow_positive
-      1.53,                                    // max_thrust_bow_negative
-      2e-5,                                    // K_left
-      2e-5,                                    // K_right
-      20,                                      // max_delta_rotation_azimuth
-      1000,                                    // max_rotation_azimuth
-      50,                                      // min_rotation_azimuth
-      20,                                      // max_thrust_azimuth_left
-      20,                                      // max_thrust_azimuth_right
-      0.05,                                    // min_thrust_azimuth_left
-      0.05,                                    // min_thrust_azimuth_right
-      0.1277,                                  // max_delta_alpha_azimuth
-      M_PI * 175 / 180,                        // max_alpha_azimuth_left
-      M_PI / 18,                               // min_alpha_azimuth_left
-      -M_PI / 18,                              // max_alpha_azimuth_right
-      -M_PI * 175 / 180,                       // min_alpha_azimuth_right
-      1.9,                                     // bow_x
-      0,                                       // bow_y
-      -1.893,                                  // left_x
-      -0.216,                                  // left_y
-      -1.893,                                  // right_x
-      0.216                                    // right_y
+      {1157, 0, 0, 0, 1311, 825, 0, 825, 2411},  // mass
+      {34, 0, 0, 0, 40, 0, 0, 0, 200},           // damping
+      40,                                        // P_x
+      20,                                        // P_y
+      50.0,                                      // P_theta
+      4,                                         // I_x
+      3,                                         // I_y
+      0.0,                                       // I_theta
+      500.0,                                     // D_x
+      400.0,                                     // D_y
+      300.0,                                     // D_theta
+      0.01,                                      // allowed_error_x
+      0.01,                                      // allowed_error_y;
+      0.02,                                      // allowed_error_orientation;
+      6.0,                                       // maxpositive_x_thrust(N)
+      5.0,                                       // maxnegative_x_thrust(N)
+      3,                                         // maxpositive_y_thrust(N)
+      3,                                         // maxnegative_y_thrust(N)
+      5,                                         // maxpositive_Mz_thrust(N*m)
+      4,                                         // maxnegative_Mz_thrust(N*m)
+      3,                                         // m
+      3,                                         // n
+      9,                                         // numvar
+      3,                                         // num_constraints
+      7.9e-7,                                    // Kbar_positive
+      6.0e-7,                                    // Kbar_negative
+      100,                                       // max_delta_rotation_bow
+      3000,                                      // max_rotation_bow
+      7.11,                                      // max_thrust_bow_positive
+      5.4,                                       // max_thrust_bow_negative
+      8e-7,                                      // K_left
+      8e-7,                                      // K_right
+      100,                                       // max_delta_rotation_azimuth
+      3000,                                      // max_rotation_azimuth
+      50,                                        // min_rotation_azimuth
+      7.2,                                       // max_thrust_azimuth_left
+      7.2,                                       // max_thrust_azimuth_right
+      0.002,                                     // min_thrust_azimuth_left
+      0.002,                                     // min_thrust_azimuth_right
+      0.1277,                                    // max_delta_alpha_azimuth
+      M_PI * 175 / 180,                          // max_alpha_azimuth_left
+      M_PI / 18,                                 // min_alpha_azimuth_left
+      -M_PI / 18,                                // max_alpha_azimuth_right
+      -M_PI * 175 / 180,                         // min_alpha_azimuth_right
+      2.58,                                      // bow_x
+      0,                                         // bow_y
+      -2.95,                                     // left_x
+      -0.44,                                     // left_y
+      -2.95,                                     // right_x
+      0.44                                       // right_y
   };
 
   // realtime parameters of the first vessel (K class-I)
@@ -928,7 +906,7 @@ class threadloop {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(sample_mtime - mt_elapsed));
       }
-      // realtimeprint_second();
+      realtimeprint_third();
     }
   }
 
@@ -974,33 +952,24 @@ class threadloop {
         _realtimevessel_third, _desired_initialx, _desired_initialy,
         _desired_initialtheta, _delta_value, _desired_velocity, _indicator);
   }
-  // setup the box of each vessel
-  void setBox_first(double _desired_velocity, double _desired_theta,
-                    double _desired_initialx, double _desired_initialy,
-                    double _deltax, double _deltay) {
-    mysetpoints.gobox_first(_realtimevessel_first, _desired_velocity,
-                            _desired_theta, _desired_initialx,
-                            _desired_initialy, _deltax, _deltay);
-  }
-  void setBox_second(double _desired_velocity, double _desired_theta,
-                     double _desired_initialx, double _desired_initialy,
-                     double _deltax, double _deltay) {
-    mysetpoints.gobox_second(_realtimevessel_second, _desired_velocity,
-                             _desired_theta, _desired_initialx,
-                             _desired_initialy, _deltax, _deltay);
-  }
-  void setStraightline_both(
-      double _desired_velocity, double _desired_theta,
-      double _desired_initialx_first, double _desired_initialy_first,
-      double _desired_finalx_first, double _desired_finaly_first,
+
+  void setStraightline_triple(
+      int _total_time_spent, double _desired_initialx_first,
+      double _desired_initialy_first, double _desired_initialtheta_first,
+      double _delta_value_first, int _indicator_first,
       double _desired_initialx_second, double _desired_initialy_second,
-      double _desired_finalx_second, double _desired_finaly_second) {
-    mysetpoints.followstraightline_both(
-        _realtimevessel_first, _realtimevessel_second, _desired_velocity,
-        _desired_theta, _desired_initialx_first, _desired_initialy_first,
-        _desired_finalx_first, _desired_finaly_first, _desired_initialx_second,
-        _desired_initialy_second, _desired_finalx_second,
-        _desired_finaly_second);
+      double _desired_initialtheta_second, double _delta_value_second,
+      int _indicator_second, double _desired_initialx_third,
+      double _desired_initialy_third, double _desired_initialtheta_third,
+      double _delta_value_third, int _indicator_third) {
+    mysetpoints.gosingledimension_triple(
+        _realtimevessel_first, _realtimevessel_second, _realtimevessel_third,
+        _total_time_spent, _desired_initialx_first, _desired_initialy_first,
+        _desired_initialtheta_first, _delta_value_first, _indicator_first,
+        _desired_initialx_second, _desired_initialy_second,
+        _desired_initialtheta_second, _delta_value_second, _indicator_second,
+        _desired_initialx_third, _desired_initialy_third,
+        _desired_initialtheta_third, _delta_value_third, _indicator_third);
   }
   // reset realtime data of each vessel
   void resetallvessels() {

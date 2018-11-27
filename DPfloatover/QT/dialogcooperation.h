@@ -22,7 +22,9 @@ class DialogCooperation : public QDialog {
 
   void on_PB_reset_clicked();
 
- private:
+  void on_PB_getcurrentposition_clicked();
+
+private:
   Ui::DialogCooperation *ui;
   void initilizeDialogCooperation();
 };

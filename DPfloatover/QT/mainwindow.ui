@@ -504,6 +504,7 @@
      <string>Display(&amp;D)</string>
     </property>
     <addaction name="action2D"/>
+    <addaction name="action6DOF"/>
     <addaction name="actionThruster_I_vessel"/>
     <addaction name="actionThruster_II_vessel"/>
     <addaction name="actionThruster_P"/>
@@ -522,7 +523,6 @@
     <addaction name="actionCoG"/>
     <addaction name="separator"/>
     <addaction name="actionCooperation"/>
-    <addaction name="actionBox"/>
     <addaction name="actionStraightLine"/>
     <addaction name="actionSetpoints"/>
     <addaction name="actionRotation"/>
@@ -605,6 +605,11 @@
   <action name="actionThruster_II_vessel">
    <property name="text">
     <string>Thruster -- II vessel</string>
+   </property>
+  </action>
+  <action name="action6DOF">
+   <property name="text">
+    <string>6DOF</string>
    </property>
   </action>
  </widget>

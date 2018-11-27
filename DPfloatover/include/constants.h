@@ -18,7 +18,7 @@ using T_BOOST_CLOCK =
 
 #define CLIENT_DATA_SIZE 9  // define length of float array for client data
 // maximum number of clients connected, "0" means unlimited number of clients
-#define MAXCONNECTION 2
+#define MAXCONNECTION 3
 #define PORT "9035"  // port we're listening on
 
 // max number of bytes we can get at once for socket server

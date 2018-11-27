@@ -164,6 +164,7 @@ void Dialogstraightline::on_setupsetpoint_clicked() {
         desired_initialx, desired_initialy, desired_initialtheta, delta_value,
         desired_velocity, indicator, index_vessel);
     // ui operation
+    ui->getcurrentposition->setEnabled(false);
     ui->setupsetpoint->setEnabled(false);
     ui->resetsetpoint->setEnabled(true);
 
@@ -171,7 +172,7 @@ void Dialogstraightline::on_setupsetpoint_clicked() {
     ui->LE_setyI0->setEnabled(false);
     ui->LE_setvelocityI->setEnabled(false);
     ui->LE_deltaI->setEnabled(false);
-    ui->LE_indicatorII->setEnabled(false);
+    ui->LE_indicatorI->setEnabled(false);
     ui->LE_setthetaI->setEnabled(false);
 
   } else if (index_vessel == 1) {
@@ -188,6 +189,7 @@ void Dialogstraightline::on_setupsetpoint_clicked() {
         desired_initialx, desired_initialy, desired_initialtheta, delta_value,
         desired_velocity, indicator, index_vessel);
     // ui operation
+    ui->getcurrentposition->setEnabled(false);
     ui->setupsetpoint->setEnabled(false);
     ui->resetsetpoint->setEnabled(true);
 
@@ -212,6 +214,7 @@ void Dialogstraightline::on_setupsetpoint_clicked() {
         desired_initialx, desired_initialy, desired_initialtheta, delta_value,
         desired_velocity, indicator, index_vessel);
     // ui operation
+    ui->getcurrentposition->setEnabled(false);
     ui->setupsetpoint->setEnabled(false);
     ui->resetsetpoint->setEnabled(true);
 
@@ -228,28 +231,57 @@ void Dialogstraightline::on_resetsetpoint_clicked() {
   // stop update setpoints
   globalvar::_threadloop.closeupdatesetpoints();
   // ui operation
+  ui->getcurrentposition->setEnabled(true);
   ui->setupsetpoint->setEnabled(true);
   ui->resetsetpoint->setEnabled(false);
   if (index_vessel == 0) {
-    ui->LE_setxI0->setEnabled(false);
-    ui->LE_setyI0->setEnabled(false);
-    ui->LE_setvelocityI->setEnabled(false);
-    ui->LE_deltaI->setEnabled(false);
-    ui->LE_indicatorI->setEnabled(false);
-    ui->LE_setthetaI->setEnabled(false);
-  } else if (index_vessel == 0) {
-    ui->LE_setxII0->setEnabled(false);
-    ui->LE_setyII0->setEnabled(false);
-    ui->LE_setvelocityII->setEnabled(false);
-    ui->LE_deltaII->setEnabled(false);
-    ui->LE_indicatorII->setEnabled(false);
-    ui->LE_setthetaII->setEnabled(false);
+    ui->LE_setxI0->setEnabled(true);
+    ui->LE_setyI0->setEnabled(true);
+    ui->LE_setvelocityI->setEnabled(true);
+    ui->LE_deltaI->setEnabled(true);
+    ui->LE_indicatorI->setEnabled(true);
+    ui->LE_setthetaI->setEnabled(true);
+  } else if (index_vessel == 1) {
+    ui->LE_setxII0->setEnabled(true);
+    ui->LE_setyII0->setEnabled(true);
+    ui->LE_setvelocityII->setEnabled(true);
+    ui->LE_deltaII->setEnabled(true);
+    ui->LE_indicatorII->setEnabled(true);
+    ui->LE_setthetaII->setEnabled(true);
   } else {
-    ui->LE_setxIII0->setEnabled(false);
-    ui->LE_setyIII0->setEnabled(false);
-    ui->LE_setvelocityIII->setEnabled(false);
-    ui->LE_deltaIII->setEnabled(false);
-    ui->LE_indicatorIII->setEnabled(false);
-    ui->LE_setthetaIII->setEnabled(false);
+    ui->LE_setxIII0->setEnabled(true);
+    ui->LE_setyIII0->setEnabled(true);
+    ui->LE_setvelocityIII->setEnabled(true);
+    ui->LE_deltaIII->setEnabled(true);
+    ui->LE_indicatorIII->setEnabled(true);
+    ui->LE_setthetaIII->setEnabled(true);
+  }
+}
+
+void Dialogstraightline::on_getcurrentposition_clicked() {
+  if (index_vessel == 0) {
+    Eigen::Vector3d _setpoints = globalvar::_threadloop.getSetpoints_first();
+    QString valestring = QString::number(_setpoints(0));
+    ui->LE_setxI0->setText(valestring);
+    valestring = QString::number(_setpoints(1));
+    ui->LE_setyI0->setText(valestring);
+    valestring = QString::number(_setpoints(2) * 180 / M_PI);
+    ui->LE_setthetaI->setText(valestring);
+  } else if (index_vessel == 1) {
+    Eigen::Vector3d _setpoints = globalvar::_threadloop.getSetpoints_second();
+    QString valestring = QString::number(_setpoints(0));
+    ui->LE_setxII0->setText(valestring);
+    valestring = QString::number(_setpoints(1));
+    ui->LE_setyII0->setText(valestring);
+    valestring = QString::number(_setpoints(2) * 180 / M_PI);
+    ui->LE_setthetaII->setText(valestring);
+  } else {
+    Eigen::Vector3d _setpoints = globalvar::_threadloop.getSetpoints_third();
+    QString valestring = QString::number(_setpoints(0));
+    ui->LE_setxIII0->setText(valestring);
+    valestring = QString::number(_setpoints(1));
+    ui->LE_setyIII0->setText(valestring);
+    valestring = QString::number(_setpoints(2) * 180 / M_PI);
+    ui->LE_setthetaIII->setText(valestring);
   }
 }

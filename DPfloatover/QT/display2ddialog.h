@@ -12,7 +12,6 @@
 const uint32_t arraylength = 592;  // length of array for 2D display
 // length of array for trajectory display
 const uint32_t trajectorylength = 2000;
-const uint32_t arraylength_6DoF = 296;  // length of array for 6DoF display
 const double radius_heading = 4;
 
 const int arraylength_setpoint_circle = 20;
@@ -35,7 +34,6 @@ class Display2DDialog : public QDialog {
   void setupVesselRealtimeData();
 
  private slots:
-  void motion6DOFdataSlot();
   void simplerealtimeDataSlot();
   void vesselshapeDataSlot();
 
@@ -55,12 +53,8 @@ class Display2DDialog : public QDialog {
   std::unordered_map<int, std::vector<double>> CoG4viewer;
   std::unordered_map<int, QVector<QCPCurveData>> setpoints_circle_larger;
   std::unordered_map<int, QVector<QCPCurveData>> setpoints_circle_smaller;
-  // data for 6DoF time series
-  std::unordered_map<int, QVector<double>> motion_clients;
-  QVector<double> motion6Dof_xaxis_data;
-  QVector<double> motion6Dof_yaxis_data;
+
   std::vector<QColor> V_Qcolor;
-  std::vector<QCPAxisRect *> dofmotionplot;
   std::vector<QCPItemCurve *> setheadingarrows;
   std::vector<QCPItemCurve *> realtimeheadingarrows;
   std::vector<QCPCurve *> setpoint_circle_curves_larger;
@@ -75,7 +69,6 @@ class Display2DDialog : public QDialog {
   void updatesetpointvector(double set_x, double set_y,
                             QVector<double> &t_setpoint_x,
                             QVector<double> &t_setpoint_y);
-  void initialize6DOFmotion(QCustomPlot *customPlot);
   void initializePlanarMotion(QCustomPlot *customPlot);
   void initializePlanarMotionData();
   void initializeCircle(QCustomPlot *customPlot);

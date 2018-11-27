@@ -62,16 +62,6 @@
     <string>TextLabel</string>
    </property>
   </widget>
-  <widget class="QCustomPlot" name="customPlot_6DOF" native="true">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>771</width>
-     <height>601</height>
-    </rect>
-   </property>
-  </widget>
  </widget>
  <customwidgets>
   <customwidget>

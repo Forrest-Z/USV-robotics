@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>908</width>
-    <height>582</height>
+    <width>889</width>
+    <height>273</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>201</width>
-     <height>231</height>
+     <height>251</height>
     </rect>
    </property>
    <property name="title">
@@ -31,7 +31,7 @@
       <x>90</x>
       <y>10</y>
       <width>101</width>
-      <height>221</height>
+      <height>241</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -42,10 +42,13 @@
       <widget class="QLineEdit" name="LE_startyI"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="LE_endxI"/>
+      <widget class="QLineEdit" name="LE_thetaI"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="LE_endyI"/>
+      <widget class="QLineEdit" name="LE_deltaI"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_indicatorI"/>
      </item>
     </layout>
    </widget>
@@ -54,8 +57,8 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>69</width>
-      <height>201</height>
+      <width>74</width>
+      <height>221</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -76,14 +79,90 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>end_x (m)</string>
+        <string>theta (deg)</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="label_10">
        <property name="text">
-        <string>end_y (m)</string>
+        <string>delta (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>indicator</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>680</x>
+     <y>10</y>
+     <width>191</width>
+     <height>251</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Common</string>
+   </property>
+   <widget class="QLineEdit" name="LE_time">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>30</y>
+      <width>99</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>72</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Time (s)</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>151</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_7">
+     <item>
+      <widget class="QPushButton" name="PB_getcurrentposition">
+       <property name="text">
+        <string>current position</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PB_setup">
+       <property name="text">
+        <string>setup</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PB_reset">
+       <property name="text">
+        <string>reset</string>
        </property>
       </widget>
      </item>
@@ -96,19 +175,19 @@
      <x>230</x>
      <y>10</y>
      <width>201</width>
-     <height>231</height>
+     <height>251</height>
     </rect>
    </property>
    <property name="title">
     <string>II vessel</string>
    </property>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="layoutWidget_2">
     <property name="geometry">
      <rect>
       <x>90</x>
       <y>10</y>
       <width>101</width>
-      <height>221</height>
+      <height>241</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -119,131 +198,145 @@
       <widget class="QLineEdit" name="LE_startyII"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="LE_endxII"/>
+      <widget class="QLineEdit" name="LE_thetaII"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="LE_endyII"/>
+      <widget class="QLineEdit" name="LE_deltaII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_indicatorII"/>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget_2">
+   <widget class="QWidget" name="layoutWidget_3">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>69</width>
-      <height>201</height>
+      <width>74</width>
+      <height>221</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="QLabel" name="label_5">
+      <widget class="QLabel" name="label_4">
        <property name="text">
         <string>start_x (m)</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_6">
+      <widget class="QLabel" name="label_5">
        <property name="text">
         <string>start_y (m)</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>end_x (m)</string>
+        <string>theta (deg)</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_8">
+      <widget class="QLabel" name="label_12">
        <property name="text">
-        <string>end_y (m)</string>
+        <string>delta (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_13">
+       <property name="text">
+        <string>indicator</string>
        </property>
       </widget>
      </item>
     </layout>
    </widget>
   </widget>
-  <widget class="QGroupBox" name="groupBox_3">
+  <widget class="QGroupBox" name="groupBox_4">
    <property name="geometry">
     <rect>
      <x>450</x>
      <y>10</y>
-     <width>201</width>
-     <height>231</height>
+     <width>211</width>
+     <height>251</height>
     </rect>
    </property>
    <property name="title">
-    <string>Common</string>
+    <string>III vessel</string>
    </property>
-   <widget class="QPushButton" name="PB_setup">
+   <widget class="QWidget" name="layoutWidget_4">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>150</y>
-      <width>151</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>setup</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="PB_reset">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>190</y>
-      <width>151</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>reset</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>0</y>
+      <x>100</x>
+      <y>10</y>
       <width>101</width>
-      <height>131</height>
+      <height>241</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_7">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
      <item>
-      <widget class="QLineEdit" name="LE_velocity"/>
+      <widget class="QLineEdit" name="LE_startxIII"/>
      </item>
      <item>
-      <widget class="QLineEdit" name="LE_theta"/>
+      <widget class="QLineEdit" name="LE_startyIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_thetaIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_deltaIII"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_indicatorIII"/>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="layoutWidget_5">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>76</width>
-      <height>91</height>
+      <width>85</width>
+      <height>221</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_8">
+    <layout class="QVBoxLayout" name="verticalLayout_6">
      <item>
-      <widget class="QLabel" name="label_9">
+      <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>V (m/s)</string>
+        <string>start_x (m)</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_14">
+      <widget class="QLabel" name="label_8">
        <property name="text">
-        <string>Theta (deg)</string>
+        <string>start_y (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>theta (deg)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_16">
+       <property name="text">
+        <string>delta (m)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_17">
+       <property name="text">
+        <string>indicator</string>
        </property>
       </widget>
      </item>

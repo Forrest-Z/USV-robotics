@@ -211,9 +211,9 @@
    <property name="geometry">
     <rect>
      <x>690</x>
-     <y>190</y>
+     <y>160</y>
      <width>191</width>
-     <height>131</height>
+     <height>161</height>
     </rect>
    </property>
    <property name="title">
@@ -225,10 +225,17 @@
       <x>20</x>
       <y>20</y>
       <width>151</width>
-      <height>101</height>
+      <height>131</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_10">
+     <item>
+      <widget class="QPushButton" name="getcurrentposition">
+       <property name="text">
+        <string>Current Position</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QPushButton" name="setupsetpoint">
        <property name="text">
@@ -252,19 +259,19 @@
      <x>690</x>
      <y>10</y>
      <width>191</width>
-     <height>171</height>
+     <height>151</height>
     </rect>
    </property>
    <property name="title">
     <string>GroupBox</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>23</y>
       <width>151</width>
-      <height>141</height>
+      <height>121</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -389,12 +396,6 @@
     </layout>
    </widget>
   </widget>
-  <zorder>GB_setI</zorder>
-  <zorder>GB_setI_3</zorder>
-  <zorder>groupBox_2</zorder>
-  <zorder>groupBox_3</zorder>
-  <zorder>layoutWidget_10</zorder>
-  <zorder>GB_setI_4</zorder>
  </widget>
  <resources/>
  <connections/>

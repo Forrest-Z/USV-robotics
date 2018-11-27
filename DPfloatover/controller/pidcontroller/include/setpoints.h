@@ -25,42 +25,11 @@ struct fixedpointdata {
   double desired_theta;   // rad
 };
 
-// go box
-struct boxdata {
-  double desired_velocity;          // m/s
-  double desired_theta;             // rad
-  double desired_initialx;          // m
-  double desired_initialy;          // m
-  double deltax;                    // m
-  double deltay;                    // m
-  int orientation_adjustment_time;  // second
-};
-
 // go rotation
 struct rotationaroundpoint {
   double rotation_center_x;  // m
   double rotation_center_y;  // m
   double rotation_speed;     // rad/s
-};
-
-// go straight line
-struct strightlinedata_both {
-  // common value
-  double desired_velocity;          // m/s
-  double desired_theta;             // rad
-  int orientation_adjustment_time;  // adjustment(seconds)
-
-  // I vessel
-  double desired_initialx_first;  // m
-  double desired_initialy_first;  // m
-  double desired_finalx_first;    // m
-  double desired_finaly_first;    // m
-
-  // II vessel
-  double desired_initialx_second;  // m
-  double desired_initialy_second;  // m
-  double desired_finalx_second;    // m
-  double desired_finaly_second;    // m
 };
 
 // straightline move or rotation
@@ -81,11 +50,65 @@ struct SingleDimensionMove {
   // 5 ---- rotate anti-clockwise
 };
 
+// straightline move or rotation
+struct SingleDimensionMove_triple {
+  int orientation_adjustment_time;    // elapsed time for orientation
+  int total_time_spent;               // total time for this task (s)
+  double desired_initialx_first;      // m
+  double desired_initialy_first;      // m
+  double desired_initialtheta_first;  // rad
+  double delta_value_first;           // delta value (distance or angle)
+  int indicator_first;                // where to go
+
+  double desired_initialx_second;      // m
+  double desired_initialy_second;      // m
+  double desired_initialtheta_second;  // rad
+  double delta_value_second;           // delta value (distance or angle)
+  int indicator_second;                // where to go
+
+  double desired_initialx_third;      // m
+  double desired_initialy_third;      // m
+  double desired_initialtheta_third;  // rad
+  double delta_value_third;           // delta value (distance or angle)
+  int indicator_third;                // where to go
+
+  // 0 ---- move forward
+  // 1 ---- move starboard
+  // 2 ---- move backward
+  // 3 ---- move port
+  // 4 ---- rotate clockwise
+  // 5 ---- rotate anti-clockwise
+  // 6 ---- fixed point
+};
+
 class setpoints {
  public:
   setpoints() {}
   ~setpoints() {}
 
+  void gosingledimension_triple(
+      realtimevessel_first &_realtimevessel_first,
+      realtimevessel_second &_realtimevessel_second,
+      realtimevessel_third &_realtimevessel_third, int _total_time_spent,
+      double _desired_initialx_first, double _desired_initialy_first,
+      double _desired_initialtheta_first, double _delta_value_first,
+      int _indicator_first, double _desired_initialx_second,
+      double _desired_initialy_second, double _desired_initialtheta_second,
+      double _delta_value_second, int _indicator_second,
+      double _desired_initialx_third, double _desired_initialy_third,
+      double _desired_initialtheta_third, double _delta_value_third,
+      int _indicator_third) {
+    setSingleDimensionMovetripledata(
+        mysingledimensionmove_triple, _total_time_spent,
+        _desired_initialx_first, _desired_initialy_first,
+        _desired_initialtheta_first, _delta_value_first, _indicator_first,
+        _desired_initialx_second, _desired_initialy_second,
+        _desired_initialtheta_second, _delta_value_second, _indicator_second,
+        _desired_initialx_third, _desired_initialy_third,
+        _desired_initialtheta_third, _delta_value_third, _indicator_third);
+    singledimension_triple(_realtimevessel_first, _realtimevessel_second,
+                           _realtimevessel_third, mysingledimensionmove_triple);
+  }
   void gosingledimension_first(realtimevessel_first &_realtimevessel,
                                double _desired_initialx,
                                double _desired_initialy,
@@ -119,29 +142,7 @@ class setpoints {
                                _delta_value, _desired_velocity, _indicator);
     singledimension_third(_realtimevessel, mySingleDimensionMove_third);
   }
-  // Enable cooperation control for two vesesls to follow a straight line
-  void followstraightline_both(
-      realtimevessel_first &_realtimevessel_first,
-      realtimevessel_second &_realtimevessel_second, double _desired_velocity,
-      double _desired_theta, double _desired_initialx_first,
-      double _desired_initialy_first, double _desired_finalx_first,
-      double _desired_finaly_first, double _desired_initialx_second,
-      double _desired_initialy_second, double _desired_finalx_second,
-      double _desired_finaly_second) {
-    setstraightlinedata_both(mystrightlinedata_both, _desired_velocity,
-                             _desired_theta, _desired_initialx_first,
-                             _desired_initialy_first, _desired_finalx_first,
-                             _desired_finaly_first, _desired_initialx_second,
-                             _desired_initialy_second, _desired_finalx_second,
-                             _desired_finaly_second);
-    _realtimevessel_first.index_step =
-        checksteppoint(_realtimevessel_first.setPoints, _desired_theta);
-    _realtimevessel_second.index_step =
-        checksteppoint(_realtimevessel_second.setPoints, _desired_theta);
-    gostraightline_both(_realtimevessel_first.setPoints,
-                        _realtimevessel_second.setPoints,
-                        mystrightlinedata_both);
-  }
+
   // Enable each vessel to reach a fixed point independently
   void gofixedpoint_first(realtimevessel_first &_realtimevessel,
                           double _desired_finalx, double _desired_finaly,
@@ -171,28 +172,6 @@ class setpoints {
     gofixedpoint(_realtimevessel.setPoints, myfixedpointdata_third);
   }
 
-  // enable each vessel to go like a box
-  void gobox_first(realtimevessel_first &_realtimevessel,
-                   double _desired_velocity, double _desired_theta,
-                   double _desired_initialx, double _desired_initialy,
-                   double _deltax, double _deltay) {
-    setboxdata(mybox_first, _desired_velocity, _desired_theta,
-               _desired_initialx, _desired_initialy, _deltax, _deltay);
-    _realtimevessel.index_step =
-        checksteppoint(_realtimevessel.setPoints, _desired_theta);
-    gobox(_realtimevessel.setPoints, mybox_first);
-  }
-  void gobox_second(realtimevessel_second &_realtimevessel,
-                    double _desired_velocity, double _desired_theta,
-                    double _desired_initialx, double _desired_initialy,
-                    double _deltax, double _deltay) {
-    setboxdata(mybox_second, _desired_velocity, _desired_theta,
-               _desired_initialx, _desired_initialy, _deltax, _deltay);
-    _realtimevessel.index_step =
-        checksteppoint(_realtimevessel.setPoints, _desired_theta);
-    gobox(_realtimevessel.setPoints, mybox_second);
-  }
-
   fixedpointdata getfixedpointdata_first() const {
     return myfixedpointdata_first;
   }
@@ -213,11 +192,8 @@ class setpoints {
     return mySingleDimensionMove_third;
   }
 
-  boxdata getboxdata_first() const { return mybox_first; }
-  boxdata getboxdata_second() const { return mybox_second; }
-
-  strightlinedata_both getstraightlinedata_both() const {
-    return mystrightlinedata_both;
+  SingleDimensionMove_triple getsingledimensionmove_triple() const {
+    return mysingledimensionmove_triple;
   }
 
  private:
@@ -235,40 +211,6 @@ class setpoints {
       0.0,       // desired_finalx
       -6,        // desired_finaly
       -M_PI / 3  // desired_theta
-  };
-
-  boxdata mybox_first{
-      0.1,       // desired_velocity
-      M_PI / 2,  // desired_theta
-      0.0,       // desired_initialx
-      -2,        // desired_initialy
-      0.0,       // deltax
-      0,         // deltay
-      10         // orientation_adjustment_time
-  };
-
-  boxdata mybox_second{
-      0.1,       // desired_velocity
-      M_PI / 2,  // desired_theta
-      0.0,       // desired_initialx
-      -2,        // desired_initialy
-      0.0,       // deltax
-      0,         // deltay
-      10         // orientation_adjustment_time
-  };
-
-  strightlinedata_both mystrightlinedata_both{
-      0.05,      // desired_velocity
-      M_PI / 2,  // desired_theta
-      10,        // orientation_adjustment_time
-      0.0,       // desired_initialx_first
-      0.1,       // desired_initialy_first
-      0.0,       // desired_finalx_first
-      -2,        // desired_finaly_first
-      0.0,       // desired_initialx_second
-      0,         // desired_initialy_second
-      7.0,       // desired_finalx_second
-      -3         // desired_finaly_second
   };
 
   SingleDimensionMove mySingleDimensionMove_first{
@@ -298,6 +240,25 @@ class setpoints {
       0.05,  // desired_velocity;
       0      // indicator;
   };
+  SingleDimensionMove_triple mysingledimensionmove_triple{
+      10,        //  orientation_adjustment_time
+      100,       // total_time_spent
+      0,         // desired_initialx_first
+      -3,        // desired_initialy_first
+      0,         // desired_initialtheta_first
+      2,         // delta_value_first
+      6,         // indicator_first
+      0,         // desired_initialx_second
+      3,         // desired_initialy_second
+      0,         // desired_initialtheta_second
+      3,         // delta_value_second
+      6,         // indicator_second
+      2,         // desired_initialx_third
+      3,         // desired_initialy_third
+      M_PI / 3,  // desired_initialtheta_third
+      3,         // delta_value_third
+      6          // indicator_third
+  };
   // setup the fixedpoint data
   void setfixedpointdata(fixedpointdata &_fixedpointdata,
                          double _desired_finalx, double _desired_finaly,
@@ -307,17 +268,6 @@ class setpoints {
     _fixedpointdata.desired_theta = _desired_theta;
   }
 
-  // setup the box data
-  void setboxdata(boxdata &_boxdata, double _desired_velocity,
-                  double _desired_theta, double _desired_initialx,
-                  double _desired_initialy, double _deltax, double _deltay) {
-    _boxdata.desired_velocity = _desired_velocity;
-    _boxdata.desired_theta = _desired_theta;
-    _boxdata.desired_initialx = _desired_initialx;
-    _boxdata.desired_initialy = _desired_initialy;
-    _boxdata.deltax = _deltax;
-    _boxdata.deltay = _deltay;
-  }
   // setup the straight line data
   void setSingleDimensionMovedata(SingleDimensionMove &_SingleDimensionMovedata,
                                   double _desired_initialx,
@@ -332,25 +282,46 @@ class setpoints {
     _SingleDimensionMovedata.desired_velocity = _desired_velocity;
     _SingleDimensionMovedata.indicator = _indicator;
   }
-  // setup the straight line data for cooperation control (two vessels)
-  void setstraightlinedata_both(
-      strightlinedata_both &_strightlinedata_both, double _desired_velocity,
-      double _desired_theta, double _desired_initialx_first,
-      double _desired_initialy_first, double _desired_finalx_first,
-      double _desired_finaly_first, double _desired_initialx_second,
-      double _desired_initialy_second, double _desired_finalx_second,
-      double _desired_finaly_second) {
-    _strightlinedata_both.desired_velocity = _desired_velocity;
-    _strightlinedata_both.desired_theta = _desired_theta;
-    _strightlinedata_both.desired_initialx_first = _desired_initialx_first;
-    _strightlinedata_both.desired_initialy_first = _desired_initialy_first;
-    _strightlinedata_both.desired_finalx_first = _desired_finalx_first;
-    _strightlinedata_both.desired_finaly_first = _desired_finaly_first;
-    _strightlinedata_both.desired_initialx_second = _desired_initialx_second;
-    _strightlinedata_both.desired_initialy_second = _desired_initialy_second;
-    _strightlinedata_both.desired_finalx_second = _desired_finalx_second;
-    _strightlinedata_both.desired_finaly_second = _desired_finaly_second;
+
+  void setSingleDimensionMovetripledata(
+      SingleDimensionMove_triple &_SingleDimensionMove_triple,
+      int _total_time_spent, double _desired_initialx_first,
+      double _desired_initialy_first, double _desired_initialtheta_first,
+      double _delta_value_first, int _indicator_first,
+      double _desired_initialx_second, double _desired_initialy_second,
+      double _desired_initialtheta_second, double _delta_value_second,
+      int _indicator_second, double _desired_initialx_third,
+      double _desired_initialy_third, double _desired_initialtheta_third,
+      double _delta_value_third, int _indicator_third) {
+    _SingleDimensionMove_triple.total_time_spent = _total_time_spent;
+    _SingleDimensionMove_triple.desired_initialx_first =
+        _desired_initialx_first;
+    _SingleDimensionMove_triple.desired_initialy_first =
+        _desired_initialy_first;
+    _SingleDimensionMove_triple.desired_initialtheta_first =
+        _desired_initialtheta_first;
+    _SingleDimensionMove_triple.delta_value_first = _delta_value_first;
+    _SingleDimensionMove_triple.indicator_first = _indicator_first;
+
+    _SingleDimensionMove_triple.desired_initialx_second =
+        _desired_initialx_second;
+    _SingleDimensionMove_triple.desired_initialy_second =
+        _desired_initialy_second;
+    _SingleDimensionMove_triple.desired_initialtheta_second =
+        _desired_initialtheta_second;
+    _SingleDimensionMove_triple.delta_value_second = _delta_value_second;
+    _SingleDimensionMove_triple.indicator_second = _indicator_second;
+
+    _SingleDimensionMove_triple.desired_initialx_third =
+        _desired_initialx_third;
+    _SingleDimensionMove_triple.desired_initialy_third =
+        _desired_initialy_third;
+    _SingleDimensionMove_triple.desired_initialtheta_third =
+        _desired_initialtheta_third;
+    _SingleDimensionMove_triple.delta_value_third = _delta_value_third;
+    _SingleDimensionMove_triple.indicator_third = _indicator_third;
   }
+
   // go alongwith single dimension of the I vessel
   void singledimension_first(realtimevessel_first &_realtimevessel,
                              const SingleDimensionMove &_SingleDimensionMove) {
@@ -386,8 +357,10 @@ class setpoints {
         t_end = T_BOOST_CLOCK::local_time();
         t_elapsed = t_end - t_start;
         mt_elapsed = t_elapsed.total_milliseconds();
-        _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xA;
-        _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yA;
+        _realtimevessel.setPoints(0) =
+            total_delta_x * mt_elapsed / total_mt_elapsed + xA;
+        _realtimevessel.setPoints(1) =
+            total_delta_y * mt_elapsed / total_mt_elapsed + yA;
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
       } while (mt_elapsed < total_mt_elapsed);
     } else {  // rotation
@@ -401,6 +374,7 @@ class setpoints {
         mt_elapsed = t_elapsed.total_milliseconds();
         t_desired_theta = _desired_total_theta * mt_elapsed / total_mt_elapsed +
                           _SingleDimensionMove.desired_initialtheta;
+        restrictorientation(t_desired_theta);
         _realtimevessel.index_step =
             checksteppoint(_realtimevessel.setPoints, t_desired_theta);
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -442,8 +416,10 @@ class setpoints {
         t_end = T_BOOST_CLOCK::local_time();
         t_elapsed = t_end - t_start;
         mt_elapsed = t_elapsed.total_milliseconds();
-        _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xA;
-        _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yA;
+        _realtimevessel.setPoints(0) =
+            total_delta_x * mt_elapsed / total_mt_elapsed + xA;
+        _realtimevessel.setPoints(1) =
+            total_delta_y * mt_elapsed / total_mt_elapsed + yA;
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
       } while (mt_elapsed < total_mt_elapsed);
     } else {  // rotation
@@ -457,6 +433,7 @@ class setpoints {
         mt_elapsed = t_elapsed.total_milliseconds();
         t_desired_theta = _desired_total_theta * mt_elapsed / total_mt_elapsed +
                           _SingleDimensionMove.desired_initialtheta;
+        restrictorientation(t_desired_theta);
         _realtimevessel.index_step =
             checksteppoint(_realtimevessel.setPoints, t_desired_theta);
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -498,8 +475,10 @@ class setpoints {
         t_end = T_BOOST_CLOCK::local_time();
         t_elapsed = t_end - t_start;
         mt_elapsed = t_elapsed.total_milliseconds();
-        _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xA;
-        _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yA;
+        _realtimevessel.setPoints(0) =
+            total_delta_x * mt_elapsed / total_mt_elapsed + xA;
+        _realtimevessel.setPoints(1) =
+            total_delta_y * mt_elapsed / total_mt_elapsed + yA;
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
       } while (mt_elapsed < total_mt_elapsed);
     } else {  // rotation
@@ -513,11 +492,150 @@ class setpoints {
         mt_elapsed = t_elapsed.total_milliseconds();
         t_desired_theta = _desired_total_theta * mt_elapsed / total_mt_elapsed +
                           _SingleDimensionMove.desired_initialtheta;
+        restrictorientation(t_desired_theta);
         _realtimevessel.index_step =
             checksteppoint(_realtimevessel.setPoints, t_desired_theta);
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
       } while (mt_elapsed < total_mt_elapsed);
     }
+  }
+
+  void singledimension_triple(
+      realtimevessel_first &_realtimevessel_first,
+      realtimevessel_second &_realtimevessel_second,
+      realtimevessel_third &_realtimevessel_third,
+      const SingleDimensionMove_triple &_SingleDimensionMove_triple) {
+    // We reach the desired orientation first.
+    double xA_first = _SingleDimensionMove_triple.desired_initialx_first;
+    double yA_first = _SingleDimensionMove_triple.desired_initialy_first;
+    double xA_second = _SingleDimensionMove_triple.desired_initialx_second;
+    double yA_second = _SingleDimensionMove_triple.desired_initialy_second;
+    double xA_third = _SingleDimensionMove_triple.desired_initialx_third;
+    double yA_third = _SingleDimensionMove_triple.desired_initialy_third;
+    _realtimevessel_first.setPoints(0) = xA_first;
+    _realtimevessel_first.setPoints(1) = yA_first;
+    _realtimevessel_second.setPoints(0) = xA_second;
+    _realtimevessel_second.setPoints(1) = yA_second;
+    _realtimevessel_third.setPoints(0) = xA_third;
+    _realtimevessel_third.setPoints(1) = yA_third;
+    _realtimevessel_first.index_step =
+        checksteppoint(_realtimevessel_first.setPoints,
+                       _SingleDimensionMove_triple.desired_initialtheta_first);
+    _realtimevessel_second.index_step =
+        checksteppoint(_realtimevessel_second.setPoints,
+                       _SingleDimensionMove_triple.desired_initialtheta_second);
+    _realtimevessel_third.index_step =
+        checksteppoint(_realtimevessel_third.setPoints,
+                       _SingleDimensionMove_triple.desired_initialtheta_third);
+
+    std::this_thread::sleep_for(std::chrono::seconds(
+        _SingleDimensionMove_triple.orientation_adjustment_time));
+
+    long int total_mt_elapsed =
+        (long int)(1000 * _SingleDimensionMove_triple.total_time_spent);
+    // setup timer
+    boost::posix_time::ptime t_start(T_BOOST_CLOCK::local_time());
+    boost::posix_time::ptime t_end(T_BOOST_CLOCK::local_time());
+    boost::posix_time::time_duration t_elapsed = t_end - t_start;
+    long int mt_elapsed = 0;
+
+    // then we keep the straight line and reach the desired points (B)
+    double theta_first =
+        _SingleDimensionMove_triple.desired_initialtheta_first +
+        M_PI * _SingleDimensionMove_triple.indicator_first / 2;
+    double total_delta_x_first =
+        std::cos(theta_first) * _SingleDimensionMove_triple.delta_value_first;
+    double total_delta_y_first =
+        std::sin(theta_first) * _SingleDimensionMove_triple.delta_value_first;
+
+    double theta_second =
+        _SingleDimensionMove_triple.desired_initialtheta_second +
+        M_PI * _SingleDimensionMove_triple.indicator_second / 2;
+    double total_delta_x_second =
+        std::cos(theta_second) * _SingleDimensionMove_triple.delta_value_second;
+    double total_delta_y_second =
+        std::sin(theta_second) * _SingleDimensionMove_triple.delta_value_second;
+
+    double theta_third =
+        _SingleDimensionMove_triple.desired_initialtheta_third +
+        M_PI * _SingleDimensionMove_triple.indicator_third / 2;
+    double total_delta_x_third =
+        std::cos(theta_third) * _SingleDimensionMove_triple.delta_value_third;
+    double total_delta_y_third =
+        std::sin(theta_third) * _SingleDimensionMove_triple.delta_value_third;
+
+    double _desired_total_theta_first =
+        (9 - 2 * _SingleDimensionMove_triple.indicator_first) *
+        _SingleDimensionMove_triple.delta_value_first;
+
+    double _desired_total_theta_second =
+        (9 - 2 * _SingleDimensionMove_triple.indicator_second) *
+        _SingleDimensionMove_triple.delta_value_second;
+
+    double _desired_total_theta_third =
+        (9 - 2 * _SingleDimensionMove_triple.indicator_third) *
+        _SingleDimensionMove_triple.delta_value_third;
+    double t_desired_theta_first = 0;
+    double t_desired_theta_second = 0;
+    double t_desired_theta_third = 0;
+
+    do {
+      t_end = T_BOOST_CLOCK::local_time();
+      t_elapsed = t_end - t_start;
+      mt_elapsed = t_elapsed.total_milliseconds();
+      // the first vessel
+      if (_SingleDimensionMove_triple.indicator_first <= 3) {
+        _realtimevessel_first.setPoints(0) =
+            total_delta_x_first * mt_elapsed / total_mt_elapsed + xA_first;
+        _realtimevessel_first.setPoints(1) =
+            total_delta_y_first * mt_elapsed / total_mt_elapsed + yA_first;
+      } else if (_SingleDimensionMove_triple.indicator_first == 6) {
+        _realtimevessel_first.setPoints(0) = xA_first;
+        _realtimevessel_first.setPoints(1) = yA_first;
+      } else {
+        t_desired_theta_first =
+            _desired_total_theta_first * mt_elapsed / total_mt_elapsed +
+            _SingleDimensionMove_triple.desired_initialtheta_first;
+        restrictorientation(t_desired_theta_first);
+        _realtimevessel_first.index_step = checksteppoint(
+            _realtimevessel_first.setPoints, t_desired_theta_first);
+      }
+      // the second vessel
+      if (_SingleDimensionMove_triple.indicator_second <= 3) {
+        _realtimevessel_second.setPoints(0) =
+            total_delta_x_second * mt_elapsed / total_mt_elapsed + xA_second;
+        _realtimevessel_second.setPoints(1) =
+            total_delta_y_second * mt_elapsed / total_mt_elapsed + yA_second;
+      } else if (_SingleDimensionMove_triple.indicator_second == 6) {
+        _realtimevessel_second.setPoints(0) = xA_second;
+        _realtimevessel_second.setPoints(1) = yA_second;
+      } else {
+        t_desired_theta_second =
+            _desired_total_theta_second * mt_elapsed / total_mt_elapsed +
+            _SingleDimensionMove_triple.desired_initialtheta_second;
+        restrictorientation(t_desired_theta_second);
+        _realtimevessel_second.index_step = checksteppoint(
+            _realtimevessel_second.setPoints, t_desired_theta_second);
+      }
+      // the third vessel
+      if (_SingleDimensionMove_triple.indicator_third <= 3) {
+        _realtimevessel_third.setPoints(0) =
+            total_delta_x_third * mt_elapsed / total_mt_elapsed + xA_third;
+        _realtimevessel_third.setPoints(1) =
+            total_delta_y_third * mt_elapsed / total_mt_elapsed + yA_third;
+      } else if (_SingleDimensionMove_triple.indicator_third == 6) {
+        _realtimevessel_third.setPoints(0) = xA_third;
+        _realtimevessel_third.setPoints(1) = yA_third;
+      } else {
+        t_desired_theta_third =
+            _desired_total_theta_third * mt_elapsed / total_mt_elapsed +
+            _SingleDimensionMove_triple.desired_initialtheta_third;
+        restrictorientation(t_desired_theta_third);
+        _realtimevessel_third.index_step = checksteppoint(
+            _realtimevessel_third.setPoints, t_desired_theta_third);
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    } while (mt_elapsed < total_mt_elapsed);
   }
   // go to a fixed point with any trajectory
   void gofixedpoint(Eigen::Vector3d &_setpoints,
@@ -526,184 +644,13 @@ class setpoints {
     _setpoints(1) = _fixedpointdata.desired_finaly;
   }
 
-  // box for each vessel
-  void gobox(Eigen::Vector3d &_setpoints, const boxdata &_boxdata) {
-    // We reach the desired orientation first. (A)
-    double xA = _boxdata.desired_initialx;
-    double yA = _boxdata.desired_initialy;
-    _setpoints(0) = xA;
-    _setpoints(1) = yA;
-    std::this_thread::sleep_for(
-        std::chrono::seconds(_boxdata.orientation_adjustment_time));
-
-    // then we keep the straight line and reach the desired points (B)
-    double cvalue = std::cos(_boxdata.desired_theta);
-    double svalue = std::sin(_boxdata.desired_theta);
-    double total_delta_x = -svalue * _boxdata.deltay;
-    double total_delta_y = cvalue * _boxdata.deltay;
-
-    // setup timer
-    boost::posix_time::ptime t_start(T_BOOST_CLOCK::local_time());
-    boost::posix_time::ptime t_end(T_BOOST_CLOCK::local_time());
-    boost::posix_time::time_duration t_elapsed = t_end - t_start;
-    long int mt_elapsed = 0;
-
-    long int total_mt_elapsed =
-        (long int)(1000 * _boxdata.deltay / _boxdata.desired_velocity);
-    // update the desired position step by step
-    do {
-      t_end = T_BOOST_CLOCK::local_time();
-      t_elapsed = t_end - t_start;
-      mt_elapsed = t_elapsed.total_milliseconds();
-      _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xA;
-      _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yA;
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    } while (mt_elapsed < total_mt_elapsed);
-
-    // B
-    double xB = xA + total_delta_x;
-    double yB = yA + total_delta_y;
-    _setpoints(0) = xB;
-    _setpoints(1) = yB;
-    std::this_thread::sleep_for(
-        std::chrono::seconds(_boxdata.orientation_adjustment_time));
-
-    total_delta_x = cvalue * _boxdata.deltax;
-    total_delta_y = svalue * _boxdata.deltax;
-
-    // setup timer
-    t_start = T_BOOST_CLOCK::local_time();
-
-    total_mt_elapsed =
-        (long int)(1000 * _boxdata.deltax / _boxdata.desired_velocity);
-    // update the desired position step by step
-    do {
-      t_end = T_BOOST_CLOCK::local_time();
-      t_elapsed = t_end - t_start;
-      mt_elapsed = t_elapsed.total_milliseconds();
-      _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xB;
-      _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yB;
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    } while (mt_elapsed < total_mt_elapsed);
-
-    // C
-    double xC = xB + total_delta_x;
-    double yC = yB + total_delta_y;
-    _setpoints(0) = xC;
-    _setpoints(1) = yC;
-    std::this_thread::sleep_for(
-        std::chrono::seconds(_boxdata.orientation_adjustment_time));
-
-    total_delta_x = svalue * _boxdata.deltay;
-    total_delta_y = -cvalue * _boxdata.deltay;
-
-    // setup timer
-    t_start = T_BOOST_CLOCK::local_time();
-    total_mt_elapsed =
-        (long int)(1000 * _boxdata.deltay / _boxdata.desired_velocity);
-    // update the desired position step by step
-    do {
-      t_end = T_BOOST_CLOCK::local_time();
-      t_elapsed = t_end - t_start;
-      mt_elapsed = t_elapsed.total_milliseconds();
-      _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xC;
-      _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yC;
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    } while (mt_elapsed < total_mt_elapsed);
-
-    // D
-    double xD = xC + total_delta_x;
-    double yD = yC + total_delta_y;
-    _setpoints(0) = xD;
-    _setpoints(1) = yD;
-    std::this_thread::sleep_for(
-        std::chrono::seconds(_boxdata.orientation_adjustment_time));
-
-    total_delta_x = -cvalue * _boxdata.deltax;
-    total_delta_y = -svalue * _boxdata.deltax;
-
-    // setup timer
-    t_start = T_BOOST_CLOCK::local_time();
-
-    total_mt_elapsed =
-        (long int)(1000 * _boxdata.deltax / _boxdata.desired_velocity);
-    // update the desired position step by step
-    do {
-      t_end = T_BOOST_CLOCK::local_time();
-      t_elapsed = t_end - t_start;
-      mt_elapsed = t_elapsed.total_milliseconds();
-      _setpoints(0) = total_delta_x * mt_elapsed / total_mt_elapsed + xD;
-      _setpoints(1) = total_delta_y * mt_elapsed / total_mt_elapsed + yD;
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    } while (mt_elapsed < total_mt_elapsed);
-  }
-  // cooperation control for two vessels
-  void gostraightline_both(Eigen::Vector3d &_setpoints_first,
-                           Eigen::Vector3d &_setpoints_second,
-                           const strightlinedata_both &_strightlinedata_both) {
-    // We reach the desired orientation first.
-    _setpoints_first(0) = _strightlinedata_both.desired_initialx_first;
-    _setpoints_first(1) = _strightlinedata_both.desired_initialy_first;
-    _setpoints_second(0) = _strightlinedata_both.desired_initialx_second;
-    _setpoints_second(1) = _strightlinedata_both.desired_initialy_second;
-    std::this_thread::sleep_for(std::chrono::seconds(
-        _strightlinedata_both.orientation_adjustment_time));
-
-    // then we keep the straight line and reach the desired points
-    double total_delta_x_first = _strightlinedata_both.desired_finalx_first -
-                                 _strightlinedata_both.desired_initialx_first;
-    double total_delta_y_first = _strightlinedata_both.desired_finaly_first -
-                                 _strightlinedata_both.desired_initialy_first;
-    double total_length_first =
-        std::sqrt(total_delta_x_first * total_delta_x_first +
-                  total_delta_y_first * total_delta_y_first);
-
-    double total_delta_x_second = _strightlinedata_both.desired_finalx_second -
-                                  _strightlinedata_both.desired_initialx_second;
-    double total_delta_y_second = _strightlinedata_both.desired_finaly_second -
-                                  _strightlinedata_both.desired_initialy_second;
-    double total_length_second =
-        std::sqrt(total_delta_x_second * total_delta_x_second +
-                  total_delta_y_second * total_delta_y_second);
-    // setup timer
-    boost::posix_time::ptime t_start(T_BOOST_CLOCK::local_time());
-    boost::posix_time::ptime t_end(T_BOOST_CLOCK::local_time());
-    boost::posix_time::time_duration t_elapsed = t_end - t_start;
-    long int mt_elapsed = 0;
-
-    long int total_mt_elapsed =
-        (long int)(500 * (total_length_first + total_length_second) /
-                   _strightlinedata_both.desired_velocity);
-    // update the desired position step by step
-    do {
-      t_end = T_BOOST_CLOCK::local_time();
-      t_elapsed = t_end - t_start;
-      mt_elapsed = t_elapsed.total_milliseconds();
-      _setpoints_first(0) =
-          total_delta_x_first * mt_elapsed / total_mt_elapsed +
-          _strightlinedata_both.desired_initialx_first;
-      _setpoints_first(1) =
-          total_delta_y_first * mt_elapsed / total_mt_elapsed +
-          _strightlinedata_both.desired_initialy_first;
-
-      _setpoints_second(0) =
-          total_delta_x_second * mt_elapsed / total_mt_elapsed +
-          _strightlinedata_both.desired_initialx_second;
-      _setpoints_second(1) =
-          total_delta_y_second * mt_elapsed / total_mt_elapsed +
-          _strightlinedata_both.desired_initialy_second;
-
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    } while (mt_elapsed < total_mt_elapsed);
-  }  // gostraightline_both
-
   // cooperation control for two vessels, considering the vessel state
-  void gostraightline_both(Eigen::Vector3d &_setpoints_first,
-                           Eigen::Vector3d &_setpoints_second,
-                           const strightlinedata &_strightlinedata_first,
-                           const strightlinedata &_strightlinedata_second,
-                           const Vector6d &_state_first,
-                           const Vector6d &_state_second) {}
+  // void gostraightline_both(Eigen::Vector3d &_setpoints_first,
+  //                          Eigen::Vector3d &_setpoints_second,
+  //                          const strightlinedata &_strightlinedata_first,
+  //                          const strightlinedata &_strightlinedata_second,
+  //                          const Vector6d &_state_first,
+  //                          const Vector6d &_state_second) {}
 
   // judge the step point based on the setpoint orientation
   // index_step = 1, we use the 0~360 (add 360 when orientation is less than
@@ -726,6 +673,11 @@ class setpoints {
       _setpoint(2) = _setpoint_orientation;
     }
     return index_step;
+  }
+  // restrict the orientation to -M_PI ~ M_PI
+  void restrictorientation(double &_orientation) {
+    if (_orientation <= -M_PI) _orientation += (2 * M_PI);
+    if (_orientation >= M_PI) _orientation -= (2 * M_PI);
   }
 };
 #endif /* _SETPOINTS_H_ */

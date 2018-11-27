@@ -122,7 +122,7 @@ class databasecpp {
   // insert a row into some client table
   void update_client_table(bool t_status,
                            const realtimevessel_third &_realtimevessel) {
-    std::string str = "INSERT INTO " + clientset[1];
+    std::string str = "INSERT INTO " + clientset[2];
     // t_status=0 means corrected data
     std::string str_end("");
     if (t_status) {

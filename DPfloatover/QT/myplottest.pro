@@ -172,7 +172,6 @@ SOURCES += \
     dialogfixedsetpoint.cpp \
     dialogstraightline.cpp \
     dialogrotation.cpp \
-    dialogbox.cpp \
     dialogcooperation.cpp \
     ../network/src/crccheck.c \
     ../network/src/datapack.c \
@@ -196,7 +195,8 @@ SOURCES += \
     dialogabout.cpp \
     dialogthrusterdiagi.cpp \
     dialogthrusterdiagii.cpp \
-    dialogthrusterdiagiii.cpp
+    dialogthrusterdiagiii.cpp \
+    dialog6dof.cpp
 
 
 
@@ -210,7 +210,6 @@ HEADERS += \
     dialogfixedsetpoint.h \
     dialogstraightline.h \
     dialogrotation.h \
-    dialogbox.h \
     dialogcooperation.h \
     ../include/constants.h \
     ../include/threaded_Loop.h \
@@ -585,7 +584,8 @@ HEADERS += \
     dialogabout.h \
     dialogthrusterdiagi.h \
     dialogthrusterdiagii.h \
-    dialogthrusterdiagiii.h
+    dialogthrusterdiagiii.h \
+    dialog6dof.h
 
 
 
@@ -597,9 +597,9 @@ FORMS += \
         dialogfixedsetpoint.ui \
         dialogstraightline.ui \
         dialogrotation.ui \
-        dialogbox.ui \
         dialogcooperation.ui \
     dialogabout.ui \
     dialogthrusterdiagi.ui \
     dialogthrusterdiagii.ui \
-    dialogthrusterdiagiii.ui
+    dialogthrusterdiagiii.ui \
+    dialog6dof.ui

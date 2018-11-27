@@ -1563,7 +1563,7 @@ void send2triplevessel(const realtimevessel_first *_realtimevessel_first,
 
   Addr_third.AddrType = PNIO_ADDR_LOG;
   Addr_third.IODataType = PNIO_IO_OUT;
-  Addr_third.u.Addr = 50;
+  Addr_third.u.Addr = 48;
   while (1) {
     // update data for the first vessel
     write_data_first[0] = (float)_realtimevessel_first->rotation(0);

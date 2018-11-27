@@ -29,6 +29,8 @@ class Dialogstraightline : public QDialog {
 
   void on_resetsetpoint_clicked();
 
+  void on_getcurrentposition_clicked();
+
  private:
   Ui::Dialogstraightline *ui;
   void initializeStraightlineDiag();

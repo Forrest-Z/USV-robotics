@@ -9,8 +9,6 @@
 Display2DDialog::Display2DDialog(QWidget *parent)
     : QDialog(parent),
       ui(new Ui::Display2DDialog),
-      motion6Dof_xaxis_data(arraylength_6DoF, 0),
-      motion6Dof_yaxis_data(arraylength_6DoF, 0),
       V_Qcolor({QColor(209, 17, 65), QColor(0, 177, 89), QColor(0, 174, 219)}) {
   ui->setupUi(this);
   initializePlanarMotionData();
@@ -30,7 +28,7 @@ void Display2DDialog::initializeAllUI() {
   pal_2D.setColor(QPalette::Background, Qt::white);
 
   // set the whole dialog
-  this->setWindowState(Qt::WindowMaximized);
+  this->setGeometry(0, 0, size_2ddisplay, size_2ddisplay);
   this->setWindowFlags(Qt::Window);
   this->setAutoFillBackground(true);
   this->setPalette(pal_background);
@@ -51,7 +49,6 @@ void Display2DDialog::initializeAllUI() {
   ui->label_north->adjustSize();
 
   // initialize the time series of 6DOF motion and planar motion
-  initialize6DOFmotion(ui->customPlot_6DOF);
   initializePlanarMotion(ui->customPlot_2Dmotion);
   initializeCircle(ui->customPlot_2Dmotion);
   // install event filter for mouse
@@ -62,7 +59,6 @@ void Display2DDialog::initializeAllUI() {
 void Display2DDialog::setupVesselRealtimeData() {
   demoName = "Real-time vessel Display";
   connect(&dataTimer, SIGNAL(timeout()), this, SLOT(vesselshapeDataSlot()));
-  connect(&dataTimer, SIGNAL(timeout()), this, SLOT(motion6DOFdataSlot()));
   // Interval 0 means to refresh as fast as possible
   dataTimer.start(VIEWERREFRESH);
 }
@@ -90,9 +86,7 @@ void Display2DDialog::simplerealtimeDataSlot() {
   if (key - lastFpsKey > 2)  // average fps over 2 seconds
   {
     ui->status_text->setText(
-        QString("%1 FPS, Total Data points: %2")
-            .arg(frameCount / (key - lastFpsKey), 0, 'f', 0)
-            .arg(ui->customPlot_2Dmotion->graph()->data()->size()));
+        QString("%1 FPS").arg(frameCount / (key - lastFpsKey), 0, 'f', 0));
     lastFpsKey = key;
     frameCount = 0;
   }
@@ -173,61 +167,10 @@ void Display2DDialog::vesselshapeDataSlot() {
   if (key - lastFpsKey > 2)  // average fps over 2 seconds
   {
     ui->status_text->setText(
-        QString("%1 FPS, Total Data points: %2")
-            .arg(frameCount / (key - lastFpsKey), 0, 'f', 0)
-            .arg(ui->customPlot_2Dmotion->graph(0)->data()->size()));
+        QString("%1 FPS").arg(frameCount / (key - lastFpsKey), 0, 'f', 0));
     lastFpsKey = key;
     frameCount = 0;
   }
-}
-
-// real-time 6DOF motion data
-void Display2DDialog::motion6DOFdataSlot() {
-  Vector6d position6DoF_first =
-      globalvar::_threadloop.getrealtime6dmotion_first();
-  Vector6d position6DoF_second =
-      globalvar::_threadloop.getrealtime6dmotion_second();
-  Vector6d position6DoF_third =
-      globalvar::_threadloop.getrealtime6dmotion_third();
-
-  // update data to make phase move:
-  if (MAXCONNECTION > 0) {
-    for (unsigned j = 0; j != 6; ++j) {
-      auto searchdata = motion_clients.find(j);
-      searchdata->second.pop_front();
-      searchdata->second.push_back(position6DoF_first(j));
-
-      ui->customPlot_6DOF->graph(j)->setData(motion6Dof_xaxis_data,
-                                             searchdata->second);
-      ui->customPlot_6DOF->graph(j)->rescaleValueAxis(true);
-    }
-  }
-  if (MAXCONNECTION > 1) {
-    for (unsigned j = 0; j != 6; ++j) {
-      unsigned item4eachmotion = j + 6;
-      auto searchdata = motion_clients.find(item4eachmotion);
-      searchdata->second.pop_front();
-      searchdata->second.push_back(position6DoF_second(j));
-
-      ui->customPlot_6DOF->graph(item4eachmotion)
-          ->setData(motion6Dof_xaxis_data, searchdata->second);
-      ui->customPlot_6DOF->graph(item4eachmotion)->rescaleValueAxis(true);
-    }
-  }
-  if (MAXCONNECTION > 2) {
-    for (unsigned j = 0; j != 6; ++j) {
-      unsigned item4eachmotion = j + 12;
-      auto searchdata = motion_clients.find(item4eachmotion);
-      searchdata->second.pop_front();
-      searchdata->second.push_back(position6DoF_third(j));
-
-      ui->customPlot_6DOF->graph(item4eachmotion)
-          ->setData(motion6Dof_xaxis_data, searchdata->second);
-      ui->customPlot_6DOF->graph(item4eachmotion)->rescaleValueAxis(true);
-    }
-  }
-
-  ui->customPlot_6DOF->replot();
 }
 
 void Display2DDialog::convertvessel(double origin_x, double origin_y,
@@ -235,7 +178,6 @@ void Display2DDialog::convertvessel(double origin_x, double origin_y,
                                     QVector<double> &t_datay, int index) {
   // we should exchange x, y between the display coordinate and global
   // coordinate
-
   // convert degree to rad
   t_orient = t_orient * M_PI / 180;
   double c_value = std::cos(t_orient);
@@ -268,37 +210,6 @@ void Display2DDialog::updatesetpointvector(double set_x, double set_y,
   t_setpoint_y[0] = set_y;
 }
 
-// initialize UI for real-time 6DoF motion
-void Display2DDialog::initialize6DOFmotion(QCustomPlot *customPlot) {
-  customPlot->setGeometry(size_2ddisplay + 15, 10, MAXCONNECTION * 450,
-                          size_2ddisplay);
-  customPlot->plotLayout()->clear();
-
-  QVector<QString> str_6DOFmotion;
-  str_6DOFmotion << "Surge (m)"
-                 << "Sway (m)"
-                 << "Heave (m)"
-                 << "Roll (deg)"
-                 << "Pitch (deg)"
-                 << "Yaw (deg)";
-  // prepare data
-  for (unsigned i = 0; i != arraylength_6DoF; ++i)
-    motion6Dof_xaxis_data[i] = i / (double)(arraylength_6DoF - 1) * 34 - 17;
-
-  for (unsigned c_index = 0; c_index != MAXCONNECTION; ++c_index)
-    for (unsigned j = 0; j != 6; ++j) {
-      unsigned temp = j + 6 * c_index;
-      motion_clients[temp] = motion6Dof_yaxis_data;
-      dofmotionplot.push_back(new QCPAxisRect(customPlot));
-      customPlot->plotLayout()->addElement(j, c_index, dofmotionplot[temp]);
-      dofmotionplot[temp]->axis(QCPAxis::atLeft)->setLabel(str_6DOFmotion[j]);
-      customPlot->addGraph(dofmotionplot[temp]->axis(QCPAxis::atBottom),
-                           dofmotionplot[temp]->axis(QCPAxis::atLeft));
-      customPlot->graph(temp)->setData(motion6Dof_xaxis_data,
-                                       motion6Dof_xaxis_data);
-      customPlot->graph(temp)->valueAxis()->setRange(-0.5, 0.5);
-    }
-}
 // initialize UI for real-time planar motion
 void Display2DDialog::initializePlanarMotion(QCustomPlot *customPlot) {
   // initialize realtime viewer

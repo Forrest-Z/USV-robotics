@@ -190,11 +190,6 @@ void MainWindow::on_actionRotation_triggered() {
   myDialogRotation->show();
 }
 
-void MainWindow::on_actionBox_triggered() {
-  myDialogBox = new DialogBox(this);
-  myDialogBox->show();
-}
-
 void MainWindow::on_actionCooperation_triggered() {
   myDialogCooperation = new DialogCooperation(this);
   myDialogCooperation->show();
@@ -279,4 +274,9 @@ void MainWindow::on_actionThruster_I_vessel_triggered() {
 void MainWindow::on_actionThruster_II_vessel_triggered() {
   myDialogthrusterdiagII = new DialogthrusterdiagII(this);
   myDialogthrusterdiagII->show();
+}
+
+void MainWindow::on_action6DOF_triggered() {
+  myDialog6dof = new Dialog6dof(this);
+  myDialog6dof->show();
 }

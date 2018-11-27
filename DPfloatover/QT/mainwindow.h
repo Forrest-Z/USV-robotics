@@ -13,8 +13,8 @@
 #include <QMainWindow>
 #include <QString>
 #include <fstream>
+#include "dialog6dof.h"
 #include "dialogabout.h"
-#include "dialogbox.h"
 #include "dialogcooperation.h"
 #include "dialogfixedsetpoint.h"
 #include "dialogrotation.h"
@@ -86,8 +86,6 @@ class MainWindow : public QMainWindow {
 
   void on_actionRotation_triggered();
 
-  void on_actionBox_triggered();
-
   void on_actionCooperation_triggered();
 
   void on_actionLicensing_triggered();
@@ -98,11 +96,12 @@ class MainWindow : public QMainWindow {
 
   void on_actionThruster_II_vessel_triggered();
 
+  void on_action6DOF_triggered();
+
  private:
   Ui::MainWindow *ui;
   Display2DDialog *myDisplay2DDialog;
   Dialogsetparameter *myDialogsetparameter;
-  DialogBox *myDialogBox;
   Dialogfixedsetpoint *myDialogfixedsetpoint;
   DialogRotation *myDialogRotation;
   Dialogstraightline *myDialogstraightline;
@@ -112,6 +111,7 @@ class MainWindow : public QMainWindow {
   DialogThrusterDiagI *myDialogThrusterDiagI;
   DialogthrusterdiagII *myDialogthrusterdiagII;
   DialogthrusterdiagIII *myDialogthrusterdiagIII;
+  Dialog6dof *myDialog6dof;
   Qt::WindowFlags flags = nullptr;
 
   QString logfilepath;

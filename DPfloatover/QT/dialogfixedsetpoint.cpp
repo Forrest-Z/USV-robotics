@@ -65,7 +65,7 @@ void Dialogfixedsetpoint::on_setupsetpointIII_clicked() {
   double settheta = ui->LE_setthetaIII->text().toDouble();
   settheta *= (M_PI / 180);
 
-  globalvar::_threadloop.setFixedpoint_second(setx, sety, settheta);
+  globalvar::_threadloop.setFixedpoint_third(setx, sety, settheta);
 
   // ui operation
   ui->LE_setxIII->setEnabled(false);
