@@ -521,8 +521,8 @@ class threadloop {
       0.0,                                     // I_x
       0.0,                                     // I_y
       0.0,                                     // I_theta
-      200.0,                                   // D_x
-      150.0,                                   // D_y
+      300.0,                                   // D_x
+      200.0,                                   // D_y
       300.0,                                   // D_theta
       0.01,                                    // allowed_error_x
       0.01,                                    // allowed_error_y;
@@ -571,8 +571,8 @@ class threadloop {
       20,                                      // P_x
       10,                                      // P_y
       50.0,                                    // P_theta
-      4,                                       // I_x
-      2,                                       // I_y
+      0,                                       // I_x
+      0,                                       // I_y
       0.0,                                     // I_theta
       300.0,                                   // D_x
       200.0,                                   // D_y
@@ -622,18 +622,18 @@ class threadloop {
   vessel_third _vessel_third{
       {1157, 0, 0, 0, 1311, 825, 0, 825, 2411},  // mass
       {34, 0, 0, 0, 40, 0, 0, 0, 200},           // damping
-      40,                                        // P_x
-      20,                                        // P_y
+      20,                                        // P_x
+      10,                                        // P_y
       50.0,                                      // P_theta
-      4,                                         // I_x
-      3,                                         // I_y
+      0,                                         // I_x
+      0,                                         // I_y
       0.0,                                       // I_theta
-      500.0,                                     // D_x
-      400.0,                                     // D_y
+      300.0,                                     // D_x
+      250.0,                                     // D_y
       300.0,                                     // D_theta
       0.01,                                      // allowed_error_x
       0.01,                                      // allowed_error_y;
-      0.02,                                      // allowed_error_orientation;
+      0.01,                                      // allowed_error_orientation;
       6.0,                                       // maxpositive_x_thrust(N)
       5.0,                                       // maxnegative_x_thrust(N)
       3,                                         // maxpositive_y_thrust(N)
@@ -645,25 +645,25 @@ class threadloop {
       9,                                         // numvar
       3,                                         // num_constraints
       7.9e-7,                                    // Kbar_positive
-      6.0e-7,                                    // Kbar_negative
+      6.2e-7,                                    // Kbar_negative
       100,                                       // max_delta_rotation_bow
       3000,                                      // max_rotation_bow
       7.11,                                      // max_thrust_bow_positive
-      5.4,                                       // max_thrust_bow_negative
+      5.58,                                      // max_thrust_bow_negative
       8e-7,                                      // K_left
       8e-7,                                      // K_right
       100,                                       // max_delta_rotation_azimuth
       3000,                                      // max_rotation_azimuth
-      50,                                        // min_rotation_azimuth
+      200,                                       // min_rotation_azimuth
       7.2,                                       // max_thrust_azimuth_left
       7.2,                                       // max_thrust_azimuth_right
-      0.002,                                     // min_thrust_azimuth_left
-      0.002,                                     // min_thrust_azimuth_right
+      0.032,                                     // min_thrust_azimuth_left
+      0.032,                                     // min_thrust_azimuth_right
       0.1277,                                    // max_delta_alpha_azimuth
-      M_PI * 175 / 180,                          // max_alpha_azimuth_left
+      M_PI * 170 / 180,                          // max_alpha_azimuth_left
       M_PI / 18,                                 // min_alpha_azimuth_left
       -M_PI / 18,                                // max_alpha_azimuth_right
-      -M_PI * 175 / 180,                         // min_alpha_azimuth_right
+      -M_PI * 170 / 180,                         // min_alpha_azimuth_right
       2.58,                                      // bow_x
       0,                                         // bow_y
       -2.95,                                     // left_x

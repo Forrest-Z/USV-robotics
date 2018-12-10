@@ -22,7 +22,9 @@
 #include "realtimedata.h"
 #include "timecounter.hpp"
 
-#define QP_THREADS_USED 2
+#define QP_THREADS_USED_FIRST 1
+#define QP_THREADS_USED_SECOND 1
+#define QP_THREADS_USED_THIRD 1
 // static void MSKAPI printstr(void *handle, const char str[]) {  //
 // printf("%s", str);  // } /* printstr */
 
@@ -293,8 +295,8 @@ class thrusterallocation_first {
     Q(1, 1) = 1000;
     Q(2, 2) = 1000;
     Omega(0, 0) = 1;
-    Omega(1, 1) = 10;
-    Omega(2, 2) = 10;
+    Omega(1, 1) = 20;
+    Omega(2, 2) = 20;
     qval[3] = Omega(0, 0);
     qval[4] = Omega(1, 1);
     qval[5] = Omega(2, 2);
@@ -310,7 +312,7 @@ class thrusterallocation_first {
     r = MSK_maketask(env, _vessel_first.num_constraints, _vessel_first.numvar,
                      &task);
     // set up the threads used by mosek
-    r = MSK_putintparam(task, MSK_IPAR_NUM_THREADS, QP_THREADS_USED);
+    r = MSK_putintparam(task, MSK_IPAR_NUM_THREADS, QP_THREADS_USED_FIRST);
     // r = MSK_linkfunctotaskstream(task, MSK_STREAM_LOG, NULL, printstr);
     r = MSK_linkfunctotaskstream(task, MSK_STREAM_LOG, NULL, NULL);
     // append num_constrainsts empty contraints
@@ -678,7 +680,7 @@ class thrusterallocation_first {
   void onestepmosek(FILE *t_file, int index = 0) {
     MSKint32t i, j;
     double t_results[numvar];
-
+    results.setZero();
     if (r == MSK_RES_OK) {
       for (j = 0; j < numvar; ++j) {
         /* Set the linear term g_j in the objective.*/
@@ -1124,8 +1126,8 @@ class thrusterallocation_second {
     Q(1, 1) = 1000;
     Q(2, 2) = 1000;
     Omega(0, 0) = 1;
-    Omega(1, 1) = 10;
-    Omega(2, 2) = 10;
+    Omega(1, 1) = 20;
+    Omega(2, 2) = 20;
     qval[3] = Omega(0, 0);
     qval[4] = Omega(1, 1);
     qval[5] = Omega(2, 2);
@@ -1141,7 +1143,7 @@ class thrusterallocation_second {
     r = MSK_maketask(env, _vessel_second.num_constraints, _vessel_second.numvar,
                      &task);
     // set up the threads used by mosek
-    r = MSK_putintparam(task, MSK_IPAR_NUM_THREADS, QP_THREADS_USED);
+    r = MSK_putintparam(task, MSK_IPAR_NUM_THREADS, QP_THREADS_USED_SECOND);
     // r = MSK_linkfunctotaskstream(task, MSK_STREAM_LOG, NULL, printstr);
     r = MSK_linkfunctotaskstream(task, MSK_STREAM_LOG, NULL, NULL);
     // append num_constrainsts empty contraints
@@ -1507,7 +1509,7 @@ class thrusterallocation_second {
   void onestepmosek(FILE *t_file, int index = 0) {
     MSKint32t i, j;
     double t_results[numvar];
-
+    results.setZero();
     if (r == MSK_RES_OK) {
       for (j = 0; j < numvar; ++j) {
         /* Set the linear term g_j in the objective.*/
@@ -1950,8 +1952,8 @@ class thrusterallocation_third {
     Q(1, 1) = 1000;
     Q(2, 2) = 1000;
     Omega(0, 0) = 1;
-    Omega(1, 1) = 10;
-    Omega(2, 2) = 10;
+    Omega(1, 1) = 30;
+    Omega(2, 2) = 30;
     qval[3] = Omega(0, 0);
     qval[4] = Omega(1, 1);
     qval[5] = Omega(2, 2);
@@ -1966,7 +1968,7 @@ class thrusterallocation_third {
     /* Create the optimization task. */
     r = MSK_maketask(env, _vessel.num_constraints, _vessel.numvar, &task);
     // set up the threads used by mosek
-    r = MSK_putintparam(task, MSK_IPAR_NUM_THREADS, QP_THREADS_USED);
+    r = MSK_putintparam(task, MSK_IPAR_NUM_THREADS, QP_THREADS_USED_THIRD);
     // r = MSK_linkfunctotaskstream(task, MSK_STREAM_LOG, NULL, printstr);
     r = MSK_linkfunctotaskstream(task, MSK_STREAM_LOG, NULL, NULL);
     // append num_constrainsts empty contraints
@@ -2332,7 +2334,7 @@ class thrusterallocation_third {
   void onestepmosek(FILE *t_file, int index = 0) {
     MSKint32t i, j;
     double t_results[numvar];
-
+    results.setZero();
     if (r == MSK_RES_OK) {
       for (j = 0; j < numvar; ++j) {
         /* Set the linear term g_j in the objective.*/
@@ -2404,7 +2406,7 @@ class thrusterallocation_third {
               break;
             }
             case MSK_SOL_STA_UNKNOWN: {
-              t_file = fopen(logsavepath_second.c_str(), "a+");
+              t_file = fopen(logsavepath_third.c_str(), "a+");
               fprintf(t_file,
                       "Third: The status of the solution could not be "
                       "determined.\n");
@@ -2412,14 +2414,14 @@ class thrusterallocation_third {
               break;
             }
             default: {
-              t_file = fopen(logsavepath_second.c_str(), "a+");
+              t_file = fopen(logsavepath_third.c_str(), "a+");
               fprintf(t_file, "Third: Other solution status.");
               fclose(t_file);
               break;
             }
           }
         } else {
-          t_file = fopen(logsavepath_second.c_str(), "a+");
+          t_file = fopen(logsavepath_third.c_str(), "a+");
           fprintf(t_file, "Third: Error while optimizing.\n");
           fclose(t_file);
         }
@@ -2428,7 +2430,7 @@ class thrusterallocation_third {
         /* In case of an error print error code and description. */
         char symname[MSK_MAX_STR_LEN];
         char desc[MSK_MAX_STR_LEN];
-        t_file = fopen(logsavepath_second.c_str(), "a+");
+        t_file = fopen(logsavepath_third.c_str(), "a+");
         fprintf(t_file, "Third: An error occurred while optimizing.\n");
         MSK_getcodedesc(r, symname, desc);
         fprintf(t_file, "Error %s - '%s'\n", symname, desc);

@@ -334,7 +334,7 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket,
       // determine if the measured data is out of range or NaN
       updaterealtimevesseldata_first(_realtimevessel_first, fX, fY, fZ, fAng1,
                                      fAng2, fAng3);
-
+      changedirection(fX, fY, fZ, fAng1, fAng2, fAng3);
     } else {
       resetmeasurement(_realtimevessel_first.Measurement,
                        _realtimevessel_first.Position);
@@ -368,14 +368,17 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket,
       // the first vessel
       poRTPacket->Get6DOFEulerBody(0, fX_first, fY_first, fZ_first, fAng1_first,
                                    fAng2_first, fAng3_first);
+      changedirection(fX_first, fY_first, fZ_first, fAng1_first, fAng2_first,
+                      fAng3_first);
       // determine if the measured data is out of range or NaN
       updaterealtimevesseldata_first(_realtimevessel_first, fX_first, fY_first,
                                      fZ_first, fAng1_first, fAng2_first,
                                      fAng3_first);
-
       // the second vessel
       poRTPacket->Get6DOFEulerBody(1, fX_second, fY_second, fZ_second,
                                    fAng1_second, fAng2_second, fAng3_second);
+      changedirection(fX_second, fY_second, fZ_second, fAng1_second,
+                      fAng2_second, fAng3_second);
       // determine if the measured data is out of range or NaN
       updaterealtimevesseldata_second(_realtimevessel_second, fX_second,
                                       fY_second, fZ_second, fAng1_second,
@@ -424,6 +427,8 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket,
       // the first vessel
       poRTPacket->Get6DOFEulerBody(0, fX_first, fY_first, fZ_first, fAng1_first,
                                    fAng2_first, fAng3_first);
+      changedirection(fX_first, fY_first, fZ_first, fAng1_first, fAng2_first,
+                      fAng3_first);
       // determine if the measured data is out of range or NaN
       updaterealtimevesseldata_first(_realtimevessel_first, fX_first, fY_first,
                                      fZ_first, fAng1_first, fAng2_first,
@@ -432,6 +437,8 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket,
       // the second vessel
       poRTPacket->Get6DOFEulerBody(1, fX_second, fY_second, fZ_second,
                                    fAng1_second, fAng2_second, fAng3_second);
+      changedirection(fX_second, fY_second, fZ_second, fAng1_second,
+                      fAng2_second, fAng3_second);
       // determine if the measured data is out of range or NaN
       updaterealtimevesseldata_second(_realtimevessel_second, fX_second,
                                       fY_second, fZ_second, fAng1_second,
@@ -440,6 +447,8 @@ void COutput::PrintData6DEuler(CRTPacket* poRTPacket,
       // the third vessel
       poRTPacket->Get6DOFEulerBody(2, fX_third, fY_third, fZ_third, fAng1_third,
                                    fAng2_third, fAng3_third);
+      changedirection(fX_third, fY_third, fZ_third, fAng1_third, fAng2_third,
+                      fAng3_third);
       // determine if the measured data is out of range or NaN
       updaterealtimevesseldata_third(_realtimevessel_third, fX_third, fY_third,
                                      fZ_third, fAng1_third, fAng2_third,
@@ -513,6 +522,16 @@ void COutput::ResetCounters() {
   mnLastTimeStamp = 0;
 
 }  // ResetCounters
+
+void COutput::changedirection(float& _fX, float& _fY, float& _fZ, float& _fAng1,
+                              float& _fAng2, float& _fAng3) {
+  // _fX *= 1;
+  _fY *= -1;
+  _fZ *= -1;
+  // _fAng1 *= 1;
+  _fAng2 *= -1;
+  _fAng3 *= -1;
+}
 
 void COutput::updaterealtimevesseldata_first(
     realtimevessel_first& _realtimevessel, float _fX, float _fY, float _fZ,

@@ -31,12 +31,26 @@ alpha_second=totaldata_second(:,22:24);
 rpm_second=totaldata_second(:,25:27);
 State4control_second=totaldata_second(:,28:30);
 
+name_third='Third.csv';
+path_third=strcat(path,name_third);
+totaldata_third=csvread(path_third,1,0);
+% generate timestamp in seconds
+timestamp0_third=totaldata_third(1,3);
+timestamp_third=(totaldata_third(:,3)-timestamp0_third)*86400.0;  % seconds
+Position_third=totaldata_third(:,4:9);
+State_third=totaldata_third(:,10:15);
+Tau_third=totaldata_third(:,16:18);
+est_third=totaldata_third(:,19:21);
+alpha_third=totaldata_third(:,22:24);
+rpm_third=totaldata_third(:,25:27);
+State4control_third=totaldata_third(:,28:30);
+
 %% figure 1 of II vessel
-s_xmin=150;
-s_xmax=170;
+s_xmin=900;
+s_xmax=1600;
 index2view=find(timestamp_second>s_xmin & timestamp_second<s_xmax);
 timestamp_second=timestamp_second(index2view);
-desiredposition_second=[0 -3 00];
+desiredposition_second=[0 -5 0];
 figure(1)
 subplot(311)
 plot(timestamp_second,Position_second(index2view,1),'-r','linewidth',2);hold on;
@@ -66,7 +80,7 @@ plot([0,timestamp_second(end)],[desiredposition_second(3),desiredposition_second
 xlim([s_xmin s_xmax]);
 legend('position','State');
 xlabel('time(s)');
-ylabel('Yaw(rad)');
+ylabel('Yaw(deg)');
 
 %% figure 2 
 figure(2)
@@ -175,7 +189,7 @@ plot([0,timestamp_first(end)],[desiredposition_first(3),desiredposition_first(3)
 xlim([s_xmin s_xmax]);
 legend('position','State');
 xlabel('time(s)');
-ylabel('Yaw(rad)');
+ylabel('Yaw(deg)');
 
 %% figure 2 
 figure(6)
@@ -227,6 +241,92 @@ subplot(313)
 plot(timestamp_first, Tau_first(index2view,3),'-r','linewidth',2); hold on; 
 plot(timestamp_first, est_first(index2view,3),':k','linewidth',2);
 xlim([s_xmin s_xmax]);
+xlabel('time(s)');
+ylabel('Yaw(N*m)');
+legend('Desired force','Estimated force');
+
+%% figure 1 of III vessel
+index2view=find(timestamp_third>s_xmin & timestamp_third<s_xmax);
+timestamp_third=timestamp_third(index2view);
+desiredposition_third=[-8 0 0];
+figure(9)
+subplot(311)
+plot(timestamp_third,Position_third(index2view,1),'-r','linewidth',2);hold on;
+plot(timestamp_third,State_third(index2view,1),':k','linewidth',2); hold on;
+plot([0,timestamp_third(end)],[desiredposition_third(1),desiredposition_third(1)],'--b');
+xlim([s_xmin s_xmax]);
+% ylim([0 0.1]);
+legend('position','State');
+xlabel('time(s)');
+ylabel('surge(m)');
+title('Position comparison --- III vessel')
+
+
+subplot(312)
+plot(timestamp_third,Position_third(index2view,2),'-r','linewidth',2); hold on;
+plot(timestamp_third,State_third(index2view,2),':k','linewidth',2); hold on;
+plot([0,timestamp_third(end)],[desiredposition_third(2),desiredposition_third(2)],'--b');
+xlim([s_xmin s_xmax]);
+legend('position','State');
+xlabel('time(s)');
+ylabel('sway(m)');
+
+subplot(313)
+plot(timestamp_third,Position_third(index2view,6),'-r','linewidth',2);hold on;
+plot(timestamp_third,State_third(index2view,3)*180/pi,':k','linewidth',2); hold on;
+plot([0,timestamp_third(end)],[desiredposition_third(3),desiredposition_third(3)],'--b');
+xlim([s_xmin s_xmax]);
+legend('position','State');
+xlabel('time(s)');
+ylabel('Yaw(deg)');
+
+%% figure 2 
+figure(10)
+subplot(311)
+plot(timestamp_third,State_third(index2view,4),'-r','linewidth',2);
+xlim([s_xmin s_xmax]);
+xlabel('time(s)');
+ylabel('surge(m/s)');
+title('Velocity --- III vessel')
+
+subplot(312)
+plot(timestamp_third,State_third(index2view,5),'-r','linewidth',2);
+xlim([s_xmin s_xmax]);
+xlabel('time(s)');
+ylabel('sway(m/s)');
+
+subplot(313)
+plot(timestamp_third,State_third(index2view,6),'-r','linewidth',2);
+xlim([s_xmin s_xmax]);
+xlabel('time(s)');
+ylabel('yaw(rad/s)');
+
+
+
+%% figure 3
+figure(11)
+title('Trajectory --- III vessel')
+plot(Position_third(index2view,2),Position_third(index2view,1),'ro','MarkerSize',2); 
+
+
+%% figure 4
+figure(12)
+subplot(311)
+plot(timestamp_third, Tau_third(index2view,1),'-r','linewidth',2); hold on; 
+plot(timestamp_third, est_third(index2view,1),':k','linewidth',2);
+xlabel('time(s)');
+ylabel('surge(N)');
+legend('Desired force','Estimated force');
+title('PID force --- III vessel')
+subplot(312)
+plot(timestamp_third, Tau_third(index2view,2),'-r','linewidth',2); hold on; 
+plot(timestamp_third, est_third(index2view,2),':k','linewidth',2);
+xlabel('time(s)');
+ylabel('sway(N)');
+legend('Desired force','Estimated force');
+subplot(313)
+plot(timestamp_third, Tau_third(index2view,3),'-r','linewidth',2); hold on; 
+plot(timestamp_third, est_third(index2view,3),':k','linewidth',2);
 xlabel('time(s)');
 ylabel('Yaw(N*m)');
 legend('Desired force','Estimated force');

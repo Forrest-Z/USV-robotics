@@ -241,7 +241,7 @@ class setpoints {
       0      // indicator;
   };
   SingleDimensionMove_triple mysingledimensionmove_triple{
-      10,        //  orientation_adjustment_time
+      1,         //  orientation_adjustment_time
       100,       // total_time_spent
       0,         // desired_initialx_first
       -3,        // desired_initialy_first

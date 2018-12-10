@@ -106,6 +106,8 @@ class COutput {
   void PrintData6DEulerRes(FILE* logfile, CRTPacket* poRTPacket,
                            CRTProtocol* poRTProtocol);
 
+  void changedirection(float& _fX, float& _fY, float& _fZ, float& _fAng1,
+                       float& _fAng2, float& _fAng3);
   void updaterealtimevesseldata_first(realtimevessel_first& _realtimevessel,
                                       float _fX, float _fY, float _fZ,
                                       float _fAng1, float _fAng2, float _fAng3);

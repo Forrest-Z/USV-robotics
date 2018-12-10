@@ -17,7 +17,7 @@ const double tunnel_width_third = 0.2;
 const double tunnel_length_third = 0.8;
 
 const int max_tunnel_rotation_third = 3000;
-const int max_azimuth_rotation_third = 1000;
+const int max_azimuth_rotation_third = 3000;
 
 namespace Ui {
 class DialogthrusterdiagIII;
