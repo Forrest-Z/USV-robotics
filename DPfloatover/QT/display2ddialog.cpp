@@ -193,6 +193,29 @@ void Display2DDialog::convertvessel(double origin_x, double origin_y,
         origin_y;
   }
 }
+
+void Display2DDialog::convertvessel(const vesselshapedata &_vesselshapedata,
+                                    double origin_x, double origin_y,
+                                    double t_orient, QVector<double> &t_datax,
+                                    QVector<double> &t_datay, int index) {
+  // we should exchange x, y between the display coordinate and global
+  // coordinate
+  // convert degree to rad
+  t_orient = t_orient * M_PI / 180;
+  double c_value = std::cos(t_orient);
+  double s_value = std::sin(t_orient);
+  for (unsigned i = 0; i != _vesselshapedata.totalnum; ++i) {
+    t_datax[i] =
+        c_value * (0.33 * _vesselshapedata.x[i] - CoG4viewer[index][0]) -
+        s_value * (0.28 * _vesselshapedata.y[i] - CoG4viewer[index][1]) +
+        origin_x;
+    t_datay[i] =
+        s_value * (0.33 * _vesselshapedata.x[i] - CoG4viewer[index][0]) +
+        c_value * (0.28 * _vesselshapedata.y[i] - CoG4viewer[index][1]) +
+        origin_y;
+  }
+}
+
 // pop_front and push_back
 void Display2DDialog::updatetrajectoryvector(double origin_x, double origin_y,
                                              QVector<double> &t_trajectory_x,

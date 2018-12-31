@@ -8,6 +8,7 @@
 #include "globalvar.h"
 #include "qcustomplot.h"  // the header file of QCustomPlot.
 #include "realtimedata.h"
+#include "vesselshape.h"
 
 const uint32_t arraylength = 592;  // length of array for 2D display
 // length of array for trajectory display
@@ -63,6 +64,9 @@ class Display2DDialog : public QDialog {
   void convertvessel(double origin_x, double origin_y, double t_orient,
                      QVector<double> &t_datax, QVector<double> &t_datay,
                      int index);
+  void convertvessel(const vesselshapedata &_vesselshapedata, double origin_x,
+                     double origin_y, double t_orient, QVector<double> &t_datax,
+                     QVector<double> &t_datay, int index);
   void updatetrajectoryvector(double origin_x, double origin_y,
                               QVector<double> &t_trajectory_x,
                               QVector<double> &t_trajectory_y);
