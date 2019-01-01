@@ -196,7 +196,8 @@ SOURCES += \
     dialogthrusterdiagi.cpp \
     dialogthrusterdiagii.cpp \
     dialogthrusterdiagiii.cpp \
-    dialog6dof.cpp
+    dialog6dof.cpp \
+    csvstream.cpp
 
 
 
@@ -585,7 +586,9 @@ HEADERS += \
     dialogthrusterdiagi.h \
     dialogthrusterdiagii.h \
     dialogthrusterdiagiii.h \
-    dialog6dof.h
+    dialog6dof.h \
+    csvstream.h \
+    vesselshape.h
 
 
 

@@ -45,6 +45,7 @@ class Display2DDialog : public QDialog {
   QCPItemTracer *itemDemoPhaseTracer;
 
   // data for 2d display
+  std::unordered_map<int, vesselshapedata> vesselsshapedata;
   std::unordered_map<int, QVector<double>> planarmotion_x;
   std::unordered_map<int, QVector<double>> planarmotion_y;
   std::unordered_map<int, QVector<double>> trajectory_x;
@@ -64,9 +65,7 @@ class Display2DDialog : public QDialog {
   void convertvessel(double origin_x, double origin_y, double t_orient,
                      QVector<double> &t_datax, QVector<double> &t_datay,
                      int index);
-  void convertvessel(const vesselshapedata &_vesselshapedata, double origin_x,
-                     double origin_y, double t_orient, QVector<double> &t_datax,
-                     QVector<double> &t_datay, int index);
+  void readvesselsshape();
   void updatetrajectoryvector(double origin_x, double origin_y,
                               QVector<double> &t_trajectory_x,
                               QVector<double> &t_trajectory_y);

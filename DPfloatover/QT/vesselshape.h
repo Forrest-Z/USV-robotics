@@ -48,6 +48,8 @@ class vesselshape {
     }
   }
 
+  void setfilename(const std::string &_name) { filename = _name; }
+
  private:
   std::string filename;
 };

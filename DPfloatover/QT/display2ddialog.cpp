@@ -182,40 +182,42 @@ void Display2DDialog::convertvessel(double origin_x, double origin_y,
   t_orient = t_orient * M_PI / 180;
   double c_value = std::cos(t_orient);
   double s_value = std::sin(t_orient);
-  for (unsigned i = 0; i != arraylength; ++i) {
-    t_datax[i] =
-        c_value * (0.33 * globalvar::vesselshape_x[i] - CoG4viewer[index][0]) -
-        s_value * (0.28 * globalvar::vesselshape_y[i] - CoG4viewer[index][1]) +
-        origin_x;
-    t_datay[i] =
-        s_value * (0.33 * globalvar::vesselshape_x[i] - CoG4viewer[index][0]) +
-        c_value * (0.28 * globalvar::vesselshape_y[i] - CoG4viewer[index][1]) +
-        origin_y;
+  std::vector<double> vesselshape_x = vesselsshapedata[index].x;
+  std::vector<double> vesselshape_y = vesselsshapedata[index].y;
+  for (unsigned i = 0; i != vesselsshapedata[index].totalnum; ++i) {
+    t_datax[i] = c_value * (0.33 * vesselshape_x[i] - CoG4viewer[index][0]) -
+                 s_value * (0.28 * vesselshape_y[i] - CoG4viewer[index][1]) +
+                 origin_x;
+    t_datay[i] = s_value * (0.33 * vesselshape_x[i] - CoG4viewer[index][0]) +
+                 c_value * (0.28 * vesselshape_y[i] - CoG4viewer[index][1]) +
+                 origin_y;
   }
 }
 
-void Display2DDialog::convertvessel(const vesselshapedata &_vesselshapedata,
-                                    double origin_x, double origin_y,
-                                    double t_orient, QVector<double> &t_datax,
-                                    QVector<double> &t_datay, int index) {
-  // we should exchange x, y between the display coordinate and global
-  // coordinate
-  // convert degree to rad
-  t_orient = t_orient * M_PI / 180;
-  double c_value = std::cos(t_orient);
-  double s_value = std::sin(t_orient);
-  for (unsigned i = 0; i != _vesselshapedata.totalnum; ++i) {
-    t_datax[i] =
-        c_value * (0.33 * _vesselshapedata.x[i] - CoG4viewer[index][0]) -
-        s_value * (0.28 * _vesselshapedata.y[i] - CoG4viewer[index][1]) +
-        origin_x;
-    t_datay[i] =
-        s_value * (0.33 * _vesselshapedata.x[i] - CoG4viewer[index][0]) +
-        c_value * (0.28 * _vesselshapedata.y[i] - CoG4viewer[index][1]) +
-        origin_y;
+void Display2DDialog::readvesselsshape() {
+  for (int i = 0; i != 3; ++i) vesselsshapedata[i] = vesselshapedata{0};
+
+  const std::string vesselshape_first =
+      "/home/skloe/Coding/CPP1X/USV/DPfloatover/QT/build/geometry/"
+      "firstvessel.csv";
+  const std::string vesselshape_second =
+      "/home/skloe/Coding/CPP1X/USV/DPfloatover/QT/build/geometry/"
+      "secondvessel.csv";
+  const std::string vesselshape_third =
+      "/home/skloe/Coding/CPP1X/USV/DPfloatover/QT/build/geometry/"
+      "thirdvessel.csv";
+  vesselshape myvesselshape(vesselshape_first);  // Open file
+  myvesselshape.readvesselshape(vesselsshapedata[0]);
+  myvesselshape.setfilename(vesselshape_second);
+  myvesselshape.readvesselshape(vesselsshapedata[1]);
+  myvesselshape.setfilename(vesselshape_third);
+  myvesselshape.readvesselshape(vesselsshapedata[2]);
+
+  for (int i = 0; i != 3; ++i) {
+    planarmotion_x[i] = QVector<double>(vesselsshapedata[i].totalnum, 0);
+    planarmotion_y[i] = QVector<double>(vesselsshapedata[i].totalnum, 0);
   }
 }
-
 // pop_front and push_back
 void Display2DDialog::updatetrajectoryvector(double origin_x, double origin_y,
                                              QVector<double> &t_trajectory_x,
@@ -235,7 +237,7 @@ void Display2DDialog::updatesetpointvector(double set_x, double set_y,
 
 // initialize UI for real-time planar motion
 void Display2DDialog::initializePlanarMotion(QCustomPlot *customPlot) {
-  // initialize realtime viewer
+  //  initialize realtime viewer
   //  QBrush boxBrush(QColor(68, 68, 68, 255));
   //  ui->customPlot_2Dmotion->setBackground(boxBrush);  // setup color of
   //  background
@@ -344,9 +346,8 @@ bool Display2DDialog::eventFilter(QObject *target, QEvent *event) {
 }
 
 void Display2DDialog::initializePlanarMotionData() {
+  readvesselsshape();
   for (int i = 0; i != MAXCONNECTION; ++i) {
-    planarmotion_x[i] = QVector<double>(arraylength, 0);
-    planarmotion_y[i] = QVector<double>(arraylength, 0);
     trajectory_x[i] = QVector<double>(trajectorylength, 0);
     trajectory_y[i] = QVector<double>(trajectorylength, 0);
     setpoints_x[i] = QVector<double>(1, 0);
