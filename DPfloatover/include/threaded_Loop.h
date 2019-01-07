@@ -633,7 +633,7 @@ class threadloop {
       300.0,                                     // D_theta
       0.01,                                      // allowed_error_x
       0.01,                                      // allowed_error_y;
-      0.01,                                      // allowed_error_orientation;
+      0.002,                                     // allowed_error_orientation;
       6.0,                                       // maxpositive_x_thrust(N)
       5.0,                                       // maxnegative_x_thrust(N)
       3,                                         // maxpositive_y_thrust(N)
@@ -664,11 +664,11 @@ class threadloop {
       M_PI / 18,                                 // min_alpha_azimuth_left
       -M_PI / 18,                                // max_alpha_azimuth_right
       -M_PI * 170 / 180,                         // min_alpha_azimuth_right
-      2.58,                                      // bow_x
+      2.563,                                     // bow_x
       0,                                         // bow_y
-      -2.95,                                     // left_x
+      -2.983,                                    // left_x
       -0.44,                                     // left_y
-      -2.95,                                     // right_x
+      -2.983,                                    // right_x
       0.44                                       // right_y
   };
 

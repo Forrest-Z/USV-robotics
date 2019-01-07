@@ -185,12 +185,10 @@ void Display2DDialog::convertvessel(double origin_x, double origin_y,
   std::vector<double> vesselshape_x = vesselsshapedata[index].x;
   std::vector<double> vesselshape_y = vesselsshapedata[index].y;
   for (unsigned i = 0; i != vesselsshapedata[index].totalnum; ++i) {
-    t_datax[i] = c_value * (0.33 * vesselshape_x[i] - CoG4viewer[index][0]) -
-                 s_value * (0.28 * vesselshape_y[i] - CoG4viewer[index][1]) +
-                 origin_x;
-    t_datay[i] = s_value * (0.33 * vesselshape_x[i] - CoG4viewer[index][0]) +
-                 c_value * (0.28 * vesselshape_y[i] - CoG4viewer[index][1]) +
-                 origin_y;
+    t_datax[i] = c_value * (vesselshape_x[i] - CoG4viewer[index][0]) -
+                 s_value * (vesselshape_y[i] - CoG4viewer[index][1]) + origin_x;
+    t_datay[i] = s_value * (vesselshape_x[i] - CoG4viewer[index][0]) +
+                 c_value * (vesselshape_y[i] - CoG4viewer[index][1]) + origin_y;
   }
 }
 
@@ -352,12 +350,15 @@ void Display2DDialog::initializePlanarMotionData() {
     trajectory_y[i] = QVector<double>(trajectorylength, 0);
     setpoints_x[i] = QVector<double>(1, 0);
     setpoints_y[i] = QVector<double>(1, 0);
-    CoG4viewer[i] = {2, 0};
+
     setpoints_circle_larger[i] =
         QVector<QCPCurveData>(arraylength_setpoint_circle);
     setpoints_circle_smaller[i] =
         QVector<QCPCurveData>(arraylength_setpoint_circle);
   }
+  CoG4viewer[0] = {2, 0};      // the first vessel
+  CoG4viewer[1] = {2, 0};      // the second vessel
+  CoG4viewer[2] = {2.937, 0};  // the third vessel
 }
 
 void Display2DDialog::initializeCircle(QCustomPlot *customPlot) {
